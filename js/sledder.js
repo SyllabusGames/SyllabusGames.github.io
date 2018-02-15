@@ -32,12 +32,12 @@ function moveSledder(){
 		//		sledder kinematics
 		//		while velocity and acceleration are calculated as raw math, when converting to world space, changes in position must be divided by screenScale
 
-		px += vx*dt*screenScale*0.3;
-		py += vy*dt*screenScale*0.3;
+		//px += vx*dt*screenScale*0.3;
+		//py += vy*dt*screenScale*0.3;
 		//py += 2;
 
-		//px += curveVx*dt*screenScale*0.15;
-		//py += curveVy*dt*screenScale*0.15;
+		px += curveVx*dt*screenScale*0.15;
+		py += curveVy*dt*screenScale*0.15;
 		py += gvy*dt;
 		//		test curvV with y=-x*2+(x/10-5)^2+sin(x/5+t)*15+10-x-5
 		//						y=sin(x/3+t*2)*3-x/2
