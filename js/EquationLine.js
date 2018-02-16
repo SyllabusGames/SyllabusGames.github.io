@@ -76,7 +76,8 @@ $("div").keyup(function(){
 function setCaretLocation(ele, pos){
 	var range = document.createRange(),
 		sel = window.getSelection();
-	range.setStart(ele.childNodes[pos - 1], 1);
+	if(ele.childNodes[pos - 1] != null)//		removed error
+		range.setStart(ele.childNodes[pos - 1], 1);
 	range.collapse(true);
 	sel.removeAllRanges();
 	sel.addRange(range);
