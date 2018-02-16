@@ -1,13 +1,18 @@
-﻿function loadLevel(){
+function loadLevel(){
 	var filePath = '../Levels/SR001.txt'
 	var request = new XMLHttpRequest();
-	request.open('GET' , filePath , true);
+	request.open('GET' , filePath , false);
+	rawFile.onreadystatechange = function (){
+		if(rawFile.readyState === 4){
+			if(rawFile.status === 200 || rawFile.status == 0){
+				var allText = rawFile.responseText;
+				alert(allText);
+			}
+		}
+    }
 	request.send(null);
-	var fileContent = request.responseText;
-	var fileArray = fileContent.split('\n')
-	alert(fileContent);
+	var fileArray = allText.split('\n')
 	alert(fileArray[1]);
-	alert(fileArray[2]);
 }
 
 function loadExternalLevel(){
