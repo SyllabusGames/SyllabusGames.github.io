@@ -8,7 +8,7 @@
 </head>
 
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
 <div type="text" id="dinput" placeholder="Last name" value="-x-2" defaultValue="-x" contentEditable="true" style="position:absolute;left:300px;
 			top:700px;width:1000px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA; overflow: hidden;"></div>
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
@@ -18,9 +18,10 @@
 <script src="js/Math.js"></script>
 
 <!--	Internal Scripts	-->
-<script src="js/collisions.js"></script>
-<script src="js/sledder.js"></script>
-<script src="js/EquationLine.js"></script>
+<script type="text/javascript" src="js/Collisions.js"></script>
+<script type="text/javascript" src="js/Sledder.js"></script>
+<script type="text/javascript" src="js/EquationLine.js"></script>
+<script type="text/javascript" src="js/LevelLoader.js"></script>
 
 <script>
 	//		Ctrl+Shift+J	shows error log in Chrome
@@ -34,12 +35,18 @@
 	var dx = 0;
 	var dy = 0;
 	var dydt = 0;
+	var dxdt = 0;
 	var i = 0;
 	var ftmp = 0;
 	var fftemp = 0;
+	var ltmp = 0;
+	var rtmp = 0;
 	var stmp = "";
 	var tmpx;
 	var tmpy;
+
+	var debugSkipFrame = false;
+	var debugSingleFrame = false;
 
 	//		camera position and scale
 	var screenx = 0;
@@ -54,6 +61,9 @@
 	var canvas;
 	var ctx;
 
+	//		for running things differently when a level has just been loaded
+	var newLevel = true;
+
 	//		Text colors, [0-9] Partenthasis, [11] x, [12] t, [13] z
 	var textColor = ["#00AAFF" , "#660066" , "#33AA33" , "#990033" , "#009999" , "#FF3300" , "#0066AA" , "#FF9900" , "#003399" , "#AAAA00", //		0-9
 		"#FF0000" , "#009900" , "#0000FF"];//	10-12
@@ -65,6 +75,7 @@
 	window.onload = function(){
 		canvas = document.getElementById('gc');
 		ctx = canvas.getContext('2d');
+		loadLevel();
 		//ctx.save();
 		/*c.addEventListener('mousemove' , function(e){
 			mx = e.clientX-6;
@@ -72,7 +83,6 @@
 		})*/
 		setUpSledder();
 		setUpColliders();
-		//setInterval(update, 1000 / 60);//		call update 60 times a second
 		window.requestAnimationFrame(update);
 
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
@@ -84,8 +94,29 @@
 	}
 
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
-	function update(timestamp){		
-		//		on spacebar down toggle equation editable and simulation running
+	function update(timestamp){
+		window.requestAnimationFrame(update);
+
+		//				Debug pause and frame advance//		Hold Ctrl to pause. Press Z to advance single frames
+		document.body.onkeyup = function(e){
+			if(e.keyCode == 17){//		Ctrl
+				debugSkipFrame = false;
+			}
+		}
+		document.body.onkeydown = function(e){
+			if(e.keyCode == 17){//		Ctrl
+				debugSkipFrame = true;
+			}
+			if(e.keyCode == 90){//		Z
+				debugSingleFrame = true;
+			}
+		}
+		if(debugSkipFrame && !debugSingleFrame)
+			return;
+		debugSingleFrame = false;
+		//				Debug pause and frame advance
+
+		//		on enter down toggle equation editable and simulation running
 		//		get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
 		document.body.onkeyup = function(e){
 			if(e.keyCode == 13){//		enter
@@ -136,7 +167,6 @@
 		//	ctx.fillText( "Drop Time = " + dropTime.toString() ,10,800);
 			//ctx.fillText( "SCREEN Y = " + screeny.toString() + "SCREEN X = " + screenx.toString() ,10,250);
 		drawColliders();//		see collisions.js
-		window.requestAnimationFrame(update);
 
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
