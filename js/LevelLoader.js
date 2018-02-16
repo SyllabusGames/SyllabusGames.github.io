@@ -6,6 +6,8 @@
 	var fileContent = request.responseText;
 	var fileArray = fileContent.split('\n')
 	alert(fileArray[0]);
+	alert(fileArray[1]);
+	alert(fileArray[2]);
 }
 
 function loadExternalLevel(){
