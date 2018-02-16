@@ -1,0 +1,22 @@
+﻿Easy as it gets
+SR
+0,0
+-x/5
+Goal
+400,0/-60
+
+
+
+Name
+Type_Type specific information
+player start position
+default equation(s)
+piecwise limits
+right limit
+left and right limit
+left limit
+Resets
+X,Y position of lower left vertex | X and Y length of rectangle
+X,Y position of circle center / circle radius
+Goal
+same as resets
