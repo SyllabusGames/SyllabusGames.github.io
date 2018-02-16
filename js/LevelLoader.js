@@ -2,10 +2,10 @@ function loadLevel(){
 	var filePath = '../Levels/SR001.txt'
 	var request = new XMLHttpRequest();
 	request.open('GET' , filePath , false);
-	rawFile.onreadystatechange = function (){
-		if(rawFile.readyState === 4){
-			if(rawFile.status === 200 || rawFile.status == 0){
-				var allText = rawFile.responseText;
+	request.onreadystatechange = function (){
+		if(request.readyState === 4){
+			if(request.status === 200 || request.status == 0){
+				var allText = request.responseText;
 				alert(allText);
 			}
 		}
