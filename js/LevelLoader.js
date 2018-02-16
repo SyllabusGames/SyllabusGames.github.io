@@ -5,7 +5,7 @@
 	request.send(null);
 	var fileContent = request.responseText;
 	var fileArray = fileContent.split('\n')
-	alert(fileArray[0]);
+	alert(fileContent);
 	alert(fileArray[1]);
 	alert(fileArray[2]);
 }
