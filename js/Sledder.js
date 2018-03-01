@@ -20,14 +20,13 @@ function setUpSledder(){
 	//		set up sledder
 	img = new Image;
 	img.src = "SineRiderSled.svg";
-	//window.alert("pause");
 }
 
 function resetSledder(){
 	dropTime = 0;//		delete
 	simulating = !simulating;
 	px = defaultPosX*screenScale;
-	py = defaultPosY*screenScale;
+	py = -defaultPosY*screenScale;//		negative because the Y axis is measured from the top by the canvas
 	av = 0;
 	vx = 0;
 	vy = 0;
@@ -69,8 +68,6 @@ function moveSledder(){
 		ctx.drawImage( img, -0.875*screenScale , -1.8125*screenScale , 1.75*screenScale , 2.5*screenScale);//		position here is is local space and therefore is only usefuly to center the image on the sled
 		ctx.translate( -px, -py );
 	}
-
-	drawColliders();//		see collisions.js
 }
 //		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 
@@ -126,6 +123,7 @@ function drawSledder(){
 
 		//		test (rotation)				-((x-22)*t*0.3-2)/5-5
 		//		test (slightly slopped trampoline)	 -x/100+sin(t*1.5+1.5)*7
+		//		test (neat)			-x/3-5+sin(-t+x/2)*2+((1+sin(t))*x/10-2)^2+sin(t)*4
 		
 		ltmp = equation((px-1)/screenScale);//		y pos 1 frame ago 1 meter to the left of the sledder's current location
 		rtmp = equation((px+1)/screenScale);//		y pos 1 frame ago 1 meter to the right

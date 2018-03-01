@@ -1,6 +1,5 @@
 ﻿<canvas id="gc" width="1600" height="800"></canvas>
 
-
 <head>
 	<link rel="icon" href="TabImage.png">
 	<link rel="shortcut icon" href="TabImage.png">
@@ -8,30 +7,32 @@
 </head>
 
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
 <div type="text" id="dinput" placeholder="Last name" value="-x-2" defaultValue="-x" contentEditable="true" style="position:absolute;left:300px;
 			top:700px;width:1000px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA; overflow: hidden;"></div>
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
 
-<!--	Libraries	-->
+<!--	Load External Libraries	-->
 <!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
 <script src="js/Math.js"></script>
 
-<!--	Internal Scripts	-->
+<!--	Load Internal Scripts	-->
 <script type="text/javascript" src="js/Collisions.js"></script>
 <script type="text/javascript" src="js/Sledder.js"></script>
 <script type="text/javascript" src="js/EquationLine.js"></script>
+<script type="text/javascript" src="js/LevelSaver.js"></script>
 <script type="text/javascript" src="js/LevelLoader.js"></script>
 
 <script>
 	//		Ctrl+Shift+J	shows error log in Chrome
 	
 	//		time
-	var frameTime = 0;
-	var dt = 0.016666666666666666;
+	var frameTime = 0;//		time since level started (used as t in equations)
+	var dt = 0.016666666666666666;//	=1/60	(60 frames per second)
 	//var lastTimeRaw = 0;
 
-	//		temporary variables
+	//		temporary variables (all of these are used in multiple places. This is to avoid the inefficiency of redeclaring i 10 times a frame)
 	var dx = 0;
 	var dy = 0;
 	var dydt = 0;
@@ -45,6 +46,7 @@
 	var tmpx;
 	var tmpy;
 
+	//		should be deleted before launch
 	var debugSkipFrame = false;
 	var debugSingleFrame = false;
 
@@ -54,7 +56,7 @@
 	var screenScale = 20;
 
 	//		gameplay state
-	var simulating = false;
+	var simulating = false;//		game is running. Sled is moving.
 	var paused = false;
 
 	//		canvas
@@ -69,20 +71,21 @@
 		"#FF0000" , "#009900" , "#0000FF"];//	10-12
 	var parenOpen = 0;
 
-	var dropTime = 0;//		delete this soon
-	var timestamp;
+	var timestamp;//		used only for running update()
 
 	window.onload = function(){
+		saveLevel();//		for testing
+		buildLevelMap();//		for testing
+		loadLevelMap();//		for texting
 		canvas = document.getElementById('gc');
 		ctx = canvas.getContext('2d');
-		loadLevel();
+		loadBuiltInLevel();
 		//ctx.save();
 		/*c.addEventListener('mousemove' , function(e){
 			mx = e.clientX-6;
 			my = e.clientY-6;
 		})*/
 		setUpSledder();
-		setUpColliders();
 		window.requestAnimationFrame(update);
 
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
@@ -143,7 +146,6 @@
 		
 		if(simulating){
 			frameTime += dt;
-			dropTime += dt;
 		}else{//		-----------------------------------------------------------------------		[   Edit Equation   ]		-----------------------------------------------------------------------
 			frameTime = 0;
 		}
@@ -155,8 +157,8 @@
 
 		//		-----------------------------------------------------------------------		[   Log to Screen   ]		-----------------------------------------------------------------------
 		if(simulating){
-			ctx.fillStyle = "red";//		font color for text overlay
-			var tt = performance.now();
+			//ctx.fillStyle = "red";//		font color for text overlay
+			//var tt = performance.now();
 
 			//ctx.fillText( document.getElementById('eqyTxt').value ,10,50);
 		//	ctx.fillText("Speed = " + Math.round(Math.sqrt(vy*vy + vx*vx)).toString(),10,150);
@@ -164,10 +166,8 @@
 		}
 		//	ctx.fillText( "Scale " + screenScale.toString() + " pixels = 1 meter" ,10,50);
 		//	ctx.fillText( "Pos.x = " + Math.round(px+screenx*screenScale).toString() + " py = " + Math.round(py+screeny*screenScale).toString() ,10,300);
-		//	ctx.fillText( "Drop Time = " + dropTime.toString() ,10,800);
 			//ctx.fillText( "SCREEN Y = " + screeny.toString() + "SCREEN X = " + screenx.toString() ,10,250);
 		drawColliders();//		see collisions.js
-
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 
@@ -182,8 +182,8 @@
 
 
 <div id="slidecontainer">
+	Scale:
 	<input type="range" min="100" max="6000" value="2000" class="slider" id="myRange">
-	<input type="range" min="-10" max="10" value="0" class="slider2" id="myRange2">
 </div>
 
 <script>
