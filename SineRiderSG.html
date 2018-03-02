@@ -124,6 +124,8 @@
 		document.body.onkeyup = function(e){
 			if(e.keyCode == 13){//		enter
 				resetSledder();
+				$("div").keyup();//		update line. (useful if the player types something while the simulation is running)
+
 			}
 			
 			if(e.keyCode == 27){//		escape

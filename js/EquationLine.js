@@ -14,6 +14,7 @@ var equLast = "0";
 var equInvalid = false;
 var defaultEqu = "-x-5";
 var graphResolution = 0.25;
+var equInputField;
 
 //		-----------------------------------------------------------------------		[   Equation Changed   ]		-----------------------------------------------------------------------
 //		RESOURCE: http://jsfiddle.net/karim79/TxQDV/
@@ -65,9 +66,13 @@ $("div").keyup(function(){
 			eqinput = math.parse(equLast , scope);
 			equ = eqinput.compile();
 			equInvalid = true;
+			equInputField.borderColor = "#FF0000";
+			equInputField.borderWidth = 2;			
 		}
 		if(!equInvalid){
 			equLast = equRaw;
+			equInputField.borderColor = "#AAAAAA";
+			equInputField.borderWidth = 1;
 		}
 	}
 });
@@ -84,25 +89,30 @@ function setCaretLocation(ele, pos){
 }
 
 function getCaretLocation(element){
-	var range = window.getSelection().getRangeAt(0),
-		preCaretRange = range.cloneRange();
-		preCaretRange.selectNodeContents(element);
-		preCaretRange.setEnd(range.startContainer, range.startOffset);
+	try{
+		var range = window.getSelection().getRangeAt(0),
+			preCaretRange = range.cloneRange();
+			preCaretRange.selectNodeContents(element);
+			preCaretRange.setEnd(range.startContainer, range.startOffset);
+	}catch(err){
+		return 0;
+	}
 	return preCaretRange.toString().length;
 }
 
 
 
-//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
+//		-----------------------------------------------------------------------		[   Set up Equation Input Box   ]		-----------------------------------------------------------------------
 function setUpInput(){
 	ctx.font = "60px Arial";
+	equInputField = document.getElementById('dinput').style;//		used to set the border color when the equation contains errors
 	//equInput.onkeydown = handleEnter;//		execute function on key press
 	$("#dinput").text(defaultEqu);
 	scope = {x: 0 , t: 0};
 	eqinput = math.parse(equRaw , scope);
 	equ = eqinput.compile();
-	$("div").keyup();//		update equation line in case it was edited while the sim was running.
-	$('#div').trigger('keyup');
+	//$("div").keyup();//		update equation line to match the default equation.
+	//$('#div').trigger('keyup');
 	$('#dinput').focus();
 
 	//		https://stackoverflow.com/questions/20830353/how-to-make-an-elements-content-editable-with-javascript-or-jquery
@@ -136,8 +146,15 @@ function drawGrid(){//		draw a line at every 10 units
 	}
 
 //		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
-	ctx.fillStyle = "black";
-	ctx.fillText("y =", 185, 742);
+
+	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
+	if(equInvalid){//		invalid equation, show y = old equation
+		ctx.fillStyle = "#888888";
+		ctx.fillText("y = " + equLast ,185,670);
+	}else{
+		ctx.fillStyle = "black";
+		ctx.fillText("y =", 185, 742);
+	}
 }
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------

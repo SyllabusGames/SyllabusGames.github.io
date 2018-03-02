@@ -116,6 +116,7 @@ function drawColliders(){
 		ctx.fillStyle = "black";//		font color for text overlay
 		ctx.font = "40px Arial";
 		ctx.fillText(levelName,1200,50);
+		ctx.font = "60px Arial";//		60px font is used everywhere but here so it should only need to be set here.
 	}
 }
 
