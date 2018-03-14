@@ -43,17 +43,21 @@
 	var ltmp = 0;
 	var rtmp = 0;
 	var stmp = "";
-	var tmpx;
-	var tmpy;
+	var tmspx;
+	var tmspy;
 
 	//		should be deleted before launch
 	var debugSkipFrame = false;
 	var debugSingleFrame = false;
 
-	//		camera position and scale
+	//		camera position and scale. These coordinates are the position of the upper left corner of the screen.
+	var screenWidth = 1600;
+	var screenHeight = 800;
 	var screenx = 0;
 	var screeny = 0;
 	var screenScale = 20;
+	var trackPointx = 0;//		point the camera will try to keep on screen
+	var trackPointy = 0;
 
 	//		gameplay state
 	var simulating = false;//		game is running. Sled is moving.
@@ -74,12 +78,11 @@
 	var timestamp;//		used only for running update()
 
 	window.onload = function(){
+		canvas = document.getElementById('gc');
+		ctx = canvas.getContext('2d');
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
 		loadLevelMap();//		for texting
-		canvas = document.getElementById('gc');
-		ctx = canvas.getContext('2d');
-		loadBuiltInLevel();
 		//ctx.save();
 		/*c.addEventListener('mousemove' , function(e){
 			mx = e.clientX-6;
@@ -88,18 +91,54 @@
 		setUpSledder();
 		window.requestAnimationFrame(update);
 
-		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
-		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
-		setUpInput();//		see EquationLine.js
-		
-		$("#dinput").text("-x-5");
-		$("div").keyup();
+
+		//		-----------------------------------------------------------------------		[   Page Icon   ]		-----------------------------------------------------------------------
+		var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+		link.type = 'image/x-icon';
+		link.rel = 'shortcut icon';
+		link.href = 'SineRiderSGLogo.png';
+		document.getElementsByTagName('head')[0].appendChild(link);
 	}
+	
+	document.addEventListener("keydown", function(e) {
+		if (e.keyCode == 32){//		shift = 16		//		escape = 27
+			//		folowing code from		https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
+			if((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+				//		switch to fullscreen
+				screenWidth = window.screen.width * window.devicePixelRatio;
+				screenHeight = window.screen.height * window.devicePixelRatio;
+				if(document.documentElement.requestFullScreen) {
+					document.documentElement.requestFullScreen();
+				}else if (document.documentElement.mozRequestFullScreen) {
+					document.documentElement.mozRequestFullScreen();
+				}else if (document.documentElement.webkitRequestFullScreen) {
+					document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+				}
+			}else{//		exit fullscreen
+				screenWidth = 1600;
+				screenHeight = 800;
+				if (document.cancelFullScreen) {
+					document.cancelFullScreen();
+				}else if (document.mozCancelFullScreen) {
+					document.mozCancelFullScreen();
+				}else if (document.webkitCancelFullScreen) {
+					document.webkitCancelFullScreen();
+				}
+			}
+						
+			canvas.width = screenWidth;
+			canvas.height = screenHeight;
+			equInputField.left = Math.round(screenWidth * 0.1);
+			equInputField.top = Math.round(screenHeight * 0.9);
+			equInputField.width = Math.round(screenWidth * 0.8);
+		}
+	}, false);
 
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 	function update(timestamp){
 		window.requestAnimationFrame(update);
 
+		//		-----------------------------------------------------------------------		[   Debugging   ]		-----------------------------------------------------------------------
 		//				Debug pause and frame advance//		Hold Ctrl to pause. Press Z to advance single frames
 		document.body.onkeyup = function(e){
 			if(e.keyCode == 17){//		Ctrl
@@ -118,6 +157,7 @@
 			return;
 		debugSingleFrame = false;
 		//				Debug pause and frame advance
+		//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
 
 		//		on enter down toggle equation editable and simulation running
 		//		get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
@@ -125,19 +165,6 @@
 			if(e.keyCode == 13){//		enter
 				resetSledder();
 				$("div").keyup();//		update line. (useful if the player types something while the simulation is running)
-
-			}
-			
-			if(e.keyCode == 27){//		escape
-				//		full page canvas
-				//canvas.width  = window.innerWidth;
-				//canvas.height = window.innerHeight;
-				//		full screen
-				if(canvas.webkitRequestFullScreen){
-					canvas.webkitRequestFullScreen();
-				}else{
-					canvas.mozRequestFullScreen();
-				}  
 			}
 		}
 
@@ -148,66 +175,16 @@
 		
 		if(simulating){
 			frameTime += dt;
-		}else{//		-----------------------------------------------------------------------		[   Edit Equation   ]		-----------------------------------------------------------------------
+		}else{//		-----------------------------------------------------------------------		[   Editing Equation   ]		-----------------------------------------------------------------------
 			frameTime = 0;
 		}
-
 
 		drawLine();
 		moveSledder();//		see sledder.js
 
-
-		//		-----------------------------------------------------------------------		[   Log to Screen   ]		-----------------------------------------------------------------------
-		if(simulating){
-			//ctx.fillStyle = "red";//		font color for text overlay
-			//var tt = performance.now();
-
-			//ctx.fillText( document.getElementById('eqyTxt').value ,10,50);
-		//	ctx.fillText("Speed = " + Math.round(Math.sqrt(vy*vy + vx*vx)).toString(),10,150);
-		//	ctx.fillText("vx = " + Math.round(vx).toString() + "  vy = " + Math.round(vy).toString(),10,200);
-		}
-		//	ctx.fillText( "Scale " + screenScale.toString() + " pixels = 1 meter" ,10,50);
-		//	ctx.fillText( "Pos.x = " + Math.round(px+screenx*screenScale).toString() + " py = " + Math.round(py+screeny*screenScale).toString() ,10,300);
-			//ctx.fillText( "SCREEN Y = " + screeny.toString() + "SCREEN X = " + screenx.toString() ,10,250);
+		ctx.fillText( "Scale = " + screenScale.toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
 		drawColliders();//		see collisions.js
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 
-
-	function checkKey(e) {
-		var event = window.event ? window.event : e;
-		move = true;
-	}
-		
-</script>
-
-
-
-<div id="slidecontainer">
-	Scale:
-	<input type="range" min="100" max="6000" value="2000" class="slider" id="myRange">
-</div>
-
-<script>
-	document.getElementById("myRange").oninput = function() {
-		if(simulating){
-			px *= this.value/100/screenScale;
-			py *= this.value/100/screenScale;
-		}else{
-			px = defaultPosX*this.value/100 + screenx*screenScale;
-			py = defaultPosY*this.value/100 - screeny*screenScale;
-		}
-		screenScale = this.value/100;
-
-	}
-	/*document.getElementById("myRange2").oninput = function() {
-		screenx = this.value;
-		px += (screenx-lastScreenx)*screenScale;
-		lastScreenx = this.value;
-	}*/
-	/*document.getElementById("myRange2").oninput = function() {
-		screeny = this.value;
-		py += (screeny-lastScreenx)*screenScale;
-		lastScreenx = this.value;
-	}*/
 </script>

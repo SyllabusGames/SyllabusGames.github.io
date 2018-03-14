@@ -66,6 +66,10 @@ function loadBuiltInLevel(){
 			defaultPosX = parseFloat(substring[0]);
 			defaultPosY = parseFloat(substring[1]);
 			defaultEqu = loadedLevel[3];
+			$("#dinput").text(defaultEqu);
+			substring = loadedLevel[4].split(',');//		camera track point
+			trackPointx = parseFloat(substring[0]);
+			trackPointy = parseFloat(substring[1]);
 			//		-----------------------------------------------------------------------		[   GOALS   ]		-----------------------------------------------------------------------
 			//		blank out existing goal colliders
 			gCircleX = [];
@@ -76,8 +80,8 @@ function loadBuiltInLevel(){
 			gRectY = []
 			gRectSideX = [];
 			gRectSideY = [];
-			i = 5;
-			substring = loadedLevel[5].split(',');//		load in first goal collider
+			i = 6;//		line 5 was the word Goal
+			substring = loadedLevel[i].split(',');//		load in first goal collider
 			while(substring.length > 1){//		reading in text will make this false (text contains no ,)
 				if(substring.length = 3){//		circle goal
 					gCircleX.push(parseFloat(substring[0]));
@@ -121,4 +125,9 @@ function loadBuiltInLevel(){
 		case "PW":
 			break;
 	}
+	
+		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
+		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
+	setUpInput();//		see EquationLine.js
+	$("#dinput").text(defaultEqu);
 }

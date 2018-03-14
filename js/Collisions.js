@@ -28,18 +28,18 @@ var levelName = "No level loaded";
 function drawColliders(){
 	ctx.lineWidth = 6;
 	//		temporaty variables for offsetting by the screen position
-	tmpx = px/screenScale;// - screenx*screenScale;
-	tmpy = py/screenScale;// + screeny*screenScale;
-	ftmp = screenx*screenScale;
-	fftemp = screeny*screenScale;
+	tmspx = spx/screenScale;// - screenx*screenScale;
+	tmspy = spy/screenScale;// + screeny*screenScale;
+	ftmp = -screenx*screenScale;
+	fftemp = -screeny*screenScale;
 	ctx.lineWidth = 0.3*screenScale;
 		//		-----------------------------------------------------------------------		[   Draw Goals   ]		-----------------------------------------------------------------------
 		for(i = gRectX.length-1 ; i > -1 ; i--){
 			//		check for collision with the sledder. Collisions are checked in world space (no scale) while objects are drawn in screen space (scale applied).
-			if(tmpx > gRectX[i]+screenx){
-				if(tmpy > -gRectY[i]-screeny){
-					if(tmpx < gRectX[i]+screenx + gRecSideX[i]){
-						if(tmpy < -gRectY[i]-screeny + gRecSideY[i]){
+			if(tmspx > gRectX[i]-screenx){
+				if(tmspy > -gRectY[i]+screeny){
+					if(tmspx < gRectX[i]-screenx + gRecSideX[i]){
+						if(tmspy < -gRectY[i]+screeny + gRecSideY[i]){
 							levelCleared();
 							resetSledder();
 			}}}}
@@ -59,7 +59,7 @@ function drawColliders(){
 	
 		for(i = rCircleX.length-1 ; i > -1 ; i--){//		i is a globar variable
 			//		check for collision with the sledder. (sled.x-circle.x)^2 + (sled.y-circle.y)^2 < circle.radius^2
-			if( (Math.pow(tmpx-gCircleX[i]-screenx,2) + Math.pow(tmpy+gCircleY[i]+screeny,2)) < gCircleR[i]*gCircleR[i] ){
+			if( (Math.pow(tmspx-gCircleX[i]+screenx,2) + Math.pow(tmspy+gCircleY[i]-screeny,2)) < gCircleR[i]*gCircleR[i] ){
 				levelCleared();
 				resetSledder();
 			}
@@ -77,10 +77,10 @@ function drawColliders(){
 
 		//		-----------------------------------------------------------------------		[   Draw Resets   ]		-----------------------------------------------------------------------
 		for(i = rRectX.length-1 ; i > -1 ; i--){
-			if(tmpx > rRectX[i]+screenx){
-				if(tmpy > -rRectY[i]-screeny){
-					if(tmpx < rRectX[i]+screenx + rRecSideX[i]){
-						if(tmpy < -rRectY[i]-screeny + rRecSideY[i]){
+			if(tmspx > rRectX[i]-screenx){
+				if(tmspy > -rRectY[i]+screeny){
+					if(tmspx < rRectX[i]-screenx + rRecSideX[i]){
+						if(tmspy < -rRectY[i]+screeny + rRecSideY[i]){
 							resetSledder();
 			}}}}
 			ctx.strokeStyle="#500000";
@@ -97,7 +97,7 @@ function drawColliders(){
 		}
 	
 		for(i = rCircleX.length-1 ; i > -1 ; i--){
-			if( (Math.pow(tmpx-rCircleX[i]-screenx,2) + Math.pow(tmpy+rCircleY[i]+screeny,2)) < rCircleR[i]*rCircleR[i] ){
+			if( (Math.pow(tmspx-rCircleX[i]+screenx,2) + Math.pow(tmspy+rCircleY[i]-screeny,2)) < rCircleR[i]*rCircleR[i] ){
 				resetSledder();
 			}
 
@@ -116,7 +116,7 @@ function drawColliders(){
 		ctx.fillStyle = "black";//		font color for text overlay
 		ctx.font = "40px Arial";
 		ctx.fillText(levelName,1200,50);
-		ctx.font = "60px Arial";//		60px font is used everywhere but here so it should only need to be set here.
+		ctx.font = "60px Arial";//		60spx font is used everywhere but here so it should only need to be set here.
 	}
 }
 
