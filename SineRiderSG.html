@@ -1,16 +1,16 @@
 ﻿<canvas id="gc" width="1600" height="800"></canvas>
 
 <head>
-	<link rel="icon" href="TabImage.png">
-	<link rel="shortcut icon" href="TabImage.png">
+	<link rel="icon" href="images\TabImage.png">
+	<link rel="shortcut icon" href="images\TabImage.png">
 	<title>Sine Rider SG</title>
 </head>
 
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
 <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
 <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-<div type="text" id="dinput" placeholder="Last name" value="-x-2" defaultValue="-x" contentEditable="true" style="position:absolute;left:300px;
-			top:700px;width:1000px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA; overflow: hidden;"></div>
+<div type="text" id="dinput" placeholder="Last name" value="-x-2" defaultValue="-x" contentEditable="true" style="position:absolute;left:160px;
+			top:720px;width:1000px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA; overflow: hidden;"></div>
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
 
 <!--	Load External Libraries	-->
@@ -23,6 +23,7 @@
 <script type="text/javascript" src="js/EquationLine.js"></script>
 <script type="text/javascript" src="js/LevelSaver.js"></script>
 <script type="text/javascript" src="js/LevelLoader.js"></script>
+<script type="text/javascript" src="js/XYZView.js"></script>
 
 <script>
 	//		Ctrl+Shift+J	shows error log in Chrome
@@ -45,6 +46,7 @@
 	var stmp = "";
 	var tmspx;
 	var tmspy;
+	var tmspz;
 
 	//		should be deleted before launch
 	var debugSkipFrame = false;
@@ -80,6 +82,12 @@
 	window.onload = function(){
 		canvas = document.getElementById('gc');
 		ctx = canvas.getContext('2d');
+
+
+		drawXYZ();
+		return;
+
+		
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
 		loadLevelMap();//		for texting
@@ -182,9 +190,26 @@
 		drawLine();
 		moveSledder();//		see sledder.js
 
-		ctx.fillText( "Scale = " + screenScale.toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
+		ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
 		drawColliders();//		see collisions.js
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 
+</script>
+
+
+<div id="slidecontainer">
+	<input type="range" min="-1000" max="1000" value="0" class="slider" id="myRange" width="400">
+	<input type="range" min="-1000" max="1000" value="0" class="slider" id="ranger" width="400">
+</div>
+
+<script>
+	document.getElementById("myRange").oninput = function () {
+		camx = Math.round(this.value);
+		drawXYZ();
+	}
+	document.getElementById("ranger").oninput = function () {
+		camy = Math.round(this.value);
+		drawXYZ();
+	}
 </script>

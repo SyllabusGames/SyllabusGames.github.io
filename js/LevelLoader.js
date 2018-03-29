@@ -5,6 +5,14 @@ var substring;
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
+var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
+var useTime = false;//		time is not just set to zero
+var use2Equ = false;//		piecewise with 2 equations
+var use3Equ = false;//		piecewise with 3 equations
+var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
+var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
+var usePolar = false;//		FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
 function loadLevel(){
 	var filePath = '../Levels/SR001.txt'
 	var request = new XMLHttpRequest();
@@ -62,14 +70,46 @@ function loadBuiltInLevel(){
 	//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		case "SR":
-			substring = loadedLevel[2].split(',');//		sledder start position
+			i = 2;
+			substring = loadedLevel[i].split(',');//		sledder start position
 			defaultPosX = parseFloat(substring[0]);
 			defaultPosY = parseFloat(substring[1]);
-			defaultEqu = loadedLevel[3];
-			$("#dinput").text(defaultEqu);
-			substring = loadedLevel[4].split(',');//		camera track point
+			i++;
+
+			console.log(loadedLevel[i]);
+			if(loadedLevel[i] == "useBlanks"){
+				useFillBlanks = true;
+				i++;
+				substring = loadedLevel[i].split('_');//		sledder start position
+				defaultEqu = loadedLevel[i];
+				$("#dinput").text(defaultEqu);
+			}else{
+				defaultEqu = loadedLevel[i];
+				$("#dinput").text(defaultEqu);
+			}
+			i++;
+
+			console.log(loadedLevel[i]);
+			if(loadedLevel[i] == "useTime"){
+				useTime = true;
+				i++;
+			}else{
+				useTime = false;
+			}
+			
+			console.log(loadedLevel[i]);
+			if(loadedLevel[i] == "useZ"){
+				useZ = true;
+				i++;
+			}else{
+				useZ = false;
+			}
+			
+			console.log(loadedLevel[i] + " - End");
+			substring = loadedLevel[i].split(',');//		camera track point
 			trackPointx = parseFloat(substring[0]);
 			trackPointy = parseFloat(substring[1]);
+			i+=2;//		line 5 was the word Goal
 			//		-----------------------------------------------------------------------		[   GOALS   ]		-----------------------------------------------------------------------
 			//		blank out existing goal colliders
 			gCircleX = [];
@@ -80,7 +120,6 @@ function loadBuiltInLevel(){
 			gRectY = []
 			gRectSideX = [];
 			gRectSideY = [];
-			i = 6;//		line 5 was the word Goal
 			substring = loadedLevel[i].split(',');//		load in first goal collider
 			while(substring.length > 1){//		reading in text will make this false (text contains no ,)
 				if(substring.length = 3){//		circle goal

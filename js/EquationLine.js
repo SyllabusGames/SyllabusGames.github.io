@@ -179,23 +179,49 @@ function drawGrid(){//		draw a line at every 10 units
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------
 function drawLine(){
-	ctx.lineWidth = 4;
+	ctx.lineWidth = 3;
 	//		testing		(x-13)^2-20+sin(t/2)*20
-
-	//		draw time independent (t=0) equation line in grey
-	ctx.strokeStyle="#AAAAAA";
-	ctx.beginPath();
-	scope = {x: screenx , t: 0};
-	ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
+	if(useTime){
+		//		draw time independent (t=0) equation line in grey
+		ctx.strokeStyle="#AAAAAA";
+		ctx.beginPath();
+		scope = {x: screenx , t: frameTime , z: 0};
+		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
-	for(i = 5 ; i < screenWidth ; i+=5){
-		scope = {x: i/screenScale + screenx , t: 0};
-		ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		for(i = 5 ; i < screenWidth ; i+=5){
+			scope = {x: i/screenScale + screenx , t: 0 , z: 0};
+			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		}
+		ctx.stroke();
 	}
-	ctx.stroke();
 
+	if(useZ){
+		//		draw equation with Z=5 and -5 in red and green
+		ctx.strokeStyle="#BB7060";
+		ctx.beginPath();
+		scope = {x: screenx , t: frameTime , z: 5};
+		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
+	
+		for(i = 5 ; i < screenWidth ; i+=5){
+			scope = {x: i/screenScale + screenx , t: frameTime , z: 5};
+			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		}
+		ctx.stroke();
+
+		ctx.strokeStyle="#70BB60";
+		ctx.beginPath();
+		scope = {x: screenx , t: frameTime , z: -5};
+		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
+	
+		for(i = 5 ; i < screenWidth ; i+=5){
+			scope = {x: i/screenScale + screenx , t: frameTime , z: -5};
+			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		}
+		ctx.stroke();
+	}
 	//		draw equation line
 	ctx.strokeStyle="#000000";
+	ctx.lineWidth = 4;
 	ctx.beginPath();
 	ctx.moveTo(0 , (-equation(screenx) + screeny)*screenScale);
 	
@@ -206,7 +232,11 @@ function drawLine(){
 }
 
 function equation(input){
-	scope = {x: input , t: frameTime};
+	if(useZ){
+		scope = {x: input , t: frameTime , z: Math.sin(frameTime)*5};
+	}else{
+		scope = {x: input , t: frameTime};
+	}
 	return equ.eval(scope);//		negative because in canvas, down is posative
 //	return screenScale*math.eval('20*(2+sin(x/20))+sin(t)*50' , scope);
 	//return (10*screenScale*(5+Math.sin(input/10 - frameTime)));//		moving sin wave
