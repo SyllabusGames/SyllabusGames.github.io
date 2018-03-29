@@ -1,10 +1,91 @@
 ﻿<head>
-	<title>SG</title>
+	<title>Syllabus Games</title>
+	<link rel="icon" href="images\SGLogo.png">
+	<link rel="shortcut icon" href="images\SGLogo.png">
 </head>
-<body>
- 	<font size="+4">
-		<a href="SineRiderSG.html">Sine Rider SG</a>
-		<br>
+<body style="background-color:#23d9b0;">
+	<style>
+		#button {
+			position: absolute;
+			left: 50%;
+			margin-left: -200px;
+			overflow: visible;
+		}
+
+		svg {
+			position: absolute;
+			left: 50%;
+			margin-left: -190px;
+			overflow: visible;
+		}
+		
+		#clickable {
+			transition: 0.2s;
+			cursor: pointer;
+		}
+		/*
+		svg:hover #clickable {
+			fill: #FF0000;
+			fill-opacity: 0.2;
+		}*/
+
+	</style>
+
+
+
+	<font size="+4">
 		<a href="DKCR.html">DKCR</a>
+		<br>
 	</font>
+
+
+	<!--		Clickable areas with links		-->
+	<svg xmlns:xlink="http://www.w3.org/1999/xlink"
+		 width="100mm"
+		 height="100mm"
+		 viewBox="0 0 400 400"
+		 sodipodi:docname="SineRiderSGLink.svg">
+		<!--<rect width="400" height="400" onclick="alert('click!')" />-->
+
+		<g transform="translate(-200 -1000)">
+			<rect y="992.52" width="800" height="130" fill="#33e9c0" style="paint-order:normal" />
+			<rect x="8.0259" y="1000.5" width="783.95" height="113.95" fill="none" stroke="#5cc0a8" stroke-width="6" style="paint-order:normal" />
+			<text x="375.24896" y="1082.9844" fill="#000000" font-family="sans-serif" font-size="69.692px" letter-spacing="0px" stroke-width="1.7423" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="375.24896" y="1082.9844" font-family="Arial" font-size="71.063px" font-weight="bold" stroke-width="1.7423" text-align="center" text-anchor="middle">Sine Rider SG</tspan></text>
+			<text x="750.67255" y="1080.1736" fill="#000000" font-family="sans-serif" font-size="62.766px" letter-spacing="0px" stroke-width="1.5691" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="750.67255" y="1080.1736" font-family="Arial" font-size="64px" font-weight="bold" stroke-width="1.5691" text-align="center" text-anchor="middle">?</tspan></text>
+			<g fill="none">
+				<path d="m711.68 1013.6v87.745" stroke="#5cc0a8" stroke-width="6.148" />
+				<path d="m631.68 1013.6v87.745" stroke="#5cc0a8" stroke-width="6.148" />
+				<path d="m645 1074.5v22h50v-22" stroke="#000" stroke-linejoin="round" stroke-miterlimit="1" stroke-width="8" />
+			</g>
+			<g>
+				<path d="m665.99 1046.2c1.0102-0.2525 10 0 10 0v18h10l-15 16-15-16h10z" />
+				<text x="634.34027" y="1025.3909" fill="#000000" font-family="sans-serif" font-size="21.947px" letter-spacing="0px" stroke-width=".54866" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="634.34027" y="1025.3909" font-family="Arial" font-weight="bold" stroke-width=".54866">Source</tspan></text>
+				<text x="670.72809" y="1043.3909" fill="#000000" font-family="sans-serif" font-size="21.947px" letter-spacing="0px" stroke-width=".54866" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="670.72809" y="1043.3909" font-family="Arial" font-weight="bold" stroke-width=".54866" text-align="center" text-anchor="middle">Code</tspan></text>
+			</g>
+			<text x="750.72809" y="1025.3909" fill="#000000" font-family="sans-serif" font-size="21.947px" letter-spacing="0px" stroke-width=".54866" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="750.72809" y="1025.3909" font-family="Arial" font-weight="bold" stroke-width=".54866" text-align="center" text-anchor="middle">Info</tspan></text>
+
+			<!--		Mouse-over script from http://www.petercollingridge.co.uk/data-visualisation/mouseover-effects-svgs		-->
+			<a xlink:href="SineRiderSG.html" target="_parent">
+				<rect x="8.0259" y="1000.5" width="620.43" height="113.89" id="clickable" fill-opacity="0" style="paint-order:normal"
+				onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
+				onmouseout="evt.target.setAttribute('fill-opacity','0.0');"/><!--	Play Sine Rider SG	-->
+			</a>
+
+			<a href="Test.zip" download="Test.zip">
+				<rect x="634.64" y="1000.9" width="74.117" height="113.58" id="clickable" fill-opacity="0" style="paint-order:normal"
+				onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
+				onmouseout="evt.target.setAttribute('fill-opacity','0.0');"/><!--	Source code download	-->
+			</a>
+
+			<a xlink:href="SineRiderSGAbout.html" target="_parent">
+				<rect x="714.64" y="1000.9" width="77.331" class="button" height="113.58" id="clickable" fill-opacity="0" style="paint-order:normal"
+				onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
+				onmouseout="evt.target.setAttribute('fill-opacity','0.0');"/><!--	Info Page	-->
+			</a>
+
+		</g>
+	</svg>
+
+	<object id='button' data="SineRiderSled.svg" type="image/svg+xml" height="100" style="margin-top: -10px; margin-left: -360px;"></object>
+
 </body>

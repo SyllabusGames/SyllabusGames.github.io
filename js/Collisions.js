@@ -2,13 +2,14 @@
 
 var rRectX = new Array(2);
 var rRectY = new Array(2);
-var rRecSidex = new Array(2);
-var rRecSidey =  new Array(2);
+var rRecSideX = new Array(2);
+var rRecSideY =  new Array(2);
 
 
-var goalRectX = new Array(2);
-var gRectx = new Array(2);
-var gRecty =  new Array(2);
+var gRectX = new Array(2);
+var gRectY = new Array(2);
+var gRectSideX = new Array(2);
+var gRectSideY =  new Array(2);
 
 
 var rCircleX = new Array(1);
@@ -16,76 +17,106 @@ var rCircleY = new Array(1);
 var rCircleR = new Array(1);
 
 
-var goalCircleX = new Array(2);
-var goalCircleY = new Array(2);
-var gCircler = new Array(2);
+var gCircleX = new Array(2);
+var gCircleY = new Array(2);
+var gCircleR = new Array(2);
 
 var endAngle = 2*Math.PI;
+var levelName = "No level loaded";
 
-function setUpColliders(){
-	//setInterval(psUpdate, 1000 / 60);//		call update 60 times a second
-	rRectX[0] = -30;
-	rRectY[0] = -62;
-	rRecSidex[0] = 10;
-	rRecSidey[0] = 5;
-	
-	rRectX[1] = -20;
-	rRectY[1] = -40;
-	rRecSidex[1] = 5;
-	rRecSidey[1] = 5;
-
-	rCircleX[0] = -20;
-	rCircleY[0] = -20;
-	rCircleR[0] = 4;
-}
 
 function drawColliders(){
 	ctx.lineWidth = 6;
-	//		tomporaty variables for offsetting by the screen position
-	tmpx = px/screenScale;// - screenx*screenScale;
-	tmpy = py/screenScale;// + screeny*screenScale;
-	ftmp = screenx*screenScale;
-	fftemp = screeny*screenScale;
-//	ctx.fillText( "px = " + Math.round(tmpx-ftmp).toString() + " Box0 = " + Math.round(rRectX[0]).toString() + " Box1 = " + Math.round(rRectX[1]).toString() + " ScreenX = " + Math.round(screenx).toString() ,10,400);
-//	ctx.fillText( "px = " + Math.round(tmpx).toString() + "BoxX = " + Math.round(rRectX[0]+ftmp).toString() ,10,400);
-//	ctx.fillText( "py = " + Math.round(tmpy).toString() + "Boxy = " + Math.round(-rRectY[0]+ftmp).toString() ,10,480);
-	for(i = rRectX.length-1 ; i > -1 ; i--){//		i is a global variable
-		//		check for collision with the sledder. Collisions are checked in world space (no scale) while objects are drawn in screen space (scale applied).
-		if(tmpx > rRectX[i]+screenx){
-			if(tmpy > -rRectY[i]-screeny){
-				if(tmpx < rRectX[i]+screenx + rRecSidex[i]){
-					if(tmpy < -rRectY[i]-screeny + rRecSidey[i]){
-						resetSledder();
-		}}}}
-		//		draw rectangle
-		ctx.strokeStyle="#500000";
-		ctx.beginPath();
-		ctx.moveTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-fftemp);
-		ctx.lineTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-fftemp + rRecSidey[i]*screenScale);
-		ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSidex[i]*screenScale , -rRectY[i]*screenScale-fftemp + rRecSidey[i]*screenScale);
-		ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSidex[i]*screenScale , -rRectY[i]*screenScale-fftemp);
-		ctx.stroke();
-		ctx.fillStyle = "red";
-		ctx.closePath();
-		ctx.fill();
-		ctx.stroke();
-	}
+	//		temporaty variables for offsetting by the screen position
+	tmspx = spx/screenScale;// - screenx*screenScale;
+	tmspy = spy/screenScale;// + screeny*screenScale;
+	ftmp = -screenx*screenScale;
+	fftemp = -screeny*screenScale;
+	ctx.lineWidth = 0.3*screenScale;
+		//		-----------------------------------------------------------------------		[   Draw Goals   ]		-----------------------------------------------------------------------
+		for(i = gRectX.length-1 ; i > -1 ; i--){
+			//		check for collision with the sledder. Collisions are checked in world space (no scale) while objects are drawn in screen space (scale applied).
+			if(tmspx > gRectX[i]-screenx){
+				if(tmspy > -gRectY[i]+screeny){
+					if(tmspx < gRectX[i]-screenx + gRecSideX[i]){
+						if(tmspy < -gRectY[i]+screeny + gRecSideY[i]){
+							levelCleared();
+							resetSledder();
+			}}}}
+			//		draw rectangle
+			ctx.strokeStyle="#00B0FF";
+			ctx.beginPath();
+			ctx.moveTo(gRectX[i]*screenScale+ftmp , -gRectY[i]*screenScale-fftemp);
+			ctx.lineTo(gRectX[i]*screenScale+ftmp , -gRectY[i]*screenScale-fftemp + gRecSideY[i]*screenScale);
+			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-fftemp + gRecSideY[i]*screenScale);
+			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-fftemp);
+			ctx.stroke();
+			ctx.fillStyle = "#50B0FF";
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
 	
-	for(i = rCircleX.length-1 ; i > -1 ; i--){//		i is a globar variable
-		//		check for collision with the sledder. (sled.x-circle.x)^2 + (sled.y-circle.y)^2 < circle.radius^2
-		if( (Math.pow(tmpx-rCircleX[i]-screenx,2) + Math.pow(tmpy+rCircleY[i]+screeny,2)) < rCircleR[i]*rCircleR[i] ){
-			resetSledder();
+		for(i = rCircleX.length-1 ; i > -1 ; i--){//		i is a globar variable
+			//		check for collision with the sledder. (sled.x-circle.x)^2 + (sled.y-circle.y)^2 < circle.radius^2
+			if( (Math.pow(tmspx-gCircleX[i]+screenx,2) + Math.pow(tmspy+gCircleY[i]-screeny,2)) < gCircleR[i]*gCircleR[i] ){
+				levelCleared();
+				resetSledder();
+			}
+
+			//		draw circle
+			ctx.strokeStyle="#00B0FF";
+			ctx.beginPath();
+			ctx.arc(gCircleX[i]*screenScale+ftmp , -gCircleY[i]*screenScale-fftemp , gCircleR[i]*screenScale , 0 , endAngle);
+			ctx.stroke();
+			ctx.fillStyle = "#50B0FF";
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
 		}
 
-		//		draw rectangle
-		ctx.strokeStyle="#500000";
-		ctx.beginPath();
-		ctx.arc(rCircleX[i]*screenScale+ftmp , -rCircleY[i]*screenScale-fftemp , rCircleR[i]*screenScale , 0 , endAngle);
-		ctx.stroke();
-		ctx.fillStyle = "red";
-		ctx.closePath();
-		ctx.fill();
-		ctx.stroke();
+		//		-----------------------------------------------------------------------		[   Draw Resets   ]		-----------------------------------------------------------------------
+		for(i = rRectX.length-1 ; i > -1 ; i--){
+			if(tmspx > rRectX[i]-screenx){
+				if(tmspy > -rRectY[i]+screeny){
+					if(tmspx < rRectX[i]-screenx + rRecSideX[i]){
+						if(tmspy < -rRectY[i]+screeny + rRecSideY[i]){
+							resetSledder();
+			}}}}
+			ctx.strokeStyle="#500000";
+			ctx.beginPath();
+			ctx.moveTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-fftemp);
+			ctx.lineTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-fftemp + rRecSideY[i]*screenScale);
+			ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSideX[i]*screenScale , -rRectY[i]*screenScale-fftemp + rRecSideY[i]*screenScale);
+			ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSideX[i]*screenScale , -rRectY[i]*screenScale-fftemp);
+			ctx.stroke();
+			ctx.fillStyle = "red";
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
+	
+		for(i = rCircleX.length-1 ; i > -1 ; i--){
+			if( (Math.pow(tmspx-rCircleX[i]+screenx,2) + Math.pow(tmspy+rCircleY[i]-screeny,2)) < rCircleR[i]*rCircleR[i] ){
+				resetSledder();
+			}
+
+			ctx.strokeStyle="#500000";
+			ctx.beginPath();
+			ctx.arc(rCircleX[i]*screenScale+ftmp , -rCircleY[i]*screenScale-fftemp , rCircleR[i]*screenScale , 0 , endAngle);
+			ctx.stroke();
+			ctx.fillStyle = "red";
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
+	
+	if(simulating){//		while the game is running, check for collisions
+	}else{//		if the level is not running, display the name
+		ctx.fillStyle = "black";//		font color for text overlay
+		ctx.font = "40px Arial";
+		ctx.fillText(levelName,1200,50);
+		ctx.font = "60px Arial";//		60spx font is used everywhere but here so it should only need to be set here.
 	}
 }
 

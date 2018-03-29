@@ -14,6 +14,7 @@ var equLast = "0";
 var equInvalid = false;
 var defaultEqu = "-x-5";
 var graphResolution = 0.25;
+var equInputField;
 
 //		-----------------------------------------------------------------------		[   Equation Changed   ]		-----------------------------------------------------------------------
 //		RESOURCE: http://jsfiddle.net/karim79/TxQDV/
@@ -65,9 +66,13 @@ $("div").keyup(function(){
 			eqinput = math.parse(equLast , scope);
 			equ = eqinput.compile();
 			equInvalid = true;
+			equInputField.borderColor = "#FF0000";
+			equInputField.borderWidth = 2;			
 		}
 		if(!equInvalid){
 			equLast = equRaw;
+			equInputField.borderColor = "#AAAAAA";
+			equInputField.borderWidth = 1;
 		}
 	}
 });
@@ -84,26 +89,33 @@ function setCaretLocation(ele, pos){
 }
 
 function getCaretLocation(element){
-	var range = window.getSelection().getRangeAt(0),
-		preCaretRange = range.cloneRange();
-		preCaretRange.selectNodeContents(element);
-		preCaretRange.setEnd(range.startContainer, range.startOffset);
+	try{
+		var range = window.getSelection().getRangeAt(0),
+			preCaretRange = range.cloneRange();
+			preCaretRange.selectNodeContents(element);
+			preCaretRange.setEnd(range.startContainer, range.startOffset);
+	}catch(err){
+		return 0;
+	}
 	return preCaretRange.toString().length;
 }
 
 
 
-//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
+//		-----------------------------------------------------------------------		[   Set up Equation Input Box   ]		-----------------------------------------------------------------------
 function setUpInput(){
 	ctx.font = "60px Arial";
+	equInputField = document.getElementById('dinput').style;//		used to set the border color when the equation contains errors
 	//equInput.onkeydown = handleEnter;//		execute function on key press
-	$("#dinput").text(defaultEqu);
+	equRaw = defaultEqu;
+	equLast = defaultEqu;
+	$("#dinput").text(defaultEqu);//		set the input field to have the default equation. Then update it and set it active (focus).
+	$('#dinput').focus();
 	scope = {x: 0 , t: 0};
 	eqinput = math.parse(equRaw , scope);
 	equ = eqinput.compile();
-	$("div").keyup();//		update equation line in case it was edited while the sim was running.
-	$('#div').trigger('keyup');
-	$('#dinput').focus();
+	//$("div").keyup();//		update equation line to match the default equation.
+	//$('#div').trigger('keyup');
 
 	//		https://stackoverflow.com/questions/20830353/how-to-make-an-elements-content-editable-with-javascript-or-jquery
 }
@@ -112,77 +124,120 @@ function setUpInput(){
 //		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
 function drawGrid(){//		draw a line at every 10 units
 	ctx.strokeStyle="#C0C0C0";
-	for(i = Math.round(-screenx/10) ; i < -screenx/10+160/screenScale ; i++){//		vertical lines
+	for(i = Math.round(screenx/10) ; i < screenx/10+screenWidth/10/screenScale ; i++){//		vertical lines
 		if(i%10 == 0){
 			ctx.lineWidth = 3;
+			if(i == 0){//		Origin line
+				ctx.strokeStyle="#202020";
+				ctx.beginPath();
+				ctx.moveTo(-screenx * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
+				ctx.lineTo(-screenx * screenScale , screenHeight);
+				ctx.stroke();
+				ctx.strokeStyle="#C0C0C0";
+				continue;
+			}
 		}else{
 			ctx.lineWidth = 1;
 		}
 		ctx.beginPath();
-		ctx.moveTo((screenx + i*10) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
-		ctx.lineTo((screenx + i*10) * screenScale , 800);
+		ctx.moveTo((-screenx + i*10) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
+		ctx.lineTo((-screenx + i*10) * screenScale , screenHeight);
 		ctx.stroke();
 	}
-	for(i = Math.round(screeny/10) ; i < screeny/10+80/screenScale ; i++){//		horizontal lines
+	for(i = Math.round(-screeny/10) ; i < -screeny/10+screenHeight/10/screenScale ; i++){//		horizontal lines
 		if(i%10 == 0){
-			ctx.lineWidth = 3;
+				ctx.lineWidth = 3;
+			if(i == 0){//		Origin line
+				ctx.strokeStyle="#202020";
+				ctx.beginPath();
+				ctx.moveTo(0 , screeny * screenScale);
+				ctx.lineTo(screenWidth , screeny * screenScale);
+				ctx.stroke();
+				ctx.strokeStyle="#C0C0C0";
+				continue;
+			}
 		}else{
 			ctx.lineWidth = 1;
 		}
 		ctx.beginPath();
-		ctx.moveTo(0 , (-screeny + i*10) * screenScale);
-		ctx.lineTo(1600 , (-screeny + i*10) * screenScale);
+		ctx.moveTo(0 , (screeny + i*10) * screenScale);
+		ctx.lineTo(screenWidth , (screeny + i*10) * screenScale);
 		ctx.stroke();
 	}
 
 //		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
-	ctx.fillStyle = "black";
-	ctx.fillText("y =", 185, 742);
+
+	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
+	if(equInvalid){//		invalid equation, show y = old equation
+		ctx.fillStyle = "#888888";
+		ctx.fillText("y = " + equLast , Math.round(screenWidth * 0.03) , Math.round(screenHeight*0.86));
+	}else{
+		ctx.fillStyle = "black";
+		ctx.fillText("y =", Math.round(screenWidth * 0.03) , Math.round(screenHeight*0.94));
+	}
 }
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------
 function drawLine(){
-	//		graph time independent curve
-	ctx.strokeStyle="#AAAAAA";
-	ctx.lineWidth = 4;
-	i = -screenx/10;
-	ftmp = 160/screenScale - screenx/10;
-	//		draw first point since it uses moveTo() instead of lineTo()
-	ctx.beginPath();
-	ctx.moveTo(screenx * screenScale + (i * 10) * screenScale, -((screenScale*equ.eval(scope) + screeny * screenScale)));
-	i += graphResolution/screenScale;
-
-	while(i < ftmp){
-		i += graphResolution/screenScale;
-		scope = {x: i*10.0 , t: 0};
-		ctx.lineTo(screenx * screenScale + (i * 10) * screenScale, -(screenScale*equ.eval(scope) + screeny * screenScale));
-	}
-	ctx.stroke();
-	//		graph time independent curve
-
+	ctx.lineWidth = 3;
+	//		testing		(x-13)^2-20+sin(t/2)*20
+	if(useTime){
+		//		draw time independent (t=0) equation line in grey
+		ctx.strokeStyle="#AAAAAA";
+		ctx.beginPath();
+		scope = {x: screenx , t: frameTime , z: 0};
+		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
+		for(i = 5 ; i < screenWidth ; i+=5){
+			scope = {x: i/screenScale + screenx , t: 0 , z: 0};
+			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		}
+		ctx.stroke();
+	}
+
+	if(useZ){
+		//		draw equation with Z=5 and -5 in red and green
+		ctx.strokeStyle="#BB7060";
+		ctx.beginPath();
+		scope = {x: screenx , t: frameTime , z: 5};
+		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
+	
+		for(i = 5 ; i < screenWidth ; i+=5){
+			scope = {x: i/screenScale + screenx , t: frameTime , z: 5};
+			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		}
+		ctx.stroke();
+
+		ctx.strokeStyle="#70BB60";
+		ctx.beginPath();
+		scope = {x: screenx , t: frameTime , z: -5};
+		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
+	
+		for(i = 5 ; i < screenWidth ; i+=5){
+			scope = {x: i/screenScale + screenx , t: frameTime , z: -5};
+			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
+		}
+		ctx.stroke();
+	}
+	//		draw equation line
 	ctx.strokeStyle="#000000";
 	ctx.lineWidth = 4;
-	i = -screenx/10;// Offset by screenx to keep left end of line on screen
-	ftmp = 160/screenScale - screenx/10;//		adapt total point count to match spacing of points. Offset by screenx to keep right end of line on screen
-	
 	ctx.beginPath();
-	ctx.moveTo(screenx * screenScale + (i * 10) * screenScale, equation(i*10.0 + screenx));
-	i += graphResolution/screenScale;
+	ctx.moveTo(0 , (-equation(screenx) + screeny)*screenScale);
 	
-	while(i < ftmp){
-		//		space vertecies 10 pixels appart on the x
-		ctx.lineTo(screenx * screenScale + (i * 10) * screenScale, equation(i*10.0 + screenx));
-		//i++;//= c.width/200;
-		i += graphResolution/screenScale;//		adaptive line resolution keeps points at the same spacing at every scale
-		ctx.lineTo(screenx * screenScale + (i * 10) * screenScale, equation(i*10.0 + screenx));
+	for(i = 5 ; i < screenWidth ; i+=5){
+		ctx.lineTo(i , (-equation(i/screenScale + screenx) + screeny)*screenScale);
 	}
 	ctx.stroke();
 }
 
 function equation(input){
-	scope = {x: input - screenx , t: frameTime};
-	return -((screenScale*equ.eval(scope) + screeny * screenScale));//		negative because in canvas, down is posative
+	if(useZ){
+		scope = {x: input , t: frameTime , z: Math.sin(frameTime)*5};
+	}else{
+		scope = {x: input , t: frameTime};
+	}
+	return equ.eval(scope);//		negative because in canvas, down is posative
 //	return screenScale*math.eval('20*(2+sin(x/20))+sin(t)*50' , scope);
 	//return (10*screenScale*(5+Math.sin(input/10 - frameTime)));//		moving sin wave
 	//return input*8+100;//		linear
