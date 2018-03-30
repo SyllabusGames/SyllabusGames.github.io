@@ -199,8 +199,9 @@
 
 
 <div id="slidecontainer">
-	<input type="range" min="-1000" max="1000" value="0" class="slider" id="myRange" width="400">
-	<input type="range" min="-1000" max="1000" value="0" class="slider" id="ranger" width="400">
+	<input type="range" min="-3000" max="3000" value="0" class="slider" id="myRange" width="400">
+	<input type="range" min="-3000" max="3000" value="0" class="slider" id="ranger" width="400">
+	<input type="range" min="-300" max="300" value="0" class="slider" id="viewRotate" width="400">
 </div>
 
 <script>
@@ -210,6 +211,10 @@
 	}
 	document.getElementById("ranger").oninput = function () {
 		camy = Math.round(this.value);
+		drawXYZ();
+	}
+	document.getElementById("viewRotate").oninput = function () {
+		viewAngle = this.value/100;
 		drawXYZ();
 	}
 </script>

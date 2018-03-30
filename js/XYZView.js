@@ -1,7 +1,7 @@
-﻿var viewAngle = 3;
-var camx = 0;
-var camy = -50;
-var camz = 30;
+﻿var viewAngle = 0;
+var camx = 500;
+var camy = 500;
+var camz = 50;
 var cForwardx = -0.577350269;
 var cForwardy = -0.577350269;
 var cForwardz = -0.577350269;
@@ -19,13 +19,14 @@ var camSpacez = 0;
 
 function drawXYZ(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	/*camx = Math.sin(viewAngle) * 707;
+	/*
+	camx = Math.sin(viewAngle) * 707;
 	camz = Math.cos(viewAngle) * 707;
 	dist = magnitude(camx , camy , camz);
 
-	cnormalx = -camx/dist;
-	cnormalz = -camz/dist;*/
-	
+	cForwardx = -camx/dist;
+	cForwardz = -camz/dist;
+	*/
 	var canvasWidth  = canvas.width;
 	var canvasHeight = canvas.height;
 	var imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
@@ -54,16 +55,17 @@ function drawXYZ(){
 	//		ReRender everything near the sledders X and Z position and everything further from the camera than the sledder on those 2 axes. Then render the sledder.
 
 
-	for (var x = 0; x < 800; x++){
+	for (var x = -400; x < 400; x++){
 		for (var z = -400; z < 400; z+=3){
 			//	x=x
 			//	y=equ(x,t,z)
 			//	z=z/80
 			//y = -Math.sin(x/30)*20+Math.pow(z/80 , 2)-5;
-			if(x > 300 && x < 500 && z > -100 && z < 100){
+			if(x > -100 && x < 100 && z > -100 && z < 100){
 				y = -400;
 			}else{
 				y = -x/2+Math.sin(x/30)*5 + Math.pow((z-400)/80 , 2) - 60;
+				//y = Math.round(-x/100)*100;//		Steps
 			}
 
 
@@ -139,7 +141,7 @@ function drawXYZ(){
 	imageData.data.set(buf8);
 	ctx.putImageData(imageData, 0, 0);
 
-	ctx.fillText("View = " + Math.round(viewAngle).toString(),10,100);
+	ctx.fillText("View = " + viewAngle.toString(),10,100);
 	ctx.fillText("CamX = " + Math.round(camx).toString(),10,150);
 	ctx.fillText("CamY = " + Math.round(camy).toString(),10,200);
 	ctx.fillText("CamZ = " + Math.round(camz).toString(),10,250);
