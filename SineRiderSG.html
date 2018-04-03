@@ -199,18 +199,32 @@
 
 
 <div id="slidecontainer">
-	<input type="range" min="-3000" max="3000" value="0" class="slider" id="myRange" width="400">
-	<input type="range" min="-3000" max="3000" value="0" class="slider" id="ranger" width="400">
-	<input type="range" min="-300" max="300" value="0" class="slider" id="viewRotate" width="400">
+	<input type="range" min="-3000" max="3000" value="400" class="slider" id="rangeX" width="400">
+	<input type="range" min="-3000" max="3000" value="400" class="slider" id="rangeY" width="400">
+	<input type="range" min="-3000" max="3000" value="-800" class="slider" id="rangeZ" width="400">
+
+	<input type="range" min="-100" max="100" value="0" class="slider" id="viewY" width="400">
+
+	<input type="range" min="-300" max="300" value="100" class="slider" id="viewRotate" width="400">
 </div>
 
 <script>
-	document.getElementById("myRange").oninput = function () {
+	document.getElementById("rangeX").oninput = function () {
 		camx = Math.round(this.value);
 		drawXYZ();
 	}
-	document.getElementById("ranger").oninput = function () {
+	document.getElementById("rangeY").oninput = function () {
 		camy = Math.round(this.value);
+		drawXYZ();
+	}
+	document.getElementById("rangeZ").oninput = function () {
+		camz = Math.round(this.value);
+		drawXYZ();
+	}
+
+	
+	document.getElementById("viewY").oninput = function () {
+		cForwardy = this.value/100;
 		drawXYZ();
 	}
 	document.getElementById("viewRotate").oninput = function () {
