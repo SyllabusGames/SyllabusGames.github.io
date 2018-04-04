@@ -12,6 +12,19 @@
 			overflow: visible;
 		}
 
+		#ribbon {
+			position: absolute;
+			top: 0%;
+			left: 0%;
+			width: 100%;
+			background: #fff;
+			background-size: cover;
+			height: 0;
+			padding: 0; 
+			padding-bottom: 92%;
+		}
+
+
 		svg {
 			position: absolute;
 			left: 50%;
@@ -31,13 +44,19 @@
 
 	</style>
 	
+	<svg width="100mm"
+		 height="100mm"
+		 viewBox="0 0 400 400">
+		<g>
+			<rect y="0" width="800" height="80" fill="#AA0000" style="paint-order:normal" id="ribbon" />
+		</g>
+	</svg>
+
 
 	<!--		non-interactive UI background		-->
-	<svg xmlns:xlink="http://www.w3.org/1999/xlink"
-		 width="100mm"
+	<svg width="100mm"
 		 height="100mm"
-		 viewBox="0 0 400 400"
-		 sodipodi:docname="SineRiderSGLink.svg">
+		 viewBox="0 0 400 400">
 		<!--<rect width="400" height="400" onclick="alert('click!')" />-->
 
 		<g transform="translate(-200 -122)">
@@ -83,23 +102,22 @@
 	<svg xmlns:xlink="http://www.w3.org/1999/xlink"
 		 width="100mm"
 		 height="100mm"
-		 viewBox="0 0 400 400"
-		 sodipodi:docname="SineRiderSGLink.svg">
+		 viewBox="0 0 400 400">
 		<g transform="translate(-200 -122)">
 			<!--		Mouse-over script from http://www.petercollingridge.co.uk/data-visualisation/mouseover-effects-svgs		-->
-			<a xlink:href="SineRiderSG.html" target="_parent">
+			<a xlink:href="SineRider/SineRiderSG.html" target="_parent">
 				<rect x="8.0259" y="130.55" width="620.43" height="113.89" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
 					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
 					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	Play		-->
 			</a>
 
-			<a href="Test.zip" download="Test.zip">
+			<a href="SineRider/Test.zip" download="Test.zip">
 				<rect x="634.64" y="130.91" width="74.117" height="113.58" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
 					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
 					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	Source code download	-->
 			</a>
 
-			<a xlink:href="SineRiderSGAbout.html" target="_parent">
+			<a xlink:href="SineRider/SineRiderSGAbout.html" target="_parent">
 				<rect x="714.64" y="130.91" width="77.331" height="113.58" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
 					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
 					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	Info Page	-->
@@ -130,3 +148,6 @@
 
 
 </body>
+<!--		The background should be a minamalistic (Easy to ignore) animation including all the characters from the games you have made.
+	Sine Rider sledder glides past every once and a while.
+	-->
