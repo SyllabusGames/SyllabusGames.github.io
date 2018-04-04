@@ -62,7 +62,7 @@ function drawXYZ(){
 			//	z=z/80
 			//y = -Math.sin(x/30)*20+Math.pow(z/80 , 2)-5;
 			if(x > -100 && x < 100 && z > -5 && z < 5){
-				y = -400;
+				y = -50;
 			}else{
 				y = -x/2+Math.sin(x/30)*5 + Math.pow(z , 2)/30 - 60;
 				//y = Math.round(-x/100)*100;//		Steps
