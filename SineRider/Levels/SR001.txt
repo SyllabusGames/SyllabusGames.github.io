@@ -1,0 +1,40 @@
+﻿Easy as it gets
+SR
+0,0
+30,40
+-x/5
+400,0
+Goal
+400,0,60
+Resets
+End
+
+
+LV2: Return of the line
+SR
+0,-10
+-x/3
+Goal
+300,0,40
+Resets
+200,-50,50,30
+End
+
+
+Name
+Type_Type specific information
+player start position
+default equation(s)
+Camera second track point (The camera always tracks the player but setting this will keep this point and the player on screen)
+piecwise limits
+right limit
+left and right limit
+left limit
+Camera track point
+Goal
+X,Y position of lower left vertex | X and Y length of rectangle
+X,Y position of circle center , circle radius
+Resets
+End
+
+For exact requirments, read the LevelLoader script
