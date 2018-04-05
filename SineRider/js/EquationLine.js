@@ -199,22 +199,23 @@ function drawLine(){
 		//		draw equation with Z=5 and -5 in red and green
 		ctx.strokeStyle="#BB7060";
 		ctx.beginPath();
-		scope = {x: screenx , t: frameTime , z: 5};
+	//	tempZ = 20;
+		scope = {x: screenx , t: frameTime , z: 20};
 		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
 		for(i = 5 ; i < screenWidth ; i+=5){
-			scope = {x: i/screenScale + screenx , t: frameTime , z: 5};
+			scope = {x: i/screenScale + screenx , t: frameTime , z: 20};
 			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
 		}
 		ctx.stroke();
 
 		ctx.strokeStyle="#70BB60";
 		ctx.beginPath();
-		scope = {x: screenx , t: frameTime , z: -5};
+		scope = {x: screenx , t: frameTime , z: -20};
 		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
 		for(i = 5 ; i < screenWidth ; i+=5){
-			scope = {x: i/screenScale + screenx , t: frameTime , z: -5};
+			scope = {x: i/screenScale + screenx , t: frameTime , z: -20};
 			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
 		}
 		ctx.stroke();
@@ -233,7 +234,7 @@ function drawLine(){
 
 function equation(input){
 	if(useZ){
-		scope = {x: input , t: frameTime , z: Math.sin(frameTime)*5};
+		scope = {x: input , t: frameTime , z: tempZ};
 	}else{
 		scope = {x: input , t: frameTime};
 	}

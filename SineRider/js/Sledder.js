@@ -9,6 +9,8 @@ var boxx = 0;
 var boxy = 0;
 var apx = 150;//		position in global (absolute) space. This is used for physics and most calculations.
 var apy = 50;
+var apz = 0;
+var tempZ = 0;
 var spx = 150;//		position in screen space. Used for drawing the sledder.
 var spy = 50;//			spy has the opposite sign as apy since the screen coordinate system has 0,0 in the upper right corner
 var vx = 0;
@@ -128,6 +130,7 @@ function drawSledder(){
 	//		----------------------------------------------------		[   Set Position   ]		----------------------------------------------------
 	if(ftmp > apy){//		touching line
 		apy = ftmp;//		snap to surface of graph so you do not pass through it.
+		tempZ = apz;//		set the Z coordiante to the sled's Z coordiante
 
 		//		velocity is set by the derrivative of the graph at the contact point
 		//vy = (equation((spx+1)/screenScale) - ftmp)/screenScale*40000*dt;
