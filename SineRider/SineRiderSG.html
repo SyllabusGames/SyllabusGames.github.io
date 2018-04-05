@@ -1,5 +1,6 @@
 ﻿<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
-<canvas id="XYZ" width="500" height="500" style="z-index: -1; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1000px;top:0px;" ></canvas>
+<canvas id="XYZ" width="500" height="500" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1000px;top:0px;"></canvas>
+<canvas id="XYZ2" width="500" height="500" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1000px;top:1px;" ></canvas>
 
 <head>
 	<link rel="icon" href="SineRiderSGLogo.png">
@@ -67,11 +68,13 @@
 	var paused = false;
 
 	//		canvas
-	var canvas;
+	var canvas;//		main canvas for 2D elements
 	var ctx;
-	var xyz;
+	var xyz;//		canvas for 3D elements
 	var xyzWidth = 500;
 	var xyzHeight = 500;
+	var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel gaps caused by a low sample rate.
+	var xyz2c;
 
 	//		for running things differently when a level has just been loaded
 	var newLevel = true;
@@ -87,6 +90,8 @@
 		canvas = document.getElementById('gc');
 		ctx = canvas.getContext('2d');
 		xyz = document.getElementById('XYZ').getContext('2d');
+		xyz2c = document.getElementById('XYZ2');
+		xyz2 = xyz2c.getContext('2d');
 		
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
@@ -98,8 +103,7 @@
 		})*/
 		setUpSledder();
 		window.requestAnimationFrame(update);
-
-		drawXYZ();
+		setUpXYZ();
 
 		//		-----------------------------------------------------------------------		[   Page Icon   ]		-----------------------------------------------------------------------
 		var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -146,6 +150,7 @@
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 	function update(timestamp){
 		window.requestAnimationFrame(update);
+		drawXYZ();//		update the 3D view
 
 		//		-----------------------------------------------------------------------		[   Debugging   ]		-----------------------------------------------------------------------
 		//				Debug pause and frame advance//		Hold Ctrl to pause. Press Z to advance single frames
@@ -207,7 +212,7 @@
 	
 	<input type="range" min="-95" max="95" value="0" class="slider" id="viewY" width="400">
 	-->
-	<input type="range" min="-314" max="314" value="100" class="slider" id="viewRotate" width="400">
+	<input type="range" min="-314" max="314" value="-100" class="slider" id="viewRotate" width="400">
 </div>
 
 <script>
@@ -230,7 +235,6 @@
 		drawXYZ();
 	}*/
 	document.getElementById("viewRotate").oninput = function () {
-		viewAngle = this.value/100;
-		drawXYZ();
+		viewAngle = -this.value/100;
 	}
 </script>

@@ -181,6 +181,7 @@ function drawGrid(){//		draw a line at every 10 units
 function drawLine(){
 	ctx.lineWidth = 3;
 	//		testing		(x-13)^2-20+sin(t/2)*20
+	//	----------------------------------		[   draw time independent line (light grey)   ]		----------------------------------
 	if(useTime){
 		//		draw time independent (t=0) equation line in grey
 		ctx.strokeStyle="#AAAAAA";
@@ -195,6 +196,7 @@ function drawLine(){
 		ctx.stroke();
 	}
 
+	//	----------------------------------		[   draw Z max and Z min lines (red and green)   ]		----------------------------------
 	if(useZ){
 		//		draw equation with Z=5 and -5 in red and green
 		ctx.strokeStyle="#BB7060";
@@ -219,8 +221,9 @@ function drawLine(){
 			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
 		}
 		ctx.stroke();
+		tempZ = apz;
 	}
-	//		draw equation line
+	//	----------------------------------		[   draw equation line (black)   ]		----------------------------------
 	ctx.strokeStyle="#000000";
 	ctx.lineWidth = 4;
 	ctx.beginPath();

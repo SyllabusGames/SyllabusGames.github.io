@@ -104,6 +104,7 @@ function drawSledder(){
 	boxy = Math.sin(-rotation)*40;
 	boxx = Math.cos(-rotation)*40;
 
+	tempZ = apz;
 	ftmp = equation(apx);//		Y position of line under sled
 
 	//		----------------------------------------------------		[   Draw Sledder   ]		----------------------------------------------------

@@ -51,9 +51,9 @@ function drawColliders(){
 			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-fftemp + gRecSideY[i]*screenScale);
 			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-fftemp);
 			ctx.stroke();
-			ctx.fillStyle = "#50B0FF";
+			//ctx.fillStyle = "#50B0FF";
 			ctx.closePath();
-			ctx.fill();
+			//ctx.fill();
 			ctx.stroke();
 		}
 	
@@ -69,9 +69,9 @@ function drawColliders(){
 			ctx.beginPath();
 			ctx.arc(gCircleX[i]*screenScale+ftmp , -gCircleY[i]*screenScale-fftemp , gCircleR[i]*screenScale , 0 , endAngle);
 			ctx.stroke();
-			ctx.fillStyle = "#50B0FF";
+			//ctx.fillStyle = "#50B0FF";
 			ctx.closePath();
-			ctx.fill();
+			//ctx.fill();
 			ctx.stroke();
 		}
 
