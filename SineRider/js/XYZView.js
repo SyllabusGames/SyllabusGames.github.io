@@ -1,4 +1,5 @@
 ﻿var viewAngle = 1;
+var passViewAngle = 1;//		the view angle used for this pass so it doesn't change partway through a render pass.
 var cForwardx = 0.577350269;
 var cForwardz = -0.577350269;
 var cLeftx = 0;
@@ -8,6 +9,9 @@ var camSpacey = 0;
 var camSpacez = 0;
 
 //		for testing			-x*2+2+sin(z/15+t*2+x/10)*10
+//							(sin(x/5-t)+sin(z/5))*5-20
+//							sin(x/5-t)*4+-(z/5)^2
+
 
 var imageData;
 var buf;
@@ -30,14 +34,15 @@ function setUpXYZ(){
 	buf = new ArrayBuffer(imageData.data.length);
 	buf8 = new Uint8ClampedArray(buf);
 	data = new Uint32Array(buf);
+	passViewAngle = viewAngle;
 }
 
 function drawXYZ(){
 	//		the camera never looks up or down. This means cForwardy and cLefty are always 0 and cUpx = 0, cUpy = 1, and cUpz = 0
 
 	//		use the viewAngle to find the X and Z components of the vector of the direction the camera is facing
-	cForwardx = -Math.sin(viewAngle);
-	cForwardz = -Math.cos(viewAngle);
+	cForwardx = -Math.sin(passViewAngle);
+	cForwardz = -Math.cos(passViewAngle);
 	
 	cLeftx = cForwardz;
 	cLeftz = -cForwardx;
@@ -55,12 +60,12 @@ function drawXYZ(){
 			//		transform to camera space. Matrix is [x,x,x,0	//	y,y,y,0	//	z,z,z,0]	x = cLeft	y=cUp	z=cForward.
 			//		A lot of the matrix is removed since the camera never changes pitch.
 			camSpacex = x*cLeftx + z*cForwardx;
-			camSpacey = -y + 25;//		invert Y since y increases as you go down the screen. Offset camera by 25m up because tilting the camera just doesn't work.'
+			camSpacey = -y + 200;//		invert Y since y increases as you go down the screen. Offset camera by 25m up because tilting the camera just doesn't work.'
 			camSpacez = x*cLeftz + z*cForwardz;
 
 			//		perspective projection matrix. (still side view)		Scale = 25
-			camSpacex =  camSpacex/(-500+camSpacez)*1000;//		camSpace / (camera distance from origin allong horizontal axis + z) * scale
-			camSpacey = -camSpacey/(-500+camSpacez)*1000;
+			camSpacex =  camSpacex/(-500+camSpacez)*1200;//		camSpace / (camera distance from origin allong horizontal axis + z) * scale
+			camSpacey = -camSpacey/(-500+camSpacez)*1200;
 		
 			//		when one of these variables is not set below, it is being left at 1.
 			brightness = 1;
@@ -79,10 +84,12 @@ function drawXYZ(){
 			}else if(Math.abs(x) % 10 < 0.5 || Math.abs(z) % 10 < 0.5){//		on the 10x10 grid
 				brightness = 0;
 			}else{//		normal point on surface
-				ftmp = y-equation(x-1);
+				ftmp = y-equation(x-0.2);//		
 				//		cross product of normal and light (straight down) scaled and clamped [0.4,1]
-				brightness = Math.max(Math.min(1-(1/(1+(y-lastY)*(y-lastY)) + 1/(1+ftmp*ftmp))/2 , 1) , 0.4);
+				//		y-lastY is the change in y moving 0.2 pixels allong -z. ftmp is change in y moving 0.2 pixels allong -x
+				brightness = 1/(1+20*(y-lastY)*(y-lastY)) * 1/(1+20*ftmp*ftmp);
 			}
+			lastY = y;
 
 			//		draw a dot at the sled's position
 			if((x-apx)*(x-apx)+(z-apz)*(z-apz) < 4){
@@ -94,7 +101,7 @@ function drawXYZ(){
 
 			pos = Math.round(camSpacex+xyzWidth/2);//		add half of screen width so the render is centered
 			if(pos > 0 && pos < xyzWidth){//		not off screen to the right or left
-				pos += Math.round(camSpacey+xyzHeight/2 - 100)*xyzWidth;
+				pos += Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 				if(pos > 0 && pos < data.length){//		not off screen off the top or bottom
 					data[pos] =
 						(255   << 24) |    // alpha
@@ -112,6 +119,7 @@ function drawXYZ(){
 		return;
 	}
 		
+	passViewAngle = viewAngle;
 	scanLine = -15;
 	//		erase the last render
 	xyz.clearRect(0, 0, xyzWidth, xyzHeight);
@@ -125,9 +133,9 @@ function drawXYZ(){
 		camSpacez = x*cLeftz;
 		//		perspective projection matrix. (still side view)		Scale = 25
 		camSpacex =  camSpacex/(-500+camSpacez)*1200;//		camSpace / (camera distance from origin allong horizontal axis + z) * scale
-		camSpacey = -25/(-500+camSpacez)*1200;
+		camSpacey = -200/(-500+camSpacez)*1200;
 			
-		pos = Math.round(camSpacex+xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 100)*xyzWidth;
+		pos = Math.round(camSpacex+xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 			data[pos] =
 				(255   << 24) |    // alpha
 				 255;            // red
@@ -135,8 +143,8 @@ function drawXYZ(){
 	x = 0;
 	z = 0;
 	for (var y = -4; y < 4; y+=0.2){
-		camSpacey = (y - 25)/(-500)*1200;
-		pos = Math.round(xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 100)*xyzWidth;
+		camSpacey = (y - 200)/(-500)*1200;
+		pos = Math.round(xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 			data[pos] =
 				(255   << 24) |    // alpha
 				(255 <<  8)    // green
@@ -148,9 +156,9 @@ function drawXYZ(){
 		camSpacez = z*cForwardz;
 
 		camSpacex =  camSpacex/(-500+camSpacez)*1200;
-		camSpacey = -25/(-500+camSpacez)*1200;
+		camSpacey = -200/(-500+camSpacez)*1200;
 			
-		pos = Math.round(camSpacex+xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 100)*xyzWidth;
+		pos = Math.round(camSpacex+xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 			data[pos] =
 				(255   << 24) |    // alpha
 				(255 << 16)    // blue

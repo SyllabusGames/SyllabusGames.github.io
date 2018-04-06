@@ -100,6 +100,7 @@ function loadBuiltInLevel(){
 			console.log(loadedLevel[i]);
 			if(loadedLevel[i] == "useZ"){
 				useZ = true;
+				setUpXYZ();
 				i++;
 			}else{
 				useZ = false;
