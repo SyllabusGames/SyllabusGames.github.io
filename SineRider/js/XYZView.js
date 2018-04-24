@@ -7,7 +7,13 @@ var cLeftz = 0;
 var camSpacex = 0;
 var camSpacey = 0;
 var camSpacez = 0;
-
+var xyzMouseX = 0;
+var xyzMouseY = 0;
+var xyzLastMouseX = 0;
+var xyzLastMouseY = 0;
+var xyzMouseHeld = false;
+var changeApz = false;
+var futureApz = 0;
 //		for testing			-x*2+2+sin(z/15+t*2+x/10)*10
 //							(sin(x/5-t)+sin(z/5))*5-20
 //							sin(x/5-t)*4+-(z/5)^2
@@ -28,6 +34,53 @@ var green = 0;
 var blue = 0;
 var scanLine = -15;
 
+//	----------------------------------		[   Get mouse for rotating render   ]		----------------------------------
+document.getElementById('XYZ2').addEventListener("mousedown", function(e){
+	xyzMouseHeld = true;
+	if (e.x != undefined){
+		xyzMouseX = e.x;
+		xyzMouseY = e.y;
+	}else{ // Firefox method to get the position{
+		xyzMouseX = e.clientX;
+		xyzMouseY = e.clientY;
+	}
+	xyzLastMouseX = xyzMouseX;
+	xyzLastMouseY = xyzMouseY;
+});
+
+document.getElementById('XYZ2').addEventListener("mouseup", function(e){
+	xyzMouseHeld = false;
+	changeApz = false;
+});
+
+
+document.getElementById('XYZ2').addEventListener("mouseout", function(e){
+	xyzMouseHeld = false;
+	changeApz = false;
+});
+
+document.getElementById('XYZ2').addEventListener('mousemove' , function(e){
+	if(!xyzMouseHeld)
+		return;
+	if (e.x != undefined){
+		xyzMouseX = e.x;
+		xyzMouseY = e.y;
+	}else{ // Firefox method to get the position{
+		xyzMouseX = e.clientX;
+		xyzMouseY = e.clientY;
+	}
+	viewAngle += (xyzLastMouseX - xyzMouseX)*0.02;
+	xyzLastMouseX = xyzMouseX;
+	if(changeApz){
+		futureApz = Math.max( Math.min(futureApz + (xyzLastMouseY - xyzMouseY)*0.12 , 20) , -20);//		I want apz to be rounded but recording it directly causes problems
+		apz = Math.round(futureApz);
+		xyzLastMouseY = xyzMouseY;//		reset xyzLastMouseY so Z doesn't jump 20px worth of movement
+	}else if(Math.abs(xyzMouseY - xyzLastMouseY) > 20){//		only change apz (sled Z position) after the mouse has moved more than 20px vertically. [reduces incidental movement while trying to rotate the view]
+		changeApz = true;
+		xyzLastMouseY = xyzMouseY;//		reset xyzLastMouseY so Z doesn't jump 20px worth of movement
+	}
+});
+
 function setUpXYZ(){
 	scanLine = -20;
 	imageData = xyz.getImageData(0, 0, xyzWidth, xyzWidth);
@@ -35,8 +88,14 @@ function setUpXYZ(){
 	buf8 = new Uint8ClampedArray(buf);
 	data = new Uint32Array(buf);
 	passViewAngle = viewAngle;
+	//		"Z = #" should be the only text on this canvas
+	xyz2.fillStyle = "#0000FF";
+	xyz2.font = "40px Arial";
+//	renderFlipZ = (passViewAngle > 3.14159 || passViewAngle < 0);//		if the 3D model is being viewed from the -Z side, flip the renderer so thigs are rendered from +Z to -Z.
 }
 
+
+	//	----------------------------------		[   Draw 3D View   ]		----------------------------------
 function drawXYZ(){
 	//		the camera never looks up or down. This means cForwardy and cLefty are always 0 and cUpx = 0, cUpy = 1, and cUpz = 0
 
@@ -60,7 +119,7 @@ function drawXYZ(){
 			//		transform to camera space. Matrix is [x,x,x,0	//	y,y,y,0	//	z,z,z,0]	x = cLeft	y=cUp	z=cForward.
 			//		A lot of the matrix is removed since the camera never changes pitch.
 			camSpacex = x*cLeftx + z*cForwardx;
-			camSpacey = -y + 200;//		invert Y since y increases as you go down the screen. Offset camera by 25m up because tilting the camera just doesn't work.'
+			camSpacey = -y + 150;//		invert Y since y increases as you go down the screen. Offset camera by 25m up because tilting the camera just doesn't work.'
 			camSpacez = x*cLeftz + z*cForwardz;
 
 			//		perspective projection matrix. (still side view)		Scale = 25
@@ -133,7 +192,7 @@ function drawXYZ(){
 		camSpacez = x*cLeftz;
 		//		perspective projection matrix. (still side view)		Scale = 25
 		camSpacex =  camSpacex/(-500+camSpacez)*1200;//		camSpace / (camera distance from origin allong horizontal axis + z) * scale
-		camSpacey = -200/(-500+camSpacez)*1200;
+		camSpacey = -150/(-500+camSpacez)*1200;
 			
 		pos = Math.round(camSpacex+xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 			data[pos] =
@@ -143,7 +202,7 @@ function drawXYZ(){
 	x = 0;
 	z = 0;
 	for (var y = -4; y < 4; y+=0.2){
-		camSpacey = (y - 200)/(-500)*1200;
+		camSpacey = (y - 150)/(-500)*1200;
 		pos = Math.round(xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 			data[pos] =
 				(255   << 24) |    // alpha
@@ -156,7 +215,7 @@ function drawXYZ(){
 		camSpacez = z*cForwardz;
 
 		camSpacex =  camSpacex/(-500+camSpacez)*1200;
-		camSpacey = -200/(-500+camSpacez)*1200;
+		camSpacey = -150/(-500+camSpacez)*1200;
 			
 		pos = Math.round(camSpacex+xyzWidth/2) + Math.round(camSpacey+xyzHeight/2 - 400)*xyzWidth;
 			data[pos] =
@@ -172,6 +231,41 @@ function drawXYZ(){
 	
 	document.getElementById('XYZ2').getContext('2d').clearRect(0, 0, xyzWidth, xyzHeight);
 	document.getElementById('XYZ2').getContext('2d').drawImage(document.getElementById('XYZ') , 0 , 0);
+
+	//	----------------------------------		[   Draw Z position indicator   ]		----------------------------------
+	xyz2.strokeStyle="#000000";
+	xyz2.beginPath();
+	xyz2.moveTo(40 , 375);
+	xyz2.lineTo(40 , 395);
+	xyz2.lineTo(40 , 385);
+	xyz2.lineTo(250 , 385);
+	xyz2.lineTo(250 , 377);
+	xyz2.lineTo(250 , 393);
+	xyz2.lineTo(250 , 385);
+	xyz2.lineTo(460 , 385);
+	xyz2.lineTo(460 , 375);
+	xyz2.lineTo(460 , 395);
+	xyz2.stroke();
+	//		Z position dot
+	xyz2.strokeStyle="#0000FF";
+	xyz2.beginPath();
+	xyz2.arc( 250 + apz*10.5 , 385 , 5 , 0 , endAngle);
+	xyz2.stroke();
+	xyz2.closePath();
+	xyz2.fill();
+	xyz2.stroke();
+	if(changeApz){
+		xyz2.beginPath();
+		xyz2.moveTo(20 , 370);
+		xyz2.lineTo(100 , 370);
+		xyz2.lineTo(100 , 371);
+		xyz2.lineTo(20 , 371);
+		xyz2.stroke();
+	}
+		
+
+	xyz2.fillText( "Z = " + apz.toString() , 5 , 365);
+
 
 	//		reset the render buffer
 	scanLine = -20;

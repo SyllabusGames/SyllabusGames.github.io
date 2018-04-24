@@ -100,10 +100,14 @@ function loadBuiltInLevel(){
 			console.log(loadedLevel[i]);
 			if(loadedLevel[i] == "useZ"){
 				useZ = true;
+			//	xyzc.style.display="block !important";
+			//	xyz2c.style.display="block !important";
 				setUpXYZ();
 				i++;
 			}else{
 				useZ = false;
+			//	xyzc.style.display="none !important";
+			//	xyz2c.style.display="none !important";
 			}
 			
 			console.log(loadedLevel[i] + " - End");
@@ -170,4 +174,8 @@ function loadBuiltInLevel(){
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
 	setUpInput();//		see EquationLine.js
 	$("#dinput").text(defaultEqu);
+	//		if a 3B1B animation is called for, set up the input for that
+	setUpNumberLines();//		see 3B1BAnimations.js
+//	animSteps = 
+//	animLerps = 
 }

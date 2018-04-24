@@ -1,6 +1,6 @@
 ﻿<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
-<canvas id="XYZ" width="500" height="500" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
-<canvas id="XYZ2" width="500" height="500" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
+<canvas id="XYZ" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:100px;"></canvas>
+<canvas id="XYZ2" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:101px;" ></canvas>
 
 <head>
 	<link rel="icon" href="SineRiderSGLogo.png">
@@ -26,6 +26,7 @@
 <script type="text/javascript" src="js/LevelSaver.js"></script>
 <script type="text/javascript" src="js/LevelLoader.js"></script>
 <script type="text/javascript" src="js/XYZView.js"></script>
+<script type="text/javascript" src="js/3B1BAnimations.js"></script>
 
 <script>
 	//		Ctrl+Shift+J	shows error log in Chrome
@@ -71,6 +72,7 @@
 	var canvas;//		main canvas for 2D elements
 	var ctx;
 	var xyz;//		canvas for 3D elements
+	var xyzc;
 	var xyzWidth = 500;
 	var xyzHeight = 500;
 	var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel gaps caused by a low sample rate.
@@ -89,9 +91,10 @@
 	window.onload = function(){
 		canvas = document.getElementById('gc');
 		ctx = canvas.getContext('2d');
-		xyz = document.getElementById('XYZ').getContext('2d');
+		xyzc = document.getElementById('XYZ');
+		xyz  = xyzc.getContext('2d');
 		xyz2c = document.getElementById('XYZ2');
-		xyz2 = xyz2c.getContext('2d');
+		xyz2  = xyz2c.getContext('2d');
 		
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
@@ -113,7 +116,7 @@
 		document.getElementsByTagName('head')[0].appendChild(link);
 	}
 	
-	document.addEventListener("keydown", function(e) {
+	document.addEventListener("keydown", function(e){
 		if (e.keyCode == 32){//		shift = 16		//		escape = 27
 			//		folowing code from		https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
 			if((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
@@ -168,8 +171,10 @@
 				debugSingleFrame = true;
 			}
 		}
-		if(debugSkipFrame && !debugSingleFrame)
+		if(debugSkipFrame && !debugSingleFrame){
+			//drawNumberLines();//		see 3B1BAnimations
 			return;
+		}
 		debugSingleFrame = false;
 		//				Debug pause and frame advance
 		//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
@@ -199,6 +204,7 @@
 
 		ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
 		drawColliders();//		see collisions.js
+		drawNumberLines();//		see 3B1BAnimations
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 
@@ -208,12 +214,14 @@
 <div id="slidecontainer">
 	<!--
 	<input type="range" min="-3000" max="3000" value="400" class="slider" id="rangeX" width="400">
-	<input type="range" min="-3000" max="3000" value="400" class="slider" id="rangeY" width="400">
-	<input type="range" min="-3000" max="3000" value="-800" class="slider" id="rangeZ" width="400">
 	-->
+
+	<!--
+	<input type="range" min="0" max="100" value="100" class="slider" id="rangeY" width="400">
+	<input type="range" min="0" max="100" value="0" class="slider" id="rangeZ" width="400">
 	
 	<input type="range" min="-200" max="200" value="0" class="slider" id="viewY" width="400">
-	<input type="range" min="-314" max="314" value="-100" class="slider" id="viewRotate" width="400">
+	<input type="range" min="-314" max="314" value="-100" class="slider" id="viewRotate" width="400">-->
 </div>
 
 <script>
@@ -222,13 +230,11 @@
 		drawXYZ();
 	}
 	document.getElementById("rangeY").oninput = function () {
-		camy = Math.round(this.value);
-		drawXYZ();
+		animX = this.value/100;
 	}
 	document.getElementById("rangeZ").oninput = function () {
-		camz = Math.round(this.value);
-		drawXYZ();
-	}*/
+		animY = this.value/100;
+	}
 
 	
 	document.getElementById("viewY").oninput = function () {
@@ -236,5 +242,5 @@
 	}
 	document.getElementById("viewRotate").oninput = function () {
 		viewAngle = -this.value/100;
-	}
+	}*/
 </script>

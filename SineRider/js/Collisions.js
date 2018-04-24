@@ -34,6 +34,7 @@ function drawColliders(){
 	fftemp = -screeny*screenScale;
 	ctx.lineWidth = 0.3*screenScale;
 		//		-----------------------------------------------------------------------		[   Draw Goals   ]		-----------------------------------------------------------------------
+		//				Rectangle
 		for(i = gRectX.length-1 ; i > -1 ; i--){
 			//		check for collision with the sledder. Collisions are checked in world space (no scale) while objects are drawn in screen space (scale applied).
 			if(tmspx > gRectX[i]-screenx){
@@ -57,6 +58,7 @@ function drawColliders(){
 			ctx.stroke();
 		}
 	
+		//				Circle
 		for(i = rCircleX.length-1 ; i > -1 ; i--){//		i is a globar variable
 			//		check for collision with the sledder. (sled.x-circle.x)^2 + (sled.y-circle.y)^2 < circle.radius^2
 			if( (Math.pow(tmspx-gCircleX[i]+screenx,2) + Math.pow(tmspy+gCircleY[i]-screeny,2)) < gCircleR[i]*gCircleR[i] ){
@@ -76,6 +78,7 @@ function drawColliders(){
 		}
 
 		//		-----------------------------------------------------------------------		[   Draw Resets   ]		-----------------------------------------------------------------------
+		//				Rectangle
 		for(i = rRectX.length-1 ; i > -1 ; i--){
 			if(tmspx > rRectX[i]-screenx){
 				if(tmspy > -rRectY[i]+screeny){
@@ -95,7 +98,7 @@ function drawColliders(){
 			ctx.fill();
 			ctx.stroke();
 		}
-	
+		//				Circle
 		for(i = rCircleX.length-1 ; i > -1 ; i--){
 			if( (Math.pow(tmspx-rCircleX[i]+screenx,2) + Math.pow(tmspy+rCircleY[i]-screeny,2)) < rCircleR[i]*rCircleR[i] ){
 				resetSledder();

@@ -1,5 +1,5 @@
 ﻿/*		contains line from equation
- *			euqation text input
+ *			equation text input
  *			background grid draw
  * 
  */
