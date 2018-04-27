@@ -11,6 +11,7 @@ var apx = 150;//		position in global (absolute) space. This is used for physics 
 var apy = 50;
 var apz = 0;
 var tempZ = 0;
+var tempX = 0;
 var spx = 150;//		position in screen space. Used for drawing the sledder.
 var spy = 50;//			spy has the opposite sign as apy since the screen coordinate system has 0,0 in the upper right corner
 var vx = 0;
@@ -74,26 +75,27 @@ function moveSledder(){
 	}
 
 	//		----------------------------------------------------		[   Move Screen   ]		----------------------------------------------------
-	ftmp = Math.sqrt((apx-trackPointx)*(apx-trackPointx) + (apy-trackPointy)*(apy-trackPointy));
-	if(ftmp > 140){//		keep the sledder on screen
-		if(screenx < apx - 1400/screenScale){//		< 200 pixels from right edge of screen
-			screenx = apx - 1400/screenScale;
+	ftmp = Math.sqrt((apx-trackPointx)*(apx-trackPointx) + (apy-trackPointy)*(apy-trackPointy)*3.16);//		multiply y by 3.16 (16/9) (Screen ratio) So the target does not go off the top of the screen
+	if(ftmp > 171){//		keep the sledder on screen
+		if(screenx < apx - (screenWidth-200)/screenScale){//		< 200 pixels from right edge of screen
+			screenx = apx - (screenWidth-200)/screenScale;
 		}else if(screenx > apx - 200/screenScale){//	< 200 pixels from left edge of screen
 			screenx = apx - 200/screenScale;
 		}
 
 		if(screeny < apy + 200/screenScale){//	< 200 pixels from top edge of screen
 			screeny = apy + 200/screenScale;
-		}else if(screeny > apy + 600/screenScale){//		< 200 pixels from bottom edge of screen
-			screeny = apy + 600/screenScale;
+		}else if(screeny > apy + (screenHeight-200)/screenScale){//		< 200 pixels from bottom edge of screen
+			screeny = apy + (screenHeight-200)/screenScale;
 		}
 	}else{//		keep sledder and trackPoint on screen.
-		screenx = (apx + trackPointx)/2 - 800/screenScale;
-		screeny = (apy + trackPointy)/2 + 400/screenScale;
+		screenx = (apx + trackPointx)/2 - screenWidth/2/screenScale;
+		screeny = (apy + trackPointy)/2 + screenHeight/2/screenScale;
 	//	ftmp = Math.abs(apx-trackPointx);
 	//	if(Math.abs(apy-trackPointy) > ftmp)
 	//		ftmp = Math.abs(apy-trackPointy);
-		screenScale = 700/Math.max(ftmp , 14);//		set a max scale of 50. A minimum scale of 5 was set above by using < 140
+	//		1200 = scale of screen. Increase to zoom in.
+		screenScale = 1200/Math.max(ftmp , 24);//		set a max scale of 50 24 = (1200/50). A minimum scale of 7 was set above by using < 171 (1200/7)
 	}
 }
 //		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------

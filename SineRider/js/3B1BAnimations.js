@@ -162,7 +162,7 @@ function drawNumberLines(){
 			numberLine(ftmp , 1);
 		}
 	}else{
-		for(ftmp = 0 ; ftmp < screenWidth*animX ; ftmp += screenScale*animX){
+		for(ftmp = 0 ; ftmp < screenWidth*animX ; ftmp += 10*screenScale*animX){
 			animScope = {x: ftmp/screenScale , t: rtmp , z: 0 , k: ltmp ,  b: 0};
 		
 			if(animAShow){
@@ -273,6 +273,9 @@ function numberLine(xxx , dy , yyy){
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
+	//		label point
+	ctx.fillText( Math.round(dy*10)/10 , xxx , (screeny - dy)*screenScale - 10);
+	ctx.fillText( Math.round(xxx/screenScale+screenx) , xxx - 35 , screeny*screenScale + 45);
 
 	//		draw the offset
 	ctx.beginPath();

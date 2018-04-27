@@ -66,6 +66,8 @@ function loadBuiltInLevel(){
 	loadedLevel = localStorage.getItem(levelCode).split('\n');
 	levelName = loadedLevel[0];
 	levelType = loadedLevel[1];
+	background.src = "Levels/Cave.svg";
+//	background.src = "Levels/Tower.svg";
 
 	//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 	switch(levelType){

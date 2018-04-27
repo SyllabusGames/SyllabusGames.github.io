@@ -15,6 +15,7 @@ var equInvalid = false;
 var defaultEqu = "-x-5";
 var graphResolution = 0.25;
 var equInputField;
+var background = new Image;
 
 //		-----------------------------------------------------------------------		[   Equation Changed   ]		-----------------------------------------------------------------------
 //		RESOURCE: http://jsfiddle.net/karim79/TxQDV/
@@ -163,6 +164,11 @@ function drawGrid(){//		draw a line at every 10 units
 		ctx.moveTo(0 , (screeny + i*10) * screenScale);
 		ctx.lineTo(screenWidth , (screeny + i*10) * screenScale);
 		ctx.stroke();
+//		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
+		//ctx.drawImage( background , (-screenx * screenScale ) , (-screeny * screenScale ) , 100*screenScale , 100*screenScale);
+		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
+		//ctx.arc(gCircleX[i]*screenScale+-screenx*screenScale , -gCircleY[i]*screenScale--screeny*screenScale , gCircleR[i]*screenScale , 0 , endAngle);
+
 	}
 
 //		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
