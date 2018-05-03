@@ -187,7 +187,8 @@ function loadCollidersFromTex(){
 	console.log("Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
 	var end = "";
 	end.src = "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";
-	alert(end);
+	end = end.substring(end.indexOf("newrgbcolor"));
+	alert("Loaded Level" + loadedLevel[i] + "\n" + end);
 	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
 	fetch('file.txt').then(response => response.text()).then(text => console.log(text));
 
