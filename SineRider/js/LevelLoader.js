@@ -191,7 +191,7 @@ function loadCollidersFromTex(){
 	//end = end.substring(end.indexOf("newrgbcolor"));
 	alert("Loaded Level" + loadedLevel[i] + "\n" + end);
 	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
-	fetch('file.txt').then(response => response.text()).then(text => stmp);
+	fetch('file.txt').then(response => response.text()).then(text => stmp=text);
 	console.log("fetched\n" + stmp);
 	//var read = new FileReader
 	/*// Check for the various File API support.
