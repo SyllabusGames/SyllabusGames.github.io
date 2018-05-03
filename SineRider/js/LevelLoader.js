@@ -187,23 +187,23 @@ function loadCollidersFromTex(){
 	console.log("Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
 	var end = "";
 	end.src = "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";
-	end = end.substring(end.indexOf("newrgbcolor"));
+	//end = end.substring(end.indexOf("newrgbcolor"));
 	alert("Loaded Level" + loadedLevel[i] + "\n" + end);
 	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
 	fetch('file.txt').then(response => response.text()).then(text => console.log(text));
 
-	var read = new FileReader
+	//var read = new FileReader
 	/*// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
 	  // Great success! All the File APIs are supported.
 	} else {
 	  alert('The File APIs are not fully supported in this browser.');
 	}*/
-
+	
 	var client = new XMLHttpRequest();
 	client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
 	client.onreadystatechange = function() {
-	  alert(client.responseText);
+	  alert("OUTPUT\n" + client.responseText);
 	}
 	client.send();
 	//console.log(
