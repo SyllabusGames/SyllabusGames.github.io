@@ -66,8 +66,6 @@ function loadBuiltInLevel(){
 	loadedLevel = localStorage.getItem(levelCode).split('\n');
 	levelName = loadedLevel[0];
 	levelType = loadedLevel[1];
-	background.src = "Levels/Cave.svg";
-//	background.src = "Levels/Tower.svg";
 
 	//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 	switch(levelType){
@@ -164,8 +162,10 @@ function loadBuiltInLevel(){
 					rRectSideY.push(parseFloat(substring[3]));
 				}
 				i++;
-				substring = loadedLevel[i].split(',');//		load in first goal collider
+				substring = loadedLevel[i].split(',');//		load in next goal collider
 			}
+			background.src = "Levels/" + loadedLevel[i];
+			loadCollidersFromTex();
 			break;
 	//		-----------------------------------------------------------------------		[   Piecewise Gapless   ]		-----------------------------------------------------------------------
 		case "PW":
@@ -180,4 +180,30 @@ function loadBuiltInLevel(){
 	setUpNumberLines();//		see 3B1BAnimations.js
 //	animSteps = 
 //	animLerps = 
+}
+
+function loadCollidersFromTex(){
+	 //= "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";//		load "LevelName".tex
+	console.log("Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
+	var end = "";
+	end.src = "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";
+	alert(end);
+	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
+	fetch('file.txt').then(response => response.text()).then(text => console.log(text));
+
+	var read = new FileReader
+	/*// Check for the various File API support.
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+	  // Great success! All the File APIs are supported.
+	} else {
+	  alert('The File APIs are not fully supported in this browser.');
+	}*/
+
+	var client = new XMLHttpRequest();
+	client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
+	client.onreadystatechange = function() {
+	  alert(client.responseText);
+	}
+	client.send();
+	//console.log(
 }

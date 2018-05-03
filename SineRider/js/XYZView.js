@@ -238,36 +238,36 @@ function drawXYZ(){
 	//	----------------------------------		[   Draw Z position indicator   ]		----------------------------------
 	xyz2.strokeStyle="#000000";
 	xyz2.beginPath();
-	xyz2.moveTo(40 , 375);
-	xyz2.lineTo(40 , 395);
-	xyz2.lineTo(40 , 385);
-	xyz2.lineTo(250 , 385);
-	xyz2.lineTo(250 , 377);
-	xyz2.lineTo(250 , 393);
-	xyz2.lineTo(250 , 385);
-	xyz2.lineTo(460 , 385);
-	xyz2.lineTo(460 , 375);
-	xyz2.lineTo(460 , 395);
+	xyz2.moveTo(495 , 20);
+	xyz2.lineTo(475 , 20);
+	xyz2.lineTo(485 , 20);
+	xyz2.lineTo(485 , 200);
+	xyz2.lineTo(493 , 200);
+	xyz2.lineTo(477 , 200);
+	xyz2.lineTo(485 , 200);
+	xyz2.lineTo(485 , 380);
+	xyz2.lineTo(495 , 380);
+	xyz2.lineTo(475 , 380);
 	xyz2.stroke();
 	//		Z position dot
 	xyz2.strokeStyle="#0000FF";
 	xyz2.beginPath();
-	xyz2.arc( 250 + apz*10.5 , 385 , 5 , 0 , endAngle);
+	xyz2.arc(485 , 200 - apz*9 , 5 , 0 , endAngle);
 	xyz2.stroke();
 	xyz2.closePath();
 	xyz2.fill();
 	xyz2.stroke();
-	if(changeApz){
+	if(changeApz){//	Highlight Z scale when moving
 		xyz2.beginPath();
-		xyz2.moveTo(20 , 370);
-		xyz2.lineTo(100 , 370);
-		xyz2.lineTo(100 , 371);
-		xyz2.lineTo(20 , 371);
+		xyz2.moveTo(485 , 20);
+		xyz2.lineTo(485 , 380);
+		xyz2.lineTo(486 , 380);
+		xyz2.lineTo(486 , 20);
 		xyz2.stroke();
 	}
 		
 
-	xyz2.fillText( "Z = " + apz.toString() , 5 , 365);
+	xyz2.fillText( "Z = " + apz.toString() , 340 , 40);
 
 
 	//		reset the render buffer

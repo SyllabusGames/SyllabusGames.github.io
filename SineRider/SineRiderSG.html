@@ -1,6 +1,6 @@
 ﻿<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
-<canvas id="XYZ" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:100px;"></canvas>
-<canvas id="XYZ2" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:101px;" ></canvas>
+<canvas id="XYZ" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
+<canvas id="XYZ2" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
 
 <head>
 	<link rel="icon" href="SineRiderSGLogo.png">
@@ -27,6 +27,31 @@
 <script type="text/javascript" src="js/LevelLoader.js"></script>
 <script type="text/javascript" src="js/XYZView.js"></script>
 <script type="text/javascript" src="js/3B1BAnimations.js"></script>
+
+
+<!--		File Loader		-->
+<input type="file" id="files" hidden="hidden" name="files[]" multiple />
+<output id="list"></output>
+<script>
+	function handleFileSelect(evt) {
+		var files = evt.target.files; // FileList object
+
+		// files is a FileList of File objects. List some properties.
+		var output = [];
+		for (var i = 0, f; f = files[i]; i++) {
+			output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+				f.size, ' bytes, last modified: ',
+				f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+				'</li>');
+		}
+		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+	}
+
+	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+</script>
+<!--		File Loader		-->
+
+
 
 <script>
 	//		Ctrl+Shift+J	shows error log in Chrome

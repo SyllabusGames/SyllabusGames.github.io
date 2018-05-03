@@ -16,6 +16,7 @@ var defaultEqu = "-x-5";
 var graphResolution = 0.25;
 var equInputField;
 var background = new Image;
+var colliders;
 
 //		-----------------------------------------------------------------------		[   Equation Changed   ]		-----------------------------------------------------------------------
 //		RESOURCE: http://jsfiddle.net/karim79/TxQDV/
@@ -124,17 +125,17 @@ function setUpInput(){
 
 //		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
 function drawGrid(){//		draw a line at every 10 units
-	ctx.strokeStyle="#C0C0C0";
+	ctx.strokeStyle="#C5C5C5";
 	for(i = Math.round(screenx/10) ; i < screenx/10+screenWidth/10/screenScale ; i++){//		vertical lines
 		if(i%10 == 0){
 			ctx.lineWidth = 3;
 			if(i == 0){//		Origin line
-				ctx.strokeStyle="#202020";
+				ctx.strokeStyle="#505050";
 				ctx.beginPath();
 				ctx.moveTo(-screenx * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
 				ctx.lineTo(-screenx * screenScale , screenHeight);
 				ctx.stroke();
-				ctx.strokeStyle="#C0C0C0";
+				ctx.strokeStyle="#C5C5C5";
 				continue;
 			}
 		}else{
@@ -149,12 +150,12 @@ function drawGrid(){//		draw a line at every 10 units
 		if(i%10 == 0){
 				ctx.lineWidth = 3;
 			if(i == 0){//		Origin line
-				ctx.strokeStyle="#202020";
+				ctx.strokeStyle="#505050";
 				ctx.beginPath();
 				ctx.moveTo(0 , screeny * screenScale);
 				ctx.lineTo(screenWidth , screeny * screenScale);
 				ctx.stroke();
-				ctx.strokeStyle="#C0C0C0";
+				ctx.strokeStyle="#C5C5C5";
 				continue;
 			}
 		}else{

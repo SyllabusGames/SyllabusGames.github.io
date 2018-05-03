@@ -118,7 +118,7 @@ function drawColliders(){
 	}else{//		if the level is not running, display the name
 		ctx.fillStyle = "black";//		font color for text overlay
 		ctx.font = "40px Arial";
-		ctx.fillText(levelName,1200,50);
+		ctx.fillText(levelName,10,40);
 		ctx.font = "60px Arial";//		60spx font is used everywhere but here so it should only need to be set here.
 	}
 }
