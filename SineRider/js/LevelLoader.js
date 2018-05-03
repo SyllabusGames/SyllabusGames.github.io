@@ -171,13 +171,13 @@ function loadBuiltInLevel(){
 			var client = new XMLHttpRequest();
 			client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
 			client.onreadystatechange = function() {
-			if(client.responseText.length > 0){
-				loadCollidersFromTex(client.responseText);//		call loadCollidersFromTex() when the txt is loaded
-			  }
+				if(client.responseText.length > 0){
+					loadCollidersFromTex(client.responseText);//		call loadCollidersFromTex() when the txt is loaded
+					console.log(client.responseText);
+				}
 			}
 			client.send();
 
-			loadCollidersFromTex();
 			break;
 	//		-----------------------------------------------------------------------		[   Piecewise Gapless   ]		-----------------------------------------------------------------------
 		case "PW":
@@ -213,5 +213,5 @@ function loadCollidersFromTex(sss){
 	  alert('The File APIs are not fully supported in this browser.');
 	}*/
 
-	alert(sss);
+	alert("Final"+sss);
 }
