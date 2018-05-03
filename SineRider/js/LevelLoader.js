@@ -183,6 +183,10 @@ function loadBuiltInLevel(){
 //	animLerps = 
 }
 
+function sendToStmp(sss){
+	stmp = sss;
+}
+
 function loadCollidersFromTex(){
 	 //= "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";//		load "LevelName".tex
 	console.log("Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
@@ -191,8 +195,8 @@ function loadCollidersFromTex(){
 	//end = end.substring(end.indexOf("newrgbcolor"));
 	alert("Loaded Level" + loadedLevel[i] + "\n" + end);
 	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
-	fetch('file.txt').then(response => response.text()).then(text => stmp=text);
-	console.log("fetched\n" + stmp);
+	fetch('file.txt').then(response => response.text()).then(text => sendToStmp(text));
+	alert("fetched\n" + stmp);
 	//var read = new FileReader
 	/*// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
