@@ -13,6 +13,7 @@ var usePGaps = false;//		piecewise with gaps. When false, there are no gaps betw
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
 var usePolar = false;//		FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
+
 function loadLevel(){
 	var filePath = '../Levels/SR001.txt'
 	var request = new XMLHttpRequest();
@@ -190,8 +191,8 @@ function loadCollidersFromTex(){
 	//end = end.substring(end.indexOf("newrgbcolor"));
 	alert("Loaded Level" + loadedLevel[i] + "\n" + end);
 	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
-	fetch('file.txt').then(response => response.text()).then(text => console.log(text));
-
+	fetch('file.txt').then(response => response.text()).then(text => stmp);
+	console.log("fetched\n" + stmp);
 	//var read = new FileReader
 	/*// Check for the various File API support.
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
