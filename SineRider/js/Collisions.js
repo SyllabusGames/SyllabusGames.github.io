@@ -24,6 +24,28 @@ var gCircleR = new Array(2);
 var endAngle = 2*Math.PI;
 var levelName = "No level loaded";
 
+var groundPointsX;
+var groundPointsY;
+var ceilingPointsX;
+var ceilingPointsY;
+
+/*		checking for collision with the .svg will
+			take the sled's position
+			use fftmp = Math.max( Math.min((apx+200)/20 , 19) , 0); to get the index of the relevent points
+			use a for loop to parse all points in the arrays groundPointsX and ceilingPointsX to see if the sled is between them
+			if it is, interpolate the find the Y value directly above/below the sled and use the sled's velocity to check if it is about to passed through the floor/ceiling
+			each pass of the read in function will add more points to each array so it may look like this [(1) = point 1's position]
+			   __--(6)------____
+			(5)					(7)
+
+
+	(0)-(1)--___   _______-------(3)--__	
+				(2)						(4)
+
+			As a result of this, evey point in the relevent array must be checked (unless a line has been contacted and the sled moved)
+				because being between (5) and (6) also places you between (1) and (2) or (2) and (3)
+*/
+
 
 function drawColliders(){
 	ctx.lineWidth = 6;

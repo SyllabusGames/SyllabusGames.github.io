@@ -14,6 +14,7 @@ var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 1
 var usePolar = false;//		FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
+
 function loadLevel(){
 	var filePath = '../Levels/SR001.txt'
 	var request = new XMLHttpRequest();
@@ -77,7 +78,6 @@ function loadBuiltInLevel(){
 			defaultPosY = parseFloat(substring[1]);
 			i++;
 
-			console.log(loadedLevel[i]);
 			if(loadedLevel[i] == "useBlanks"){
 				useFillBlanks = true;
 				i++;
@@ -90,7 +90,6 @@ function loadBuiltInLevel(){
 			}
 			i++;
 
-			console.log(loadedLevel[i]);
 			if(loadedLevel[i] == "useTime"){
 				useTime = true;
 				i++;
@@ -98,20 +97,22 @@ function loadBuiltInLevel(){
 				useTime = false;
 			}
 			
-			console.log(loadedLevel[i]);
 			if(loadedLevel[i] == "useZ"){
 				useZ = true;
-			//	xyzc.style.display="block !important";
-			//	xyz2c.style.display="block !important";
+				//		show the canvases showing the 3D render
+				xyzc.style.display="block";
+				xyz2c.style.display="block";
 				setUpXYZ();
 				i++;
 			}else{
 				useZ = false;
+				//		hide the canvases showing the 3D render
+				xyzc.style.display="none";
+				xyz2c.style.display="none";
 			//	xyzc.style.display="none !important";
 			//	xyz2c.style.display="none !important";
 			}
 			
-			console.log(loadedLevel[i] + " - End");
 			substring = loadedLevel[i].split(',');//		camera track point
 			trackPointx = parseFloat(substring[0]);
 			trackPointy = parseFloat(substring[1]);
@@ -168,7 +169,10 @@ function loadBuiltInLevel(){
 			background.src = "Levels/" + loadedLevel[i];
 
 			//		request txt file of level colliders
-			var client = new XMLHttpRequest();
+			//		load internal .txt
+			loadCollidersFromTex(localStorage.getItem("SR001colliders"));
+			//		load external .txt
+			/*var client = new XMLHttpRequest();
 			client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
 			client.onreadystatechange = function() {
 				if(client.responseText.length > 0){
@@ -177,6 +181,7 @@ function loadBuiltInLevel(){
 				}
 			}
 			client.send();
+			*/
 
 			break;
 	//		-----------------------------------------------------------------------		[   Piecewise Gapless   ]		-----------------------------------------------------------------------
@@ -213,5 +218,36 @@ function loadCollidersFromTex(sss){
 	  alert('The File APIs are not fully supported in this browser.');
 	}*/
 
-	alert("Final"+sss);
+	//		create array of arrays so collision points can be stored in the array based on their position. (-200 < x < -180, point is stored in groundPoints[0])
+	groundPointsX = new Array(20);
+	groundPointsY = new Array(20);
+	ceilingPointsX = new Array(20);
+	ceilingPointsY = new Array(20);
+	for(i = 0 ; i < 20 ; i++){
+		groundPointsX[i] = new Array();
+		groundPointsY[i] = new Array();
+		ceilingPointsX[i] = new Array();
+		ceilingPointsY[i] = new Array();
+	}
+	substring = sss.split("newrgbcolor");
+	var ministring;
+	var microstring;
+	var k = 0;
+	//		loop through each line, through each set of points, then split X and Y on the ,
+	for(i = substring.length-1 ; i > -1  ; i--){
+		ministring = substring[i].split("(");
+		for(k = ministring.length-1 ; i < -1 ; i--){
+			microstring = ministring[i].split(",");
+			//		microstring[0] = "#"		microstring[1] = "#)\n\moveto"		# is the X or Y coordinate numeber
+			ftmp = microstring[0].parseFloat();
+			fftmp = Math.max( Math.min((ftmp+200)/20 , 19) , 0);//		get the index of where this point should be places and clamp it from 0 to 19
+			groundPointsX[fftmp].push(ftmp);//		add the x coordiante to the correct group
+
+			ftmp = microstring[1].substring(0 , microstring[1].indexOf(')')).parseFloat();
+			groundPointsY[fftmp].push(ftmp);//		add the Y coordiante to the same group
+			console.log(groundPointsX[fftmp][groundPointsX[fftmp].length-1].string() + " , " + groundPointsY[fftmp][groundPointsY[fftmp].length-1]);
+		}
+	}
+	stmp = sss.substring(sss.indexOf("new"));
+	//alert(sss.indexOf("new") + "Final"+stmp);
 }

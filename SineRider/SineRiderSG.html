@@ -1,6 +1,6 @@
 ﻿<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
-<canvas id="XYZ" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
-<canvas id="XYZ2" width="500" height="400" style="z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
+<canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
+<canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
 
 <head>
 	<link rel="icon" href="SineRiderSGLogo.png">
@@ -58,7 +58,9 @@
 	
 	//		time
 	var frameTime = 0;//		time since level started (used as t in equations)
-	var dt = 0.016666666666666666;//	=1/60	(60 frames per second)
+	var lastTime = 0;
+	var dt = 0.0333333333333333;//	=1/60	(60 frames per second)
+	//var dt = 0.016666666666666666;//	=1/60	(60 frames per second)
 	//var lastTimeRaw = 0;
 
 	//		temporary variables (all of these are used in multiple places. This is to avoid the inefficiency of redeclaring i 10 times a frame)
@@ -121,10 +123,11 @@
 		xyz2c = document.getElementById('XYZ2');
 		xyz2  = xyz2c.getContext('2d');
 		document.body.style.overflow = 'hidden';//		turn off page scrolling
-		
+		lastTime = performance.now()*0.001;
+
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
-		loadLevelMap();//		for texting
+		loadLevelMap();//		for testing
 		//ctx.save();
 		/*c.addEventListener('mousemove' , function(e){
 			mx = e.clientX-6;
@@ -142,6 +145,7 @@
 		document.getElementsByTagName('head')[0].appendChild(link);
 	}
 	
+//		-----------------------------------------------------------------------		[   Toggle FullScreen   ]		-----------------------------------------------------------------------
 	document.addEventListener("keydown", function(e){
 		if (e.keyCode == 32){//		shift = 16		//		escape = 27
 			//		folowing code from		https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
@@ -179,6 +183,8 @@
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 	function update(timestamp){
 		window.requestAnimationFrame(update);
+		dt = performance.now()*0.001 - lastTime;
+		lastTime = performance.now()*0.001;
 		if(useZ)
 			drawXYZ();//		update the 3D view
 
@@ -228,7 +234,7 @@
 		drawLine();
 		moveSledder();//		see sledder.js
 
-		ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
+		//ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
 		drawColliders();//		see collisions.js
 		drawNumberLines();//		see 3B1BAnimations
 	}
@@ -253,7 +259,6 @@
 <script>
 	/*document.getElementById("rangeX").oninput = function () {
 		camx = Math.round(this.value);
-		drawXYZ();
 	}
 	document.getElementById("rangeY").oninput = function () {
 		animX = this.value/100;
