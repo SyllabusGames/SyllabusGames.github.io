@@ -17,6 +17,7 @@ var graphResolution = 0.25;
 var equInputField;
 var background = new Image;
 var colliders;
+var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
 
 //		-----------------------------------------------------------------------		[   Equation Changed   ]		-----------------------------------------------------------------------
 //		RESOURCE: http://jsfiddle.net/karim79/TxQDV/
@@ -126,7 +127,18 @@ function setUpInput(){
 //		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
 function drawGrid(){//		draw a line at every 10 units
 	ctx.strokeStyle="#C5C5C5";
-	for(i = Math.round(screenx/10) ; i < screenx/10+screenWidth/10/screenScale ; i++){//		vertical lines
+	
+	//		change what grid incraments are visible based on screen scale
+	if(screenScale < 1.5)
+		gridScale = 100;
+	else if(screenScale < 25)
+		gridScale = 10;
+	else if(screenScale < 350)
+		gridScale = 1;
+	else
+		gridScale = 0.1;
+		
+	for(i = Math.round(screenx/gridScale) ; i < (screenx+screenWidth/screenScale)/gridScale ; i++){//		vertical lines
 		if(i%10 == 0){
 			ctx.lineWidth = 3;
 			if(i == 0){//		Origin line
@@ -142,11 +154,11 @@ function drawGrid(){//		draw a line at every 10 units
 			ctx.lineWidth = 1;
 		}
 		ctx.beginPath();
-		ctx.moveTo((-screenx + i*10) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
-		ctx.lineTo((-screenx + i*10) * screenScale , screenHeight);
+		ctx.moveTo((-screenx + i*gridScale) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
+		ctx.lineTo((-screenx + i*gridScale) * screenScale , screenHeight);
 		ctx.stroke();
 	}
-	for(i = Math.round(-screeny/10) ; i < -screeny/10+screenHeight/10/screenScale ; i++){//		horizontal lines
+	for(i = Math.round(-screeny/gridScale) ; i < (-screeny+screenHeight/screenScale)/gridScale ; i++){//		horizontal lines
 		if(i%10 == 0){
 				ctx.lineWidth = 3;
 			if(i == 0){//		Origin line
@@ -162,15 +174,14 @@ function drawGrid(){//		draw a line at every 10 units
 			ctx.lineWidth = 1;
 		}
 		ctx.beginPath();
-		ctx.moveTo(0 , (screeny + i*10) * screenScale);
-		ctx.lineTo(screenWidth , (screeny + i*10) * screenScale);
+		ctx.moveTo(0 , (screeny + i*gridScale) * screenScale);
+		ctx.lineTo(screenWidth , (screeny + i*gridScale) * screenScale);
 		ctx.stroke();
-//		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
-		//ctx.drawImage( background , (-screenx * screenScale ) , (-screeny * screenScale ) , 100*screenScale , 100*screenScale);
-		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
-		//ctx.arc(gCircleX[i]*screenScale+-screenx*screenScale , -gCircleY[i]*screenScale--screeny*screenScale , gCircleR[i]*screenScale , 0 , endAngle);
-
 	}
+//		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
+		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
+
+	
 
 //		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
 
@@ -193,7 +204,7 @@ function drawLine(){
 		//		draw time independent (t=0) equation line in grey
 		ctx.strokeStyle="#AAAAAA";
 		ctx.beginPath();
-		scope = {x: screenx , t: frameTime , z: 0};
+		scope = {x: screenx , t: 0 , z: 0};
 		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
 		for(i = 5 ; i < screenWidth ; i+=5){
@@ -241,6 +252,64 @@ function drawLine(){
 	}
 	ctx.stroke();
 }
+
+//	----------------------------------		[   Display coordinates on line near cursor   ]		----------------------------------
+function cursorPosition(){
+	dx = mouseX/screenScale + screenx;
+	dy = equation(dx);
+	ctx.fillText( "X = " + (Math.round(dx*100)/100).toString() + " Y = " + (Math.round(dy*100)/100).toString(),
+		Math.max(Math.min(mouseX , Math.round(screenWidth - 600)) , 10) ,
+		Math.max(Math.min(mouseY , Math.round(screenHeight - 140)) , 50));
+	
+	if(equation(dx + 0.15) < dy && equation(dx - 0.15) < dy){//		close to a local maxima
+		ltmp = dx - 0.15;//		left x value
+		dydt = equation(ltmp);//	left y value
+		rtmp = dx + 0.15;//	right x value
+		tmspy = equation(rtmp);//		right y value
+		ftmp = 0.15;//		2x gap between ltmp and rtmp
+		dtmp = dy;//		center y value
+		for(i = 0 ; i < 11 ; i++){//		covering an area of 0.3 (0.15*2), the precision will be 0.3/2^11 = 0.00015
+			if(Math.abs(dydt - dtmp) < Math.abs(tmspy - dtmp)){//		slope is less (closer to maxima) on the left side
+				dtmp = equation(dydt + ftmp/2);//		shift center y ftmp/2 to the left
+				
+				rtmp -= ftmp;//		shift right point to where the center used to be
+				tmspy = dtmp;//		set right y value to center y value
+			}else{
+				dtmp = equation(ftmp - ftmp/2);
+				
+				ltmp += ftmp;
+				dydt = dtmp;
+			}
+			ftmp *= 0.5;//		half the gap between left and right
+		}
+
+		ctx.fillText( "Local Maxima:",
+			Math.max(Math.min(mouseX , Math.round(screenWidth - 400)) , 10) ,
+			Math.max(Math.min(mouseY-100 , Math.round(screenHeight - 200)) , 50));
+
+		ctx.fillText( "X = " + (Math.round((ltmp+rtmp)/2*1000)/1000).toString() + "\nY = " + (Math.round(dtmp*1000)/1000).toString(),
+			Math.max(Math.min(mouseX , Math.round(screenWidth - 400)) , 10) ,
+			Math.max(Math.min(mouseY-50 , Math.round(screenHeight - 250)) , 100));
+		
+		ctx.beginPath();
+		ctx.arc( ((ltmp+rtmp)/2-screenx)*screenScale , -(dtmp-screeny)*screenScale , 4 , 0 , endAngle);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+
+	}else if(equation(dx + 0.15) > dy && equation(dx - 0.15) > dy){
+
+	}
+	
+	ctx.beginPath();
+	ctx.arc( mouseX , -(dy-screeny)*screenScale , 4 , 0 , endAngle);
+	ctx.stroke();
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+}
+
 
 function equation(input){
 	if(useZ){

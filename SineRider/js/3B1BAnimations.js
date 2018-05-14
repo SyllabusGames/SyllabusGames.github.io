@@ -170,9 +170,9 @@ function drawNumberLines(){
 					ctx.strokeStyle="#F08080";
 				else
 					ctx.strokeStyle="#D02020";
-				fftemp =  animAEqu.eval(animScope);//		offset (adders)
+				dtmp =  animAEqu.eval(animScope);//		offset (adders)
 				animScope = {x: 0 , t: rtmp , z: 0 , k: ltmp ,  b: ltmp};//		scalers (multipliers)
-				numberLine(ftmp , fftemp , animAEqu.eval(animScope));
+				numberLine(ftmp , dtmp , animAEqu.eval(animScope));
 			}
 
 			
@@ -181,9 +181,9 @@ function drawNumberLines(){
 					ctx.strokeStyle="#80F080";
 				else
 					ctx.strokeStyle="#20D020";
-				fftemp =  animBEqu.eval(animScope);//		offset (adders)
+				dtmp =  animBEqu.eval(animScope);//		offset (adders)
 				animScope = {x: 0 , t: rtmp , z: 0 , k: ltmp ,  b: ltmp};//		scalers (multipliers)
-				numberLine(ftmp , fftemp , animBEqu.eval(animScope));
+				numberLine(ftmp , dtmp , animBEqu.eval(animScope));
 			}
 		}
 	}
@@ -202,6 +202,7 @@ function drawNumberLines(){
 
 //		xxx is x position of line. yyy is spacing of ticks
 function numberLine(xxx , dy , yyy){
+	return;
 	xxx -= screenx*screenScale;
 	//		don't add thousands of tic marks if the spacing is too small to see
 	if(Math.abs(yyy) < 0.15){

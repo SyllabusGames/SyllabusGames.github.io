@@ -39,6 +39,7 @@ function resetSledder(){
 	vx = 0;
 	vy = 0;
 	rotation = 0;
+	screenFollowSledder();//		reset screen position
 	//		reset screen too. This should probably be moved somewhere else.
 }
 
@@ -74,8 +75,18 @@ function moveSledder(){
 		ctx.translate( -spx, -spy );
 	}
 
-	//		----------------------------------------------------		[   Move Screen   ]		----------------------------------------------------
+	//		----------------------------------------------------		[   Move/Scale Screen   ]		----------------------------------------------------
+	if(simulating){
+		screenFollowSledder();
+	}
+}
+//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
+
+
+//		----------------------------------------------------		[   Move/Scale Screen   ]		----------------------------------------------------
+function screenFollowSledder(){
 	ftmp = Math.sqrt((apx-trackPointx)*(apx-trackPointx) + (apy-trackPointy)*(apy-trackPointy)*3.16);//		multiply y by 3.16 (16/9) (Screen ratio) So the target does not go off the top of the screen
+	screenScale = 1200/Math.max(ftmp , 24);//		set a max scale of 50 24 = (1200/50). A minimum scale of 7 was set above by using < 171 (1200/7)
 	if(ftmp > 171){//		keep the sledder on screen
 		if(screenx < apx - (screenWidth-200)/screenScale){//		< 200 pixels from right edge of screen
 			screenx = apx - (screenWidth-200)/screenScale;
@@ -95,11 +106,8 @@ function moveSledder(){
 	//	if(Math.abs(apy-trackPointy) > ftmp)
 	//		ftmp = Math.abs(apy-trackPointy);
 	//		1200 = scale of screen. Increase to zoom in.
-		screenScale = 1200/Math.max(ftmp , 24);//		set a max scale of 50 24 = (1200/50). A minimum scale of 7 was set above by using < 171 (1200/7)
 	}
 }
-//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
-
 
 function drawSledder(){
 	rotation = rotation%(Math.PI*2);
@@ -142,10 +150,10 @@ function drawSledder(){
 		dx = 1/Math.sqrt(0.01 + dy*dy);//		divide dx by the length of the tangent line formed by [0.1 , dy]
 		dy *= dx;//		multiply dy by dx so [dx , dy] will be 1 meter long after the next opperation (unit tangent vector)
 		dx *= 0.1;//	dx was a multiplier for dy, now turn it back into dx (the x component of the tangent unit vector)
-		fftemp = vx*dx + vy*dy;//		Dot Product of velocity and slope's tangent.		(Ammount of velocity along the graph)
+		dtmp = vx*dx + vy*dy;//		Dot Product of velocity and slope's tangent.		(Ammount of velocity along the graph)
 			
-		vx = dx*fftemp;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
-		vy = dy*fftemp;
+		vx = dx*dtmp;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
+		vy = dy*dtmp;
 
 
 	//		----------------------------------------------------		[   Set Velocity by line movement   ]		----------------------------------------------------
@@ -209,6 +217,4 @@ function drawSledder(){
 	rotation += av;
 	av *= 0.992;//		dampen rotation as it flies above the track so the sled eventually stopps spinning
 
-	
-	
 }

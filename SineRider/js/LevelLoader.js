@@ -76,6 +76,8 @@ function loadBuiltInLevel(){
 			substring = loadedLevel[i].split(',');//		sledder start position
 			defaultPosX = parseFloat(substring[0]);
 			defaultPosY = parseFloat(substring[1]);
+			apx = defaultPosX;
+			apy = defaultPosY;
 			i++;
 
 			if(loadedLevel[i] == "useBlanks"){
@@ -195,6 +197,8 @@ function loadBuiltInLevel(){
 	$("#dinput").text(defaultEqu);
 	//		if a 3B1B animation is called for, set up the input for that
 	setUpNumberLines();//		see 3B1BAnimations.js
+	screenFollowSledder();//	move the screen to show the sledder and goal. See Sledder.js
+
 //	animSteps = 
 //	animLerps = 
 }
@@ -219,6 +223,9 @@ function loadCollidersFromTex(sss){
 	}*/
 
 	//		create array of arrays so collision points can be stored in the array based on their position. (-200 < x < -180, point is stored in groundPoints[0])
+	/*
+	//		-----------------------------------------------------------------------		[   Import to array[20]   ]		-----------------------------------------------------------------------
+
 	groundPointsX = new Array(20);
 	groundPointsY = new Array(20);
 	ceilingPointsX = new Array(20);
@@ -229,25 +236,58 @@ function loadCollidersFromTex(sss){
 		ceilingPointsX[i] = new Array();
 		ceilingPointsY[i] = new Array();
 	}
-	substring = sss.split("newrgbcolor");
+
+
+	substring = sss.split("ewpath");
 	var ministring;
 	var microstring;
 	var k = 0;
 	//		loop through each line, through each set of points, then split X and Y on the ,
-	for(i = substring.length-1 ; i > -1  ; i--){
+	for(i = substring.length-1 ; i > 0  ; i--){//		>0 because the 0ith entry is just the file header information
+	console.log("\n\n\n" + substring[i]);
 		ministring = substring[i].split("(");
-		for(k = ministring.length-1 ; i < -1 ; i--){
-			microstring = ministring[i].split(",");
+		for(k = ministring.length-1 ; k > 0 ; k--){//		>0 because ministring[0] is "moveto"
+			microstring = ministring[k].split(",");
 			//		microstring[0] = "#"		microstring[1] = "#)\n\moveto"		# is the X or Y coordinate numeber
-			ftmp = microstring[0].parseFloat();
-			fftmp = Math.max( Math.min((ftmp+200)/20 , 19) , 0);//		get the index of where this point should be places and clamp it from 0 to 19
+			ftmp = (parseFloat(microstring[0]) - 1000)/5;
+			fftmp = Math.max( Math.min(Math.round((ftmp+200)/20) , 19) , 0);//		get the index of where this point should be places and clamp it from 0 to 19
+			console.log(ftmp + " - " + fftmp);
 			groundPointsX[fftmp].push(ftmp);//		add the x coordiante to the correct group
 
-			ftmp = microstring[1].substring(0 , microstring[1].indexOf(')')).parseFloat();
+			ftmp = (-parseFloat(microstring[1].substring(0 , microstring[1].indexOf(')'))) + 1000)/5;
 			groundPointsY[fftmp].push(ftmp);//		add the Y coordiante to the same group
-			console.log(groundPointsX[fftmp][groundPointsX[fftmp].length-1].string() + " , " + groundPointsY[fftmp][groundPointsY[fftmp].length-1]);
+		//	console.log(groundPointsX[fftmp][groundPointsX[fftmp].length-1] + " , " + groundPointsY[fftmp][groundPointsY[fftmp].length-1]);
 		}
 	}
 	stmp = sss.substring(sss.indexOf("new"));
+	//alert(sss.indexOf("new") + "Final"+stmp);
+	*/
+	
+	//		-----------------------------------------------------------------------		[   Import .tex to single array   ]		-----------------------------------------------------------------------
+	allGroundPointsX = new Array();
+	allGroundPointsY = new Array();
+	allGroundBreaks = new Array();
+
+	substring = sss.split("ewpath");
+	var ministring;
+	var microstring;
+	var k = 0;
+	//		loop through each line, through each set of points, then split X and Y on the ,
+	for(i = substring.length-1 ; i > 0  ; i--){//		>0 because the 0ith entry is just the file header information
+		ministring = substring[i].split("(");
+		for(k = ministring.length-1 ; k > 0 ; k--){//		>0 because ministring[0] is "moveto"
+			microstring = ministring[k].split(",");
+			//		microstring[0] = "#"		microstring[1] = "#)\n\moveto"		# is the X or Y coordinate numeber
+			ftmp = (parseFloat(microstring[0]) - 1000)/5;
+			allGroundPointsX.push(ftmp);//		add the x coordiante to the correct group
+
+			ftmp = (-parseFloat(microstring[1].substring(0 , microstring[1].indexOf(')'))) + 1000)/5;
+			allGroundPointsY.push(ftmp);//		add the Y coordiante to the same group
+			allGroundBreaks.push(true);
+		}
+		//		change the last entry in this array to false so a line is not drawn between the end of one line and start of the next
+		allGroundBreaks[allGroundBreaks.length-1] = false;
+	}
+	//stmp = sss.substring(sss.indexOf("new"));
 	//alert(sss.indexOf("new") + "Final"+stmp);
 }

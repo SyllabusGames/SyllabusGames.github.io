@@ -34,6 +34,7 @@ var red = 0;
 var green = 0;
 var blue = 0;
 var scanLine = -15;
+var scanStep = 10;
 
 //	----------------------------------		[   Get mouse for rotating render   ]		----------------------------------
 document.getElementById('XYZ2').addEventListener("mousedown", function(e){
@@ -110,7 +111,7 @@ function drawXYZ(){
 	//		ReRender everything near the sledders X and Z position and everything further from the camera than the sledder on those 2 axes. Then render the sledder.
 	useZ = true;
 	//		render 10 lines a frame
-	for (var x = scanLine; x < scanLine+10; x+=0.3){
+	for (var x = scanLine; x < Math.min(scanLine+scanStep , 50); x+=0.3){
 		tempZ = -21;
 		tempX = renderFlipX ? tempX = 40-x : x;
 		lastY = equation(tempX);
@@ -175,8 +176,8 @@ function drawXYZ(){
 	}
 
 	//		if the render has reached line 50, push the buffer to the canvas
-	if(scanLine < 50){
-		scanLine += 10;
+	if(scanLine < 49){
+		scanLine += scanStep;
 		return;
 	}
 		

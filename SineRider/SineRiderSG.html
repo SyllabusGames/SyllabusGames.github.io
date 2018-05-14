@@ -6,6 +6,8 @@
 	<link rel="icon" href="SineRiderSGLogo.png">
 	<link rel="shortcut icon" href="SineRiderSGLogo.png">
 	<title>Sine Rider SG</title>
+	<!--		Prevent accidental scaling when holding Ctrl and zooming in		-->
+	<!--	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">	-->
 </head>
 
 <!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
@@ -27,7 +29,12 @@
 <script type="text/javascript" src="js/LevelLoader.js"></script>
 <script type="text/javascript" src="js/XYZView.js"></script>
 <script type="text/javascript" src="js/3B1BAnimations.js"></script>
+<script type="text/javascript" src="js/SvgEditor.js"></script>
+<script type="text/javascript" src="js/AudioControl.js"></script>
+<script type="text/javascript" src="js/Pause.js"></script>
 
+<!--		Remove white space around canvas (also makes cursor more accurate)		-->
+<body style="margin: 0;"></body>
 
 <!--		File Loader		-->
 <input type="file" id="files" hidden="hidden" name="files[]" multiple />
@@ -59,21 +66,22 @@
 	//		time
 	var frameTime = 0;//		time since level started (used as t in equations)
 	var lastTime = 0;
-	var dt = 0.0333333333333333;//	=1/60	(60 frames per second)
-	//var dt = 0.016666666666666666;//	=1/60	(60 frames per second)
+	var dt = 0.01;//		change in time since last frame
 	//var lastTimeRaw = 0;
 
 	//		temporary variables (all of these are used in multiple places. This is to avoid the inefficiency of redeclaring i 10 times a frame)
-	var dx = 0;
-	var dy = 0;
-	var dydt = 0;
-	var dxdt = 0;
-	var i = 0;
-	var ftmp = 0;
-	var fftemp = 0;
-	var ltmp = 0;
-	var rtmp = 0;
-	var stmp = "";
+	//		all these variables should be assumed to be reset outside the context of a single function
+	var dx = 0;//	float
+	var dy = 0;//	float
+	var dydt = 0;//	float
+	var dxdt = 0;//	float
+	var i = 0;//	int
+	var k = 0;//	int
+	var ftmp = 0;//	float
+	var dtmp = 0;//	float
+	var ltmp = 0;//	float
+	var rtmp = 0;//	float
+	var stmp = "";//	string
 	var tmspx;
 	var tmspy;
 	var tmspz;
@@ -81,6 +89,10 @@
 	//		should be deleted before launch
 	var debugSkipFrame = false;
 	var debugSingleFrame = false;
+	var debugFramerateCount = 0;
+	var debugFramerateLast = 0;
+	var debugFramerateTime = 0;
+	var debugFastForward = false;
 
 	//		camera position and scale. These coordinates are the position of the upper left corner of the screen.
 	var screenWidth = 1600;
@@ -93,7 +105,8 @@
 
 	//		gameplay state
 	var simulating = false;//		game is running. Sled is moving.
-	var paused = false;
+	var paused = false;//		player has not paused and window is in focus
+	var writeCursor = false;
 
 	//		canvas
 	var canvas;//		main canvas for 2D elements
@@ -171,7 +184,9 @@
 					document.webkitCancelFullScreen();
 				}
 			}
-						
+			//		keep 3D view in right corner of view
+			xyzc.style.left = screenWidth-500;
+			xyz2c.style.left = screenWidth-500;
 			canvas.width = screenWidth;
 			canvas.height = screenHeight;
 			equInputField.left = Math.round(screenWidth * 0.1);
@@ -183,26 +198,70 @@
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 	function update(timestamp){
 		window.requestAnimationFrame(update);
-		dt = performance.now()*0.001 - lastTime;
+		if(paused)
+			return;
+		dt = Math.min(performance.now()*0.001 - lastTime , 0.25);//		no frame can skip more than 1/4 seconds
 		lastTime = performance.now()*0.001;
 		if(useZ)
 			drawXYZ();//		update the 3D view
 
 		//		-----------------------------------------------------------------------		[   Debugging   ]		-----------------------------------------------------------------------
-		//				Debug pause and frame advance//		Hold Ctrl to pause. Press Z to advance single frames
-		document.body.onkeyup = function(e){
-			if(e.keyCode == 17){//		Ctrl
-				debugSkipFrame = false;
+		//		incrament every frame. Reset at every second.
+		if(lastTime - debugFramerateTime > 1){
+			debugFramerateTime = lastTime;
+			debugFramerateLast = debugFramerateCount;
+			debugFramerateCount = 0;
+			if(useZ){//		change the 3D view update frequency based on framerate
+				if(debugFramerateLast < 30){
+					if(debugFramerateLast < 20)
+						scanStep = 2;
+					else
+						scanStep = 6;
+				}else{
+					if(debugFramerateLast > 57)
+						scanStep = 12;
+					else
+						scanStep = 8;
+				}
 			}
+		}else{
+			debugFramerateCount++;
 		}
+		
+		//				Debug pause and frame advance//		Hold Ctrl to pause. Press Z to advance single frames
 		document.body.onkeydown = function(e){
+		//	console.log("Pressed Key " + e.keyCode);
 			if(e.keyCode == 17){//		Ctrl
+				debugFastForward = true;
+			}
+			if(e.keyCode == 20){//		CapsLock
 				debugSkipFrame = true;
+			}else if(e.keyCode == 16){//		Shift
+				writeCursor = true;
 			}
 			if(e.keyCode == 90){//		Z
 				debugSingleFrame = true;
 			}
 		}
+
+		document.onkeyup = function(e){
+		//	console.log("Released Key " + e.keyCode);
+			if(e.keyCode == 17){//		Ctrl
+				debugFastForward = false;
+			}
+			if(e.keyCode == 16){//		Shift
+				writeCursor = false;
+			}
+			if(e.keyCode == 20){//		CapsLock
+				debugSkipFrame = false;
+			}
+		}
+		
+		if(debugFastForward){
+			dt *= 4;
+			//console.log("a " + dt);
+		}
+
 		if(debugSkipFrame && !debugSingleFrame){
 			//drawNumberLines();//		see 3B1BAnimations
 			return;
@@ -210,7 +269,10 @@
 		debugSingleFrame = false;
 		//				Debug pause and frame advance
 		//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
-
+		
+		//		canvas
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		drawGrid();
 		//		on enter down toggle equation editable and simulation running
 		//		get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
 		document.body.onkeyup = function(e){
@@ -221,10 +283,8 @@
 		}
 
 
-		//		canvas
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawGrid();
 		
+		//		console.log("c " + dt);
 		if(simulating){
 			frameTime += dt;
 		}else{//		-----------------------------------------------------------------------		[   Editing Equation   ]		-----------------------------------------------------------------------
@@ -233,10 +293,20 @@
 
 		drawLine();
 		moveSledder();//		see sledder.js
+		
+		
+		if(writeCursor){
+			cursorPosition();//		see EquationLine.js
+		}
+
+		ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.85));
+		//ctx.fillText("Scale = " + String(Math.round(screenScale)) , Math.round(screenWidth * 0.7) , Math.round(screenHeight*0.92));
 
 		//ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
 		drawColliders();//		see collisions.js
 		drawNumberLines();//		see 3B1BAnimations
+
+		//		display X and Y of graph closest to cursor when I hold Ctrl
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 

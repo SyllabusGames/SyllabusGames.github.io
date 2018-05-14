@@ -29,6 +29,12 @@ var groundPointsY;
 var ceilingPointsX;
 var ceilingPointsY;
 
+
+var allGroundPointsX = new Array();
+var allGroundPointsY = new Array();
+var allGroundBreaks = new Array();
+
+
 /*		checking for collision with the .svg will
 			take the sled's position
 			use fftmp = Math.max( Math.min((apx+200)/20 , 19) , 0); to get the index of the relevent points
@@ -53,7 +59,7 @@ function drawColliders(){
 	tmspx = spx/screenScale;// - screenx*screenScale;
 	tmspy = spy/screenScale;// + screeny*screenScale;
 	ftmp = -screenx*screenScale;
-	fftemp = -screeny*screenScale;
+	dtmp = -screeny*screenScale;
 	ctx.lineWidth = 0.3*screenScale;
 		//		-----------------------------------------------------------------------		[   Draw Goals   ]		-----------------------------------------------------------------------
 		//				Rectangle
@@ -69,10 +75,10 @@ function drawColliders(){
 			//		draw rectangle
 			ctx.strokeStyle="#00B0FF";
 			ctx.beginPath();
-			ctx.moveTo(gRectX[i]*screenScale+ftmp , -gRectY[i]*screenScale-fftemp);
-			ctx.lineTo(gRectX[i]*screenScale+ftmp , -gRectY[i]*screenScale-fftemp + gRecSideY[i]*screenScale);
-			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-fftemp + gRecSideY[i]*screenScale);
-			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-fftemp);
+			ctx.moveTo(gRectX[i]*screenScale+ftmp , -gRectY[i]*screenScale-dtmp);
+			ctx.lineTo(gRectX[i]*screenScale+ftmp , -gRectY[i]*screenScale-dtmp + gRecSideY[i]*screenScale);
+			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-dtmp + gRecSideY[i]*screenScale);
+			ctx.lineTo(gRectX[i]*screenScale+ftmp + gRecSideX[i]*screenScale , -gRectY[i]*screenScale-dtmp);
 			ctx.stroke();
 			//ctx.fillStyle = "#50B0FF";
 			ctx.closePath();
@@ -91,7 +97,7 @@ function drawColliders(){
 			//		draw circle
 			ctx.strokeStyle="#00B0FF";
 			ctx.beginPath();
-			ctx.arc(gCircleX[i]*screenScale+ftmp , -gCircleY[i]*screenScale-fftemp , gCircleR[i]*screenScale , 0 , endAngle);
+			ctx.arc(gCircleX[i]*screenScale+ftmp , -gCircleY[i]*screenScale-dtmp , gCircleR[i]*screenScale , 0 , endAngle);
 			ctx.stroke();
 			//ctx.fillStyle = "#50B0FF";
 			ctx.closePath();
@@ -110,10 +116,10 @@ function drawColliders(){
 			}}}}
 			ctx.strokeStyle="#500000";
 			ctx.beginPath();
-			ctx.moveTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-fftemp);
-			ctx.lineTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-fftemp + rRecSideY[i]*screenScale);
-			ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSideX[i]*screenScale , -rRectY[i]*screenScale-fftemp + rRecSideY[i]*screenScale);
-			ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSideX[i]*screenScale , -rRectY[i]*screenScale-fftemp);
+			ctx.moveTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-dtmp);
+			ctx.lineTo(rRectX[i]*screenScale+ftmp , -rRectY[i]*screenScale-dtmp + rRecSideY[i]*screenScale);
+			ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSideX[i]*screenScale , -rRectY[i]*screenScale-dtmp + rRecSideY[i]*screenScale);
+			ctx.lineTo(rRectX[i]*screenScale+ftmp + rRecSideX[i]*screenScale , -rRectY[i]*screenScale-dtmp);
 			ctx.stroke();
 			ctx.fillStyle = "red";
 			ctx.closePath();
@@ -128,7 +134,7 @@ function drawColliders(){
 
 			ctx.strokeStyle="#500000";
 			ctx.beginPath();
-			ctx.arc(rCircleX[i]*screenScale+ftmp , -rCircleY[i]*screenScale-fftemp , rCircleR[i]*screenScale , 0 , endAngle);
+			ctx.arc(rCircleX[i]*screenScale+ftmp , -rCircleY[i]*screenScale-dtmp , rCircleR[i]*screenScale , 0 , endAngle);
 			ctx.stroke();
 			ctx.fillStyle = "red";
 			ctx.closePath();
@@ -143,5 +149,7 @@ function drawColliders(){
 		ctx.fillText(levelName,10,40);
 		ctx.font = "60px Arial";//		60spx font is used everywhere but here so it should only need to be set here.
 	}
+	drawSVGColliders();
 }
+
 
