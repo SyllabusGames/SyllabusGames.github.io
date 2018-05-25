@@ -161,7 +161,8 @@ function drawColliders(){
 				rtmp = dxdt/dx;//		fraction of line from [i] to [i-1] that is from [i] to sled position
 				ftmp = dy*rtmp + allGroundPointsY[i];//		ftmp = y position on line at sled X coordinate
 
-				if(apy < -ftmp && (-ftmp - apy) < 3){//		if sled is below line but not by more than 3 meters
+		//		if((apy+0.1 > -ftmp) && (apy+vy*dt < -ftmp)){//		currently sled is above line but next frame will be below line
+				if(apy < -ftmp && (-ftmp - apy) < 1){///(0.1+Math.abs(dx))){//		if sled is below line but not by more than 1 meter/slope x component
 					ltmp = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
 					//		make [dx , dy] the unit vector of this segment's slope
 					dx /= ltmp;

@@ -45,7 +45,7 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 }
 
 document.addEventListener("mousedown", mouseDown);
-document.addEventListener("mouseup", stopMovingPoint);
+document.addEventListener("mouseup", mouseUp);
 document.addEventListener("mousemove", updateMousePosition);
 
 
@@ -64,23 +64,34 @@ function mouseDown(e){
 			
 			dragScreenScale = screenScale;
 		}
-	}else if( evt.which == 1 ){//		left click
+	}
+	if( evt.which == 1 ){//		left click
 		if(useZ){
 			xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
 		}
 		if(selectedPoint != -1)
 			draggingPoint = true;
 	}
+	
+	if( evt.which == 3 ){//		right click
+		writeCursor = true;
+	}
 }
 
 //		----------------------------------------------------		[   Mouse Up   ]		----------------------------------------------------
-function stopMovingPoint(e){
+function mouseUp(e){
 	var evt = e==null ? event : e;//		firefox compatibility	
 
 	if( evt.which == 2 ) {//		middle click
 		draggingScreen = false;
-	}else if( evt.which == 1 ){//		left click
+	}
+	
+if( evt.which == 1 ){//		left click
 		draggingPoint = false;
+	}
+	
+	if( evt.which == 3 ){//		right click
+		writeCursor = false;
 	}
 }
 

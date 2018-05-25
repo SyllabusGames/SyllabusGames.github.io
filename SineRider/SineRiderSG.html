@@ -183,6 +183,12 @@
 				}else if (document.documentElement.webkitRequestFullScreen) {
 					document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 				}
+				//		make sure the screen is always landscape
+				if(screenHeight > screenWidth){
+					k = screenHeight;
+					screenHeight = screenWidth;
+					screenWidth = k;
+				}
 			}else{//		exit fullscreen
 				screenWidth = 1600;
 				screenHeight = 800;
