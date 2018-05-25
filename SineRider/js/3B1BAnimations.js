@@ -53,6 +53,7 @@ function setUpNumberLines(){//		reset variables for a new animation
 }
 
 function pullNextStage(){
+	return;
 	substring = animStages[animIndex].split(',');
 
 	switch(substring[0]){
@@ -123,6 +124,7 @@ function pullNextStage(){
 }
 
 function drawNumberLines(){
+	return;
 	animTime += dt*0.5;
 	
 	//		-------------------------------------------------------------		[   Load next equation/Stage   ]		-------------------------------------------------------------
@@ -202,7 +204,6 @@ function drawNumberLines(){
 
 //		xxx is x position of line. yyy is spacing of ticks
 function numberLine(xxx , dy , yyy){
-	return;
 	xxx -= screenx*screenScale;
 	//		don't add thousands of tic marks if the spacing is too small to see
 	if(Math.abs(yyy) < 0.15){

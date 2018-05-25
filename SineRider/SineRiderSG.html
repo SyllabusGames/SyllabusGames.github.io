@@ -1,4 +1,5 @@
-﻿<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
+﻿<!DOCTYPE html>
+<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
 <canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
 <canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
 
@@ -10,12 +11,8 @@
 	<!--	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">	-->
 </head>
 
-<!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
-<!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-<div type="text" id="dinput" placeholder="Last name" value="-x-2" defaultValue="-x" contentEditable="true" style="position:absolute;left:160px;
-			top:720px;width:1000px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA; overflow: hidden;"></div>
-<!-- 		-----------------------------------------------------------------------		[   Input Test   ]		----------------------------------------------------------------------- -->
+<!--		Dissable right click menu		-->
+<body oncontextmenu="return false;"></body>
 
 <!--	Load External Libraries	-->
 <!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
@@ -32,6 +29,7 @@
 <script type="text/javascript" src="js/SvgEditor.js"></script>
 <script type="text/javascript" src="js/AudioControl.js"></script>
 <script type="text/javascript" src="js/Pause.js"></script>
+<script type="text/javascript" src="js/InputManager.js"></script>
 
 <!--		Remove white space around canvas (also makes cursor more accurate)		-->
 <body style="margin: 0;"></body>
@@ -73,6 +71,8 @@
 	//		all these variables should be assumed to be reset outside the context of a single function
 	var dx = 0;//	float
 	var dy = 0;//	float
+	var lyy = 0;//	float
+	var ryy = 0;//	float
 	var dydt = 0;//	float
 	var dxdt = 0;//	float
 	var i = 0;//	int
@@ -85,6 +85,7 @@
 	var tmspx;
 	var tmspy;
 	var tmspz;
+	var onOff = false;
 
 	//		should be deleted before launch
 	var debugSkipFrame = false;
@@ -118,12 +119,9 @@
 	var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel gaps caused by a low sample rate.
 	var xyz2c;
 
-	//		for running things differently when a level has just been loaded
-	var newLevel = true;
+	var mainInput;
+	var piecInput = new Array();
 
-	//		Text colors, [0-9] Partenthasis, [11] x, [12] t, [13] z
-	var textColor = ["#00AAFF" , "#660066" , "#33AA33" , "#990033" , "#009999" , "#FF3300" , "#0066AA" , "#FF9900" , "#003399" , "#AAAA00", //		0-9
-		"#FF0000" , "#009900" , "#0000FF"];//	10-12
 	var parenOpen = 0;
 
 	var timestamp;//		used only for running update()
@@ -137,6 +135,14 @@
 		xyz2  = xyz2c.getContext('2d');
 		document.body.style.overflow = 'hidden';//		turn off page scrolling
 		lastTime = performance.now()*0.001;
+
+		mainInput = document.createElement("p");
+		mainInput.setAttribute("id" , "input0");
+		mainInput.setAttribute("contentEditable" , "true");
+		mainInput.style = "position:absolute;left:80px;top:680px;width:1440px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
+		mainInput.innerHTML = "-x"
+		document.body.appendChild(mainInput);
+		piecInput.push(mainInput);
 
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
@@ -160,6 +166,10 @@
 	
 //		-----------------------------------------------------------------------		[   Toggle FullScreen   ]		-----------------------------------------------------------------------
 	document.addEventListener("keydown", function(e){
+	//	stmp = "cow";
+	//	mainInput.setAttribute("value", "<span style='color:red;'>cat</span>");
+	//	mainInput.html("<span style='color:red;'>cow</span>");
+	//	console.log(mainInput.contentEditable);
 		if (e.keyCode == 32){//		shift = 16		//		escape = 27
 			//		folowing code from		https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
 			if((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
@@ -185,13 +195,15 @@
 				}
 			}
 			//		keep 3D view in right corner of view
-			xyzc.style.left = screenWidth-500;
-			xyz2c.style.left = screenWidth-500;
+			console.log("fullscreen");
+			xyzc.style.left = screenWidth-600 + "px";
+			xyz2c.style.left = screenWidth-600 + "px";
 			canvas.width = screenWidth;
 			canvas.height = screenHeight;
-			equInputField.left = Math.round(screenWidth * 0.1);
-			equInputField.top = Math.round(screenHeight * 0.9);
-			equInputField.width = Math.round(screenWidth * 0.8);
+			equInputField = piecInput[0].style;
+			equInputField.left = Math.round(screenWidth * 0.05) + "px";
+			equInputField.top = Math.round(screenHeight * 0.85) + "px";
+			equInputField.width = Math.round(screenWidth * 0.9) + "px";
 		}
 	}, false);
 
@@ -246,6 +258,17 @@
 
 		document.onkeyup = function(e){
 		//	console.log("Released Key " + e.keyCode);
+			//		update the active input 
+			if(usePiecewise){//		if multiple inputs and current input is not mainInput
+				for(i = 0 ; i < piecSecCount ; i++){//		check all input fields and set whichever is avtive as mainInput
+					if(piecInput[i] == document.activeElement){
+						checkInputFields(i);
+						break;
+					}
+				}
+			}else{//		not piecewise. Use normal input (0)
+				checkInputFields(0);//		see EquationLine.js
+			}
 			if(e.keyCode == 17){//		Ctrl
 				debugFastForward = false;
 			}
@@ -278,7 +301,7 @@
 		document.body.onkeyup = function(e){
 			if(e.keyCode == 13){//		enter
 				resetSledder();
-				$("div").keyup();//		update line. (useful if the player types something while the simulation is running)
+				checkInputFields();//		update line. (useful if the player types something while the simulation is running)
 			}
 		}
 

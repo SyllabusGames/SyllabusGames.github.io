@@ -17,7 +17,6 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 
 	ctx.beginPath();
 	for(i = allGroundPointsX.length-1 ; i > -1 ; i--){
-	//		ctx.lineTo((allGroundPointsX[i]+screenx)*screenScale , (allGroundPointsY[i]+screeny)*screenScale);
 		if(allGroundBreaks[i]){//		line continues
 			ctx.lineTo((allGroundPointsX[i]-screenx)*screenScale , (allGroundPointsY[i]+screeny)*screenScale);
 		}else if(i == 0 || allGroundBreaks[i-1]){//	first point of new line
@@ -25,28 +24,33 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 		}
 	}
 	ctx.stroke();
-
+	
 	if(selectedPoint != -1){//		highlight selected point and move with cursor
-		ctx.strokeStyle="#0000FF";
-		ctx.beginPath();
-		ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 0.35*screenScale , 0 , endAngle);
-		ctx.stroke();
-		ctx.fillStyle = "#0000FF";
-		ctx.closePath();
-		ctx.fill();
-		ctx.stroke();
+		if(draggingPoint){//		Point being dragged has a light blue dot over it
+			ctx.strokeStyle="#00FFFF";
+			ctx.beginPath();
+			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , endAngle);
+			ctx.stroke();
+			ctx.fillStyle = "#00FFFF";
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}else{//		Point hovered over is circled in blue
+			ctx.strokeStyle="#0080FF";
+			ctx.beginPath();
+			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , endAngle);
+			ctx.stroke();
+		}
 	}
-
 }
 
-document.addEventListener("mousedown", selectPoint);
+document.addEventListener("mousedown", mouseDown);
 document.addEventListener("mouseup", stopMovingPoint);
 document.addEventListener("mousemove", updateMousePosition);
-document.addEventListener("wheel", zoomScreen);
 
 
 //		----------------------------------------------------		[   Mouse Down   ]		----------------------------------------------------
-function selectPoint(e){
+function mouseDown(e){
 	if(simulating)
 		return;
 	var evt = e==null ? event : e;//		firefox compatibility	
@@ -55,29 +59,17 @@ function selectPoint(e){
 		evt.preventDefault();
 		draggingScreen = true;
 		if(dragScreenX == 0){//		the screen is currently in its default position
-	//		dragScreenX = screenx;
-	//		dragScreenY = -screeny;
 			dragScreenX = screenx + screenWidth/2/screenScale;
 			dragScreenY = -screeny + screenHeight/2/screenScale;
 			
 			dragScreenScale = screenScale;
 		}
 	}else if( evt.which == 1 ){//		left click
-		var dist = 10;
-		//		convert mouse space to world space
-		dx = (evt.clientX/screenScale)+screenx;
-		dy = (evt.clientY/screenScale)-screeny;
-		selectedPoint = -1;//		if this remains -1, no point was within 10 meters of the cursor
-		for(i = allGroundPointsX.length-1 ; i > -1 ; i--){
-			ftmp = dx - allGroundPointsX[i];
-			fftmp = dy - allGroundPointsY[i];
-			ftmp = ftmp*ftmp+fftmp*fftmp;
-			if(ftmp < dist){
-				dist = ftmp;
-				selectedPoint = i;
-			}
+		if(useZ){
+			xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
 		}
-		draggingPoint = true;
+		if(selectedPoint != -1)
+			draggingPoint = true;
 	}
 }
 
@@ -89,7 +81,6 @@ function stopMovingPoint(e){
 		draggingScreen = false;
 	}else if( evt.which == 1 ){//		left click
 		draggingPoint = false;
-		//saveExternalSVG();
 	}
 }
 
@@ -106,6 +97,21 @@ function updateMousePosition(e){
 	if(draggingPoint && selectedPoint != -1){//		highlight selected point and move with cursor
 		allGroundPointsX[selectedPoint] += (mouseX - mouseLastX)/screenScale;
 		allGroundPointsY[selectedPoint] += (mouseY - mouseLastY)/screenScale;
+	}else{//		highlight closest point
+		var dist = 10;
+		//		convert mouse space to world space
+		dx = (evt.clientX/screenScale)+screenx;
+		dy = (evt.clientY/screenScale)-screeny;
+		selectedPoint = -1;//		if this remains -1, no point was within 10 meters of the cursor
+		for(i = allGroundPointsX.length-1 ; i > -1 ; i--){
+			ftmp = dx - allGroundPointsX[i];
+			fftmp = dy - allGroundPointsY[i];
+			ftmp = ftmp*ftmp+fftmp*fftmp;
+			if(ftmp < dist){
+				dist = ftmp;
+				selectedPoint = i;
+			}
+		}
 	}
 	if(draggingScreen){
 		dragScreenX -= (mouseX - mouseLastX)/screenScale;
@@ -116,22 +122,22 @@ function updateMousePosition(e){
 	}
 }
 
-
 //		----------------------------------------------------		[   Scroll Wheel   ]		----------------------------------------------------
-function zoomScreen(e){
-	if(simulating)
-		return;
-	dragScreenScale = Math.min(Math.max(dragScreenScale + e.wheelDelta*0.002*dragScreenScale , 0.15) , 17000);//		scale is non-linear so multiplying by dragScreenScale makes changes close to linear
-	screenScale = dragScreenScale;
-	screenx = dragScreenX - screenWidth/2/screenScale;
-	screeny = -dragScreenY + screenHeight/2/screenScale;
-}
+document.addEventListener('wheel', function(e){
+	if(!simulating){
+		ftmp = 0.3*Math.sign(e.deltaY) - 0.046;//		makes scroll speed brouser independent
+		dragScreenScale = Math.min(Math.max(dragScreenScale - ftmp*dragScreenScale , 0.15) , 17000);//		scale is non-linear so multiplying by dragScreenScale makes changes close to linear
+		screenScale = dragScreenScale;
+		screenx = dragScreenX - screenWidth/2/screenScale;
+		screeny = -dragScreenY + screenHeight/2/screenScale;
+	}
+});
 
 //		----------------------------------------------------		[   Export SVG   ]		----------------------------------------------------
 function saveExternalSVG(){
 	if(simulating)
 		return;
-	var svgCode = '<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="2000" width="2000" version="1.1" xmlns:cc="http://creativecommons.org/ns#" viewBox="0 0 2000 2000">\n <g transform="translate(0 947.638)" fill="none">\n';
+	var svgCode = '<svg xmlns="http://www.w3.org/2000/svg" height="2000" width="2000" version="1.1" viewBox="0 0 2000 2000">\n <g transform="translate(0 1000)" fill="none">\n';
 	svgCode += '  <path d="M';
 	for(i = allGroundPointsX.length-1 ; i > -1 ; i--){
 		//		record X and Y coordiantes with 2 decimal places with spaces between them

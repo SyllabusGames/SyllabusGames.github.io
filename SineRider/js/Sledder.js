@@ -59,7 +59,12 @@ function moveSledder(){
 		//		test curvV with y=-x*2+(x/10-5)^2+sin(x/5+t)*15+10-x-5
 		//						y=sin(x/3+t*2)*3-x/2
 		//						y=sin(t*4)*3-x/2
-		vy += ay*dt;
+	//	if(frameTime < 5)
+			vy += ay*dt;
+	//	else
+	//		vy -= ay*dt;
+
+	//	console.log("vy="+vy+" vx="+vx+"vMag="+Math.sqrt(vx*vx+vy*vy));
 		//		friction
 		//vx *= 0.9999;
 		//vy *= 0.9999;

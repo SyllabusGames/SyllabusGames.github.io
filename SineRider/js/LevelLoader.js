@@ -11,6 +11,9 @@ var use2Equ = false;//		piecewise with 2 equations
 var use3Equ = false;//		piecewise with 3 equations
 var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
+var usePiecewise = false;
+var piecSections = [10,25,50];
+var piecSecCount = 3;
 var usePolar = false;//		FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
@@ -85,10 +88,10 @@ function loadBuiltInLevel(){
 				i++;
 				substring = loadedLevel[i].split('_');//		sledder start position
 				defaultEqu = loadedLevel[i];
-				$("#dinput").text(defaultEqu);
+				mainInput.innerHTML = defaultEqu;
 			}else{
 				defaultEqu = loadedLevel[i];
-				$("#dinput").text(defaultEqu);
+				mainInput.innerHTML = defaultEqu;
 			}
 			i++;
 
@@ -126,7 +129,7 @@ function loadBuiltInLevel(){
 			gCircleR = []
 			
 			gRectX = [];
-			gRectY = []
+			gRectY = [];
 			gRectSideX = [];
 			gRectSideY = [];
 			substring = loadedLevel[i].split(',');//		load in first goal collider
@@ -172,7 +175,7 @@ function loadBuiltInLevel(){
 
 			//		request txt file of level colliders
 			//		load internal .txt
-			loadCollidersFromTex(localStorage.getItem("SR001colliders"));
+			//loadCollidersFromTex(localStorage.getItem("SR001colliders"));
 			//		load external .txt
 			/*var client = new XMLHttpRequest();
 			client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
@@ -194,13 +197,37 @@ function loadBuiltInLevel(){
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
 	setUpInput();//		see EquationLine.js
-	$("#dinput").text(defaultEqu);
 	//		if a 3B1B animation is called for, set up the input for that
 	setUpNumberLines();//		see 3B1BAnimations.js
 	screenFollowSledder();//	move the screen to show the sledder and goal. See Sledder.js
-
+	if(usePiecewise)
+		setUpPiecewise();
+	checkInputFields();
+	loadCollidersFromSvg(localStorage.getItem("SVGcolliders"));
+//	loadCollidersFromSvg(localStorage.getItem("SvgExported"));
 //	animSteps = 
 //	animLerps = 
+}
+
+function setUpPiecewise(){
+	if(piecInput.length < piecSecCount){//		more equations used than inputs for equations
+		lyy =  Math.round(screenWidth * 0.05);//		left property
+		ftmp = Math.round(screenHeight * 0.85);//		top
+		ryy = Math.round(screenWidth * 0.9);//			width
+		for(i = piecInput.length ; i < piecSecCount ; i++){
+			piecInput.push(document.createElement("p"));
+			piecInput[i].setAttribute("id" , "input" + String(i));
+			console.log("input" + String(i));
+			piecInput[i].setAttribute("contentEditable" , "true");
+			piecInput[i].style = "position:absolute;left:"+lyy+"px;top:"+Math.round(ftmp-70*i)+"px;width:"+(ryy-15*i)+"px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
+			piecInput[i].innerHTML = "-x+00000+5"
+			document.body.appendChild(piecInput[i]);
+			console.log("added input");
+		}
+	}
+	checkInputFields(0);
+	checkInputFields(1);
+	checkInputFields(2);
 }
 
 function loadCollidersFromTex(sss){
@@ -290,4 +317,53 @@ function loadCollidersFromTex(sss){
 	}
 	//stmp = sss.substring(sss.indexOf("new"));
 	//alert(sss.indexOf("new") + "Final"+stmp);
+}
+
+function loadCollidersFromSvg(sss){
+	//		-----------------------------------------------------------------------		[   Import .tex to single array   ]		-----------------------------------------------------------------------
+	allGroundPointsX = new Array();
+	allGroundPointsY = new Array();
+	allGroundBreaks = new Array();
+	var absolute = false;
+
+	substring = sss.split('<path');//		each substring contains one path
+	var ministring = "";//		each ministring contains one string of points
+	var k = 0;
+	var color = "#000000";
+	//		loop through each line, through each set of points, then split X and Y on the ,
+	//		loop forward so if stroke color is left the same between paths, it will inherit the correct color
+	for(i = 1 ; i < substring.length  ; i++){//		i=1 because the 0ith entry is just the file header information
+		k = substring.indexOf("stroke:");
+		if(k != null)//		if the stroke color changes, get new color; otherwise, leave it as the last line's color.
+			color = substring[i].substring(k , 7);
+
+		substring[i] = substring[i].substring(3+substring[i].search(/d="m/i));//		cut fluff off the start of substring[i]
+		absolute = (substring[i][0] == 'M');
+
+		substring[i] = substring[i].substring(0 , substring[i].indexOf('"'));//		cut fluff off the end of substring[i]
+		substring[i] = substring[i].replace(/-/g , ' -');//		replace - with _- so if points are listed 15-35 they will go to 15 -35 and can be split on the space
+		substring[i] = substring[i].replace(/[MmLlHhVvCcSsQqTtAaZz]/g , '');//		remove all path types. Everything will be treated as 'lineto'
+		substring[i] = substring[i].replace(/  /g , ',');//		if it was formatted 15 -35 already, the last opperation will take it to 15  -35 so this will remove the redundant space
+		substring[i] = substring[i].replace(/ /g , ',');//		replace all single spaces with , so substring[i] is csv
+		substring[i] = substring[i].replace(/,,/g , ',');//		#,-# will be turned into #,,-#		This fixes that
+		if(substring[i][0] == ',')		
+			substring[i] = substring[i].substring(1);//		if the first character is , remove it
+		//		all points should now be sepperated by a , or a space
+		ministring = substring[i].split(',');//		make ministring a list of X and Y coordinates
+
+		allGroundPointsX.push( (parseFloat(ministring[0]) - 1000)/5);
+		allGroundPointsY.push( parseFloat(ministring[1])/5 - 10);
+		//console.log(substring[i]);
+		if(allGroundBreaks.length > 0)
+			allGroundBreaks[allGroundBreaks.length] = false;
+		for(k = 2 ; k < ministring.length ; k += 2){
+			allGroundPointsX.push( parseFloat(ministring[k])/5 + (absolute? -200 : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
+			//console.log('x = '+allGroundPointsX[allGroundPointsX.length-2]);
+
+			allGroundPointsY.push( parseFloat(ministring[k+1])/5 + (absolute? -10 : allGroundPointsY[allGroundPointsY.length-1]));
+			allGroundBreaks.push(true);
+			//console.log('y = '+allGroundPointsY[allGroundPointsY.length-2]);
+		}
+		//		change the last entry in this array to false so a line is not drawn between the end of one line and start of the next
+	}
 }

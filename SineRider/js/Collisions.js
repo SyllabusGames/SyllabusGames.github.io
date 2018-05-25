@@ -150,6 +150,33 @@ function drawColliders(){
 		ctx.font = "60px Arial";//		60spx font is used everywhere but here so it should only need to be set here.
 	}
 	drawSVGColliders();
+	//		-----------------------------------------------------------------------		[   Collision with SVG   ]		-----------------------------------------------------------------------
+	for(i = allGroundPointsX.length - 1 ; i > 0 ; i--){//		read all x points
+		if(allGroundBreaks[i-1]){//		if the next point is part of a different line, skip
+			if(Math.sign(allGroundPointsX[i] - apx) != Math.sign(allGroundPointsX[i-1] - apx)){//		sled is between this point and the next
+				dx = allGroundPointsX[i-1] - allGroundPointsX[i];//		change in x from one path point to the next
+				dy = allGroundPointsY[i-1] - allGroundPointsY[i];
+
+				dxdt = apx - allGroundPointsX[i];//		change in x from one path point to the sled
+				rtmp = dxdt/dx;//		fraction of line from [i] to [i-1] that is from [i] to sled position
+				ftmp = dy*rtmp + allGroundPointsY[i];//		ftmp = y position on line at sled X coordinate
+
+				if(apy < -ftmp && (-ftmp - apy) < 3){//		if sled is below line but not by more than 3 meters
+					ltmp = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
+					//		make [dx , dy] the unit vector of this segment's slope
+					dx /= ltmp;
+					dy /= ltmp;
+					
+					dtmp = vx*dx - vy*dy;//		Dot Product of velocity and slope's tangent.		(Ammount of velocity along the graph)
+				//	console.log("dot="+dtmp+" vx=" + vx + " dx=" + dx+" vy="+vy+" dy="+dy);
+					vx =  dtmp * dx;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
+					vy = -dtmp * dy;
+
+					apy = -ftmp;//		snap sled to line
+				}
+			}
+		}
+	}
 }
 
 

@@ -14,7 +14,7 @@ var xyzLastMouseY = 0;
 var xyzMouseHeld = false;
 var changeApz = false;
 var futureApz = 0;
-renderFlipX = false;
+var renderFlipX = false;
 //		for testing			-x*2+2+sin(z/15+t*2+x/10)*10
 //							(sin(x/5-t)+sin(z/5))*5-20
 //							sin(x/5-t)*4+-(z/5)^2
@@ -37,18 +37,13 @@ var scanLine = -15;
 var scanStep = 10;
 
 //	----------------------------------		[   Get mouse for rotating render   ]		----------------------------------
-document.getElementById('XYZ2').addEventListener("mousedown", function(e){
+function xyzMouseDown(xxx , yyy){//		called from mouseDown in SvgEditor.js
 	xyzMouseHeld = true;
-	if (e.x != undefined){
-		xyzMouseX = e.x;
-		xyzMouseY = e.y;
-	}else{ // Firefox method to get the position{
-		xyzMouseX = e.clientX;
-		xyzMouseY = e.clientY;
-	}
+	xyzMouseX = xxx;
+	xyzMouseY = yyy;
 	xyzLastMouseX = xyzMouseX;
 	xyzLastMouseY = xyzMouseY;
-});
+}
 
 document.getElementById('XYZ2').addEventListener("mouseup", function(e){
 	xyzMouseHeld = false;
@@ -71,7 +66,7 @@ document.getElementById('XYZ2').addEventListener('mousemove' , function(e){
 		xyzMouseX = e.clientX;
 		xyzMouseY = e.clientY;
 	}
-	viewAngle += (xyzLastMouseX - xyzMouseX)*0.02;
+	viewAngle += (xyzLastMouseX - xyzMouseX)*0.015;
 	xyzLastMouseX = xyzMouseX;
 	if(changeApz){
 		futureApz = Math.max( Math.min(futureApz + (xyzLastMouseY - xyzMouseY)*0.12 , 20) , -20);//		I want apz to be rounded but recording it directly causes problems
@@ -111,9 +106,9 @@ function drawXYZ(){
 	//		ReRender everything near the sledders X and Z position and everything further from the camera than the sledder on those 2 axes. Then render the sledder.
 	useZ = true;
 	//		render 10 lines a frame
-	for (var x = scanLine; x < Math.min(scanLine+scanStep , 50); x+=0.3){
+	for (var x = scanLine; x < Math.min(scanLine+scanStep , 100); x+=0.3){
 		tempZ = -21;
-		tempX = renderFlipX ? tempX = 40-x : x;
+		tempX = renderFlipX ? 79-x : x;
 		lastY = equation(tempX);
 		for(var z = -20; z < 20; z+=0.2){
 			tempZ = z;
@@ -176,7 +171,7 @@ function drawXYZ(){
 	}
 
 	//		if the render has reached line 50, push the buffer to the canvas
-	if(scanLine < 49){
+	if(scanLine < 100){
 		scanLine += scanStep;
 		return;
 	}
