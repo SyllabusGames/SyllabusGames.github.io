@@ -160,7 +160,11 @@ function drawLine(){
 
 //	----------------------------------		[   Display coordinates on line near cursor   ]		----------------------------------
 function cursorPosition(){
-	dx = mouseX/screenScale + screenx;
+	if(writeRoundedCursor){//		round x input
+		dx = Math.round( mouseX/screenScale + screenx );
+	}else{
+		dx = mouseX/screenScale + screenx;
+	}
 	dy = equation(dx);
 
 	//		show mouse X and corisponding graph Y on screen
@@ -170,7 +174,7 @@ function cursorPosition(){
 	
 	//		draw dot on graph at coordinates above
 	ctx.beginPath();
-	ctx.arc( mouseX , -(dy-screeny)*screenScale , 4 , 0 , endAngle);
+	ctx.arc( (dx - screenx)*screenScale , -(dy-screeny)*screenScale , 4 , 0 , endAngle);
 	ctx.stroke();
 	ctx.closePath();
 	ctx.fill();
