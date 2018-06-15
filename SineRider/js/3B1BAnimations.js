@@ -1,4 +1,5 @@
-﻿var animX = 1;//		animate 0 to 1 to go from all number lines on the Y axis to being spaced out accross the screen
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+var animX = 1;//		animate 0 to 1 to go from all number lines on the Y axis to being spaced out accross the screen
 var animY = 0;
 
 //["5" , "5+x" , "5+x/2" , "5+(x/2)^2"]

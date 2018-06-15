@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<!-------	[  This is free and unencumbered software released into the public domain  ]	------->
+<!DOCTYPE html>
 <canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
 <canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
 <canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
@@ -30,6 +31,7 @@
 <script type="text/javascript" src="js/AudioControl.js"></script>
 <script type="text/javascript" src="js/Pause.js"></script>
 <script type="text/javascript" src="js/InputManager.js"></script>
+<script type="text/javascript" src="js/Menu.js"></script>
 
 <!--		Remove white space around canvas (also makes cursor more accurate)		-->
 <body style="margin: 0;"></body>
@@ -107,6 +109,7 @@
 	//		gameplay state
 	var simulating = false;//		game is running. Sled is moving.
 	var paused = false;//		player has not paused and window is in focus
+	var menuOpen = false;//		game is paused because the menu is open
 	var writeCursor = false;
 
 	//		canvas
@@ -211,13 +214,30 @@
 			equInputField.top = Math.round(screenHeight * 0.85) + "px";
 			equInputField.width = Math.round(screenWidth * 0.9) + "px";
 		}
+		//		-----------------------------------------------------------------------		[   MAIN MENU   ]		-----------------------------------------------------------------------
+		if(e.keyCode == 192){
+			if(menuOpen){//		hide main menu
+				showHideInputs(true);
+				menuOpen = false;
+				paused = false;
+			}else{//		show main menu
+				drawMainMenu();//		see Menu.js
+				showHideInputs(false);//		see InputManager.js
+				menuOpen = true;
+				paused = true;
+			}
+		}
 	}, false);
 
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 	function update(timestamp){
 		window.requestAnimationFrame(update);
-		if(paused)
+		if(paused){
+			if(menuOpen){
+				MMDrawLine();
+			}
 			return;
+		}
 		dt = Math.min(performance.now()*0.001 - lastTime , 0.25);//		no frame can skip more than 1/4 seconds
 		lastTime = performance.now()*0.001;
 		if(useZ)

@@ -1,4 +1,5 @@
-﻿//		all points are lower left corner of rectangle
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+//		all points are lower left corner of rectangle
 
 var rRectX = new Array(2);
 var rRectY = new Array(2);

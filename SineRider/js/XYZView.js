@@ -1,5 +1,8 @@
-﻿var viewAngle = 2514.274123;//		defalut 2513.274123 is 400 turns so the player will never go negative which messes up the render depth
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+var viewAngle = 2514.274123;//		defalut 2513.274123 is 400 turns so the player will never go negative which messes up the render depth
 var passViewAngle = 0;//		the view angle used for this pass so it doesn't change partway through a render pass.
+var passTime = 0;//		temporary value of frameTime used so each pass uses the same frameTime value for the whole calculation
+var storedTime = 0;
 var cForwardx = 0.577350269;
 var cForwardz = -0.577350269;
 var cLeftx = 0;
@@ -80,6 +83,7 @@ document.getElementById('XYZ2').addEventListener('mousemove' , function(e){
 	xyzLastMouseX = xyzMouseX;
 	if(changeApz){
 		futureApz = Math.max( Math.min(futureApz + (xyzLastMouseY - xyzMouseY)*0.12 , 20) , -20);//		I want apz to be rounded but recording it directly causes problems
+		lastApz = apz;
 		apz = Math.round(futureApz);
 		xyzLastMouseY = xyzMouseY;//		reset xyzLastMouseY so Z doesn't jump 20px worth of movement
 	}else if(Math.abs(xyzMouseY - xyzLastMouseY) > 20){//		only change apz (sled Z position) after the mouse has moved more than 20px vertically. [reduces incidental movement while trying to rotate the view]
@@ -95,6 +99,7 @@ function setUpXYZ(){
 	buf8 = new Uint8ClampedArray(buf);
 	data = new Uint32Array(buf);
 	passViewAngle = viewAngle;
+	passTime = frameTime;
 	//		"Z = #" should be the only text on this canvas
 	xyz2.fillStyle = "#0000FF";
 	xyz2.font = "40px Arial";
@@ -116,6 +121,8 @@ function drawXYZ(){
 	//		ReRender everything near the sledders X and Z position and everything further from the camera than the sledder on those 2 axes. Then render the sledder.
 	useZ = true;
 	if(show3D){
+		storedTime = frameTime;
+		frameTime = passTime;//		set frameTime to the value the entire pass uses
 		//		render 10 lines a frame
 		for (var x = scanLine; x < Math.min(scanLine+scanStep , 100); x+=0.3){
 			tempZ = -21;
@@ -180,6 +187,7 @@ function drawXYZ(){
 				}
 			}
 		}
+		frameTime = storedTime;//		restore correct time
 	
 		//		if the render has reached line 50, push the buffer to the canvas
 		if(scanLine < 100){
@@ -189,6 +197,7 @@ function drawXYZ(){
 	
 		
 		passViewAngle = viewAngle%(2*Math.PI);//		keep passViewAngle between 0 and 2pi so renderFlipX works correctly
+		passTime = frameTime;
 		scanLine = -15;
 		renderFlipX = (passViewAngle > 3.14159 || passViewAngle < 0);
 		//		erase the last render

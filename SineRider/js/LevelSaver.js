@@ -1,5 +1,6 @@
-﻿function saveLevel(){
-	localStorage.setItem("SR001" , "LV1: Using Time\nSR\n0,0\n-x*0.3+2.5t\nuseTime\nuseZ\n80,5\nGoal\n80,5,3\nResets\n50,20,3\n80,-80,1\nCave.svg\nEnd");
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+function saveLevel(){
+	localStorage.setItem("SR001" , "LV1: Using Time\nSR\n0,0\nsin(x/2)*2+sin(t)*4+10\nuseTime\nuseZ\n80,5\nGoal\n80,5,3\nResets\n50,20,3\n80,-80,1\nCave.svg\nEnd");
 	localStorage.setItem("SR002" , "LV2: Using Z\nSR\n0,0\n-x/2+7t\n130,20\nGoal\n130,20,8\nResets\n-20,-3,5,3\nTower.svg\nEnd");
 	localStorage.setItem("SR003" , "LV3: Using Time and Z\nSR\n0,0\n-x-t*5+((z+5)^2)/20\nuseTime\nuseZ\n30,-60\nGoal\n30,-60,5\nResets\n10,-5,5,3\nTower.svg\nEnd");
 	localStorage.setItem("SR004" , "LV2: Using __ and Z\nSR\n0,20\n-x/3+_+2\nuseZ\n30,0\nGoal\n30,0,10\nResets\n10,-3,5,3\nCave.svg\nEnd");

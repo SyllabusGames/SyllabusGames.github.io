@@ -1,4 +1,5 @@
-﻿var selectedPoint = 8;
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+var selectedPoint = 8;
 var mouseLastX = 0.0;
 var mouseLastY = 0.0;
 var mouseX = 0.0;
@@ -51,10 +52,16 @@ document.addEventListener("mousemove", updateMousePosition);
 
 //		----------------------------------------------------		[   Mouse Down   ]		----------------------------------------------------
 function mouseDown(e){
-	if(simulating)
-		return;
 	var evt = e==null ? event : e;//		firefox compatibility	
-
+	
+	if( evt.which == 1 ){//		left click
+		if(useZ){
+			xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
+		}
+	}
+	
+	if(simulating)//		Following code not run while sledding
+		return;
 	if( evt.which == 2 ) {//		middle click
 		evt.preventDefault();
 		draggingScreen = true;
@@ -66,9 +73,6 @@ function mouseDown(e){
 		}
 	}
 	if( evt.which == 1 ){//		left click
-		if(useZ){
-			xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
-		}
 		if(selectedPoint != -1)
 			draggingPoint = true;
 	}

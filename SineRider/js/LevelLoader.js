@@ -1,4 +1,5 @@
-﻿var loadedLevel;
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+var loadedLevel;
 var levelType = "";
 var levelCode = "";//		Used by Goal (in Collidions.js) to save the current level as complete
 var substring;

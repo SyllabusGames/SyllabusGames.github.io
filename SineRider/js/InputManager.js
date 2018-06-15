@@ -1,62 +1,39 @@
-﻿/*
-//		following code from: http://jsfiddle.net/DerekL/A7gL2/
-function setCaretLocation(ele, pos){
-	var range = document.createRange(),
-		sel = window.getSelection();
-	console.log( Math.max(pos-2 , 0));
-	range.setStart(ele , Math.max(3 , 0));
-	/*if(ele.childNodes[pos - 1] != null){//		removed error
-		range.setStart(ele.childNodes[pos - 1], 1);
-	}*//*
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+
+//	copied from		http://jsfiddle.net/WeWy7/3/
+function restoreSelection(){
+	var charIndex = 0, range = document.createRange();
+	range.setStart(mainInput, 0);
 	range.collapse(true);
+	var nodeStack = [mainInput], node, foundStart = false, stop = false;
+        
+	while (!stop && (node = nodeStack.pop())) {
+		if (node.nodeType == 3) {
+			var nextCharIndex = charIndex + node.length;
+			if (!foundStart && lyy >= charIndex && lyy <= nextCharIndex) {
+				range.setStart(node, lyy - charIndex);
+				foundStart = true;
+			}
+			if (foundStart && ryy >= charIndex && ryy <= nextCharIndex) {
+				range.setEnd(node, ryy - charIndex);
+				stop = true;
+			}
+			charIndex = nextCharIndex;
+		} else {
+			var i = node.childNodes.length;
+			while (i--){
+				nodeStack.push(node.childNodes[i]);
+			}
+		}
+	}
+
+	var sel = window.getSelection();
 	sel.removeAllRanges();
-	ele.focus();
 	sel.addRange(range);
 }
 
-function setCaretPosition(elem, caretPos) {
-	if(elem.createTextRange) {
-		var range = elem.createTextRange();
-		range.move('character', caretPos);
-		range.select();
-	}else{
-		if(elem.selectionStart) {
-			elem.focus();
-			elem.setSelectionRange(caretPos, caretPos);
-		}else
-			elem.focus();
-	}
-}
-
-function setCaretPos(ctrl, pos) {
-  // Modern browsers
-	if (ctrl.setSelectionRange) {
-		ctrl.focus();
-		ctrl.setSelectionRange(pos, pos);
-		console.log("new");
-		// IE8 and below
-	}else if(ctrl.createTextRange) {
-		var range = ctrl.createTextRange();
-		range.collapse(true);
-		range.moveEnd('character', pos);
-		range.moveStart('character', pos);
-		range.select();
-		console.log("old");
-	}
-}*/
 //		reference: http://jsfiddle.net/timdown/vXnCM/
 //		setEnd reference: http://jsfiddle.net/WeWy7/3/
-function setCaret(el){
-	var range = document.createRange();
-	var sel = window.getSelection();
-	console.log(lyy + " - " + ryy + " - " + dxdt + " - " + dydt);
-	range.setStart(el.childNodes[lyy*2], ryy);
-//	range.setEnd(el.childNodes[dxdt*2], dydt);//		this is where the problem is
-	range.collapse(true);
-	sel.removeAllRanges();
-	sel.addRange(range);
-	el.focus();
-}
 
 function getCaretLocation(element){
 	try{
@@ -70,19 +47,29 @@ function getCaretLocation(element){
 	return preCaretRange.toString().length;
 }
 
+function showHideInputs(show){
+	if(show)
+		stmp = "block";
+	else
+		stmp = "none";
+	for(i = piecInput.length-1 ; i > -1 ; i--){
+		piecInput[i].style.display = stmp;
+	}
+}
+
 	//	----------------------------------		[   Equation Changed   ]		----------------------------------
 var inputZ = 0;
 function checkInputFields(inputNum = 0){
 	mainInput = piecInput[inputNum];
 	equInputField = mainInput.style;
 	mainInput.setAttribute("z-index" , ++inputZ);
-	equRaw[inputNum] = mainInput.innerText;
+
+	equRaw[inputNum] = mainInput.innerText.toLowerCase();
+
 	ftmp = getCaretLocation(mainInput);//		ftmp is current caret position
 	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
-	ltmp = 0;//		ltmp is the number of nodes (font/color changes) over the caret is
 	rtmp = 0;//		rtmp is the number of characters over the caret is in the current node (current font style/color)
-	dxdt = 0;
-	dydt = 0;
+	ryy = 0;//		right end of selection. lyy is left end of selection.
 	//	----------------------------------		[   Recolor Input Text   ]		----------------------------------
 	parenOpen = 0;
 	equChars = equRaw[inputNum].split("");
@@ -90,33 +77,26 @@ function checkInputFields(inputNum = 0){
 	equColored = "";
 	if(ftmp == 0){//		caret is at 0 , 0
 		lyy = 0;
-		ryy = 0;
 	}
-//	if(equChars[0] == 'x' || equChars[0] == 't' || equChars[0] == 'z' || equChars[0] == '(' || equChars[0] == ')')
-//		ltmp = -1;//		the first character being formatted causes errors
 	for(i = 0 ; i < k ; i++){
 		switch(equChars[i]){
 			case 'x':
 				equColored += '<a style="color:red">x</a>';
-				ltmp++;
-				rtmp = 0;
+				rtmp++;
 				break;
 			case 't':
 				equColored += '<a style="color:green">t</a>';
-				ltmp++;
-				rtmp = 0;
+				rtmp++;
 				break;
 			case 'z':
 				equColored += '<a style="color:blue">z</a>';
-				ltmp++;
-				rtmp = 0;
+				rtmp++;
 				break;
 			case '(':
 				equColored += '<a style="color:' + colors[parenOpen%10] + '">(</a>';
 				console.log(parenOpen%10);
 				parenOpen++;
-				ltmp++;
-				rtmp = 0;
+				rtmp++;
 				break;
 			case ')':
 				parenOpen--;
@@ -125,9 +105,10 @@ function checkInputFields(inputNum = 0){
 					parenOpen++;//		this makes the extra ) not effect the rest of the equation's )s coloring
 				}else
 					equColored += '<a style="color:' + colors[parenOpen%10] + '">)</a>';
-				ltmp++;
-				rtmp = 0;
+				rtmp++;
 				break;
+			case ' ':
+				break;//		remove spaces
 			default:
 				equColored += equChars[i];
 				rtmp++;
@@ -135,19 +116,14 @@ function checkInputFields(inputNum = 0){
 		}
 		ftmp--;
 		if(ftmp == 0){//		current character is the caret position
-			lyy = ltmp;
-			ryy = rtmp;
+			lyy = rtmp;
 		}if(ftmp == dtmp){//	current character is the end of the selection
-			dxdt = ltmp;
-			dydt = rtmp;
+			ryy = rtmp;
 		}
 	}
 	mainInput.innerHTML = equColored;
-//	setCaret(document.getElementById("input0" , ftmp));
-	setCaret(document.getElementById("input" + String(inputNum)));
-//	setCaretPos(document.getElementById("input" + String(inputNum) , ftmp));
-//	setCaretPosition(mainInput , ftmp);
-//	setCaretLocation(mainInput , ftmp);
+	restoreSelection();
+
 	//	----------------------------------		[   /Recolor Input Text   ]		----------------------------------
 
 	if(!simulating){//		Only update the equation if the simulation is not running

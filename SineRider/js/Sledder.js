@@ -1,4 +1,5 @@
-﻿//		set sledder rotation by this:	http://jsfiddle.net/johndavies91/xwMYY/		if possible
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+//		set sledder rotation by this:	http://jsfiddle.net/johndavies91/xwMYY/		if possible
 var defaultPosX = 0;
 var defaultPosY = 0;
 
@@ -10,6 +11,7 @@ var boxy = 0;
 var apx = 150;//		position in global (absolute) space. This is used for physics and most calculations.
 var apy = 50;
 var apz = 0;
+var lastApz = 0;
 var tempZ = 0;
 var tempX = 0;
 var spx = 150;//		position in screen space. Used for drawing the sledder.
@@ -73,11 +75,11 @@ function moveSledder(){
 		//		set sledder screen position so the camera will move correctly before the level starts
 		spx = (apx)*screenScale - screenx*screenScale;
 		spy = -(apy)*screenScale + screeny*screenScale;
-		//		draw sledder at default position and not moving
-		ctx.translate( spx, spy );
+		//		draw sledder at default position
+		ctx.translate( spx, spy+10 );
 		//		aspect ratio is 0.8
 		ctx.drawImage( img, -0.875*screenScale , -1.8125*screenScale , 1.75*screenScale , 2.5*screenScale);//		position here is is local space and therefore is only usefuly to center the image on the sled
-		ctx.translate( -spx, -spy );
+		ctx.translate( -spx, -spy-10 );
 	}
 
 	//		----------------------------------------------------		[   Move/Scale Screen   ]		----------------------------------------------------
@@ -123,13 +125,13 @@ function drawSledder(){
 	ftmp = equation(apx);//		Y position of line under sled
 
 	//		----------------------------------------------------		[   Draw Sledder   ]		----------------------------------------------------
-	ctx.translate( spx, spy );
+	ctx.translate( spx, spy+10 );
 	ctx.rotate( -rotation );//		rotation in radians
 	//		aspect ratio is 0.8
 	ctx.drawImage( img, -0.875*screenScale , -1.8125*screenScale , 1.75*screenScale , 2.5*screenScale);//		position here is is local space and therefore is only usefuly to center the image on the sled
 
 	ctx.rotate( rotation );
-	ctx.translate( -spx, -spy );
+	ctx.translate( -spx, -spy-10 );
 
 	/*	. is sledder position
 			\.--dx--|				
@@ -156,15 +158,22 @@ function drawSledder(){
 		dy *= dx;//		multiply dy by dx so [dx , dy] will be 1 meter long after the next opperation (unit tangent vector)
 		dx *= 0.1;//	dx was a multiplier for dy, now turn it back into dx (the x component of the tangent unit vector)
 		dtmp = vx*dx + vy*dy;//		Dot Product of velocity and slope's tangent.		(Ammount of velocity along the graph)
-			
+		
+		//		DRAW VECTORS
+		ctx.beginPath();
+		ctx.moveTo(spx , spy);
+		ctx.lineTo(spx+dx*50 , spy-dy*50);
+		ctx.stroke();
+
+
 		vx = dx*dtmp;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
 		vy = dy*dtmp;
-
 
 	//		----------------------------------------------------		[   Set Velocity by line movement   ]		----------------------------------------------------
 		//		since the graph can only change allong Y so the change in Y is used as the full displacment vector.
 		frameTime -= dt*2;//		I am not sure why the *2 is nessisary but it just is
-
+	//	dtmp = apz;
+	//	apz = lastApz;//		use last frame's z value so if it changed, that will be incorporated into the sled's movement
 		//		test (rotation)				-((x-22)*t*0.3-2)/5-5
 		//		test (slightly slopped trampoline)	 -x/100+sin(t*1.5+1.5)*7
 		//		test (neat)			-x/3-5+sin(-t+x/2)*2+((1+sin(t))*x/10-2)^2+sin(t)*4
@@ -178,7 +187,7 @@ function drawSledder(){
 		}else{//		the graph is moving left so i will use rtmp to estimate the change in x (dxdt) this frame
 			dxdt = (ftmp - rtmp);
 		}
-
+		
 		//		(y pos) - (y pos 1 frame ago)
 		dydt = (ftmp - equation(apx));//		dydx is just the y component of the velocity vector.
 		
@@ -191,8 +200,14 @@ function drawSledder(){
 			vy += tmspy*0.5;//		devide by 2 to compensate for multiplying the change in time by 2
 			vx += -tmspx*0.5;
 		}
+		if(vy > 0.5*tmspy/dt){
+			console.log("bump" + vy + " - " + 0.5*tmspy/dt);
+	//		vy = 10*0.5*tmspy/dt;
+		}
 		//		test			min(-5,sin(t+x/4)*10)*max(5,sin(t+x/4)*10)
 		//		square wave		max(-3,min(3,sin(-t+x/4)*100))-5
+		frameTime += dt*2;
+	//	apz = dtmp;//		restore the sled's z position
 
 		/*		read the line's Y offset over time as normal change, then get the X component of that.
 				curveVx = (line change in Y over time*Normal.x/(normal.x^2+normal.y^2))
@@ -203,7 +218,7 @@ function drawSledder(){
 				While less accurate, this should be more stable.
 		*/
 		//		this should push the sled normal to the curve instead of just straight up
-		frameTime += dt*2;
+		
 		av = 0;//		set angular velocity to 0 as it will be set below if the sled is not level on the track
 	}
 		

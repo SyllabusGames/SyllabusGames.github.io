@@ -1,4 +1,5 @@
-﻿/*		contains line from equation
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+/*		contains line from equation
  *			equation text input
  *			background grid draw
  * 
