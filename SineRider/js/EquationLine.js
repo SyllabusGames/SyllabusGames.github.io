@@ -36,13 +36,20 @@ function drawGrid(){//		draw a line at every 10 units
 	//		change what grid incraments are visible based on screen scale
 	if(screenScale < 1.5)
 		gridScale = 100;
-	else if(screenScale < 25)
-		gridScale = 10;
-	else if(screenScale < 350)
-		gridScale = 1;
-	else
-		gridScale = 0.1;
-		
+	else{
+		//		if scale is not huge and game is not running, lable the 10 meter marks
+		if(!simulating){
+			ctx.fillText("10m" , -screenx*screenScale-50 , (-10+screeny)*screenScale+20);
+			ctx.fillText("10m" , (10-screenx)*screenScale-50 , screeny*screenScale+20);
+			ctx.fillText("0m" , 0-screenx*screenScale-30 , screeny*screenScale+20);
+		}
+		if(screenScale < 25)
+			gridScale = 10;
+		else if(screenScale < 350)
+			gridScale = 1;
+		else
+			gridScale = 0.1;
+	}
 	for(i = Math.round(screenx/gridScale) ; i < (screenx+screenWidth/screenScale)/gridScale ; i++){//		vertical lines
 		if(i%10 == 0){
 			ctx.lineWidth = 3;

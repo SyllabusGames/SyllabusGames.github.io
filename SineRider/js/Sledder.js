@@ -17,7 +17,7 @@ var tempX = 0;
 var spx = 150;//		position in screen space. Used for drawing the sledder.
 var spy = 50;//			spy has the opposite sign as apy since the screen coordinate system has 0,0 in the upper right corner
 var vx = 0;
-var vy = 100;
+var vy = 0;
 var ay = -30;
 		
 //		called once when the gamescreen is loaded
@@ -61,16 +61,14 @@ function moveSledder(){
 		//		test curvV with y=-x*2+(x/10-5)^2+sin(x/5+t)*15+10-x-5
 		//						y=sin(x/3+t*2)*3-x/2
 		//						y=sin(t*4)*3-x/2
-	//	if(frameTime < 5)
-			vy += ay*dt;
-	//	else
-	//		vy -= ay*dt;
 
 	//	console.log("vy="+vy+" vx="+vx+"vMag="+Math.sqrt(vx*vx+vy*vy));
 		//		friction
 		//vx *= 0.9999;
 		//vy *= 0.9999;
 		drawSledder();
+		//		apply gravity
+		vy += ay*dt;
 	}else{
 		//		set sledder screen position so the camera will move correctly before the level starts
 		spx = (apx)*screenScale - screenx*screenScale;
@@ -157,17 +155,50 @@ function drawSledder(){
 		dx = 1/Math.sqrt(0.01 + dy*dy);//		divide dx by the length of the tangent line formed by [0.1 , dy]
 		dy *= dx;//		multiply dy by dx so [dx , dy] will be 1 meter long after the next opperation (unit tangent vector)
 		dx *= 0.1;//	dx was a multiplier for dy, now turn it back into dx (the x component of the tangent unit vector)
-		dtmp = vx*dx + vy*dy;//		Dot Product of velocity and slope's tangent.		(Ammount of velocity along the graph)
-		
-		//		DRAW VECTORS
+		dtmp = vx*dx + vy*dy;//		Dot Product of velocity and slope's tangent.		(Ammount of velocity along the graph) Dot = a.x*b.x + a.y*b.y
+		/*
+		//		Graph's tangent
 		ctx.beginPath();
 		ctx.moveTo(spx , spy);
 		ctx.lineTo(spx+dx*50 , spy-dy*50);
 		ctx.stroke();
 
+		//		slope normal vector
+		ctx.strokeStyle="#00FF00";
+		ctx.beginPath();
+		ctx.moveTo(spx , spy);
+		ctx.lineTo(spx-dy*50 , spy-dx*50);
+		ctx.stroke();
 
-		vx = dx*dtmp;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
-		vy = dy*dtmp;
+		
+		//		velocity vector
+		ctx.strokeStyle="#FF0000";
+		ctx.beginPath();
+		ctx.moveTo(spx , spy);
+		ctx.lineTo(spx+vx*5 , spy-vy*5);
+		ctx.stroke();
+
+		
+		//		velocity DOT slope normal
+		ctx.strokeStyle="#0000A0";
+		ctx.beginPath();
+		ctx.moveTo(spx , spy);
+		ctx.lineTo(spx , spy-(-dy*vx + -dx*-vy));
+		ctx.stroke();
+	//	console.log((-dy*vx + -dx*-vy));//		if dot product of slope normal and velocity is negative, sled is trying to go through the line
+	*/
+
+		//									[[[			ENABLING THIS SWITCHES LINE MOMENUM TRANSFER OFF			]]]
+		if((-dy*vx + -dx*-vy) < 0){//		if dot product of slope normal and velocity is negative, sled is trying to go through the line
+			vx = dx*dtmp;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
+			vy = dy*dtmp;
+		}
+
+
+
+
+
+
 
 	//		----------------------------------------------------		[   Set Velocity by line movement   ]		----------------------------------------------------
 		//		since the graph can only change allong Y so the change in Y is used as the full displacment vector.
@@ -178,15 +209,7 @@ function drawSledder(){
 		//		test (slightly slopped trampoline)	 -x/100+sin(t*1.5+1.5)*7
 		//		test (neat)			-x/3-5+sin(-t+x/2)*2+((1+sin(t))*x/10-2)^2+sin(t)*4
 		
-		ltmp = equation(apx-1);//		y pos 1 frame ago 1 meter to the left of the sledder's current location
-		rtmp = equation(apx+1);//		y pos 1 frame ago 1 meter to the right
-		//	is ltmp closer to the current y position than rtmp (is the graph moving !left or !right)
-		//		the difference between ftmp and ltmp/rtmp shows which direction and by how much the sled's current Y position has moved since the last frame
-		if(Math.abs(ftmp - rtmp) > Math.abs(ftmp - ltmp)){//		ltmp is closer so the line is moving right so i will use ltmp to estimate the change in x (dxdt) this frame
-			dxdt = (ftmp - ltmp);
-		}else{//		the graph is moving left so i will use rtmp to estimate the change in x (dxdt) this frame
-			dxdt = (ftmp - rtmp);
-		}
+		dxdt = (ftmp - equation(apx));//		change in curve's y since 2 frames ago
 		
 		//		(y pos) - (y pos 1 frame ago)
 		dydt = (ftmp - equation(apx));//		dydx is just the y component of the velocity vector.
@@ -195,15 +218,19 @@ function drawSledder(){
 		//		this will push the sled more left or right when the slope is steeper and more vertically when the slope is more level
 		tmspx = dy * dxdt;
 		tmspy = dx * dydt;
+	//	console.log(ftmp + " - " + equation(apx) + " - " + apx + " == " + tmspy + " vy= " + vy);
 
-		if(tmspy < 0){//		The sled cannot be pulled by the ground, only pushed.
-			vy += tmspy*0.5;//		devide by 2 to compensate for multiplying the change in time by 2
-			vx += -tmspx*0.5;
+		if(tmspy > 0){//		The sled cannot be pulled by the ground, only pushed.
+			vy += tmspy*0.5/dt;//		divide by 2 to compensate for multiplying the change in time by 2
+			vx -= tmspx*0.5/dt;
+		//	console.log("push" + vy);
 		}
+		/*
 		if(vy > 0.5*tmspy/dt){
 			console.log("bump" + vy + " - " + 0.5*tmspy/dt);
 	//		vy = 10*0.5*tmspy/dt;
 		}
+		*/
 		//		test			min(-5,sin(t+x/4)*10)*max(5,sin(t+x/4)*10)
 		//		square wave		max(-3,min(3,sin(-t+x/4)*100))-5
 		frameTime += dt*2;

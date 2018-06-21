@@ -160,10 +160,13 @@ function drawColliders(){
 
 				dxdt = apx - allGroundPointsX[i];//		change in x from one path point to the sled
 				rtmp = dxdt/dx;//		fraction of line from [i] to [i-1] that is from [i] to sled position
-				ftmp = dy*rtmp + allGroundPointsY[i];//		ftmp = y position on line at sled X coordinate
-
-		//		if((apy+0.1 > -ftmp) && (apy+vy*dt < -ftmp)){//		currently sled is above line but next frame will be below line
-				if(apy < -ftmp && (-ftmp - apy) < 1){///(0.1+Math.abs(dx))){//		if sled is below line but not by more than 1 meter/slope x component
+				ftmp = -dy*rtmp - allGroundPointsY[i];//		ftmp = y position on line at sled X coordinate
+				console.log((apy+0.1).toString() +" ftmp="+ ftmp +" next apy="+ (apy+vy*dt*0.15).toString() + " dt=" + dt);
+				//		the following line, vy*dt is multiplied by 0.15 because that is done in Sledder.js and it just works. The 1.2 is to give a margin for error/inconsistant dt values.
+				if((apy < ftmp && (ftmp - apy) < 1) && (apy+vy*dt*1.2*0.15 < ftmp)){//	Sled is under line by less than a meter OR next frame, the sled will be below line
+			//	if((apy > ftmp-0.01) && (apy+vy*dt*1.2*0.15 < ftmp)){//		currently sled is above line (or very slightly below [0.01]) and next frame will be below line
+			//	if(apy < ftmp && (ftmp - apy) < 1){///(0.1+Math.abs(dx))){//		if sled is below line but not by more than 1 meter/slope x component
+					console.log("moved to SVG");
 					ltmp = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
 					//		make [dx , dy] the unit vector of this segment's slope
 					dx /= ltmp;
@@ -174,7 +177,7 @@ function drawColliders(){
 					vx =  dtmp * dx;//		new velocity along x set by amount of original velocity that was in the direction tangent to the equation line
 					vy = -dtmp * dy;
 
-					apy = -ftmp;//		snap sled to line
+					apy = ftmp;//		snap sled to line
 				}
 			}
 		}

@@ -64,7 +64,7 @@ function checkInputFields(inputNum = 0){
 	equInputField = mainInput.style;
 	mainInput.setAttribute("z-index" , ++inputZ);
 
-	equRaw[inputNum] = mainInput.innerText.toLowerCase();
+	equRaw[inputNum] = mainInput.innerText.toLowerCase().replace("**" , "^");
 
 	ftmp = getCaretLocation(mainInput);//		ftmp is current caret position
 	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
