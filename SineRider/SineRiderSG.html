@@ -96,7 +96,7 @@
 	var debugFramerateCount = 0;
 	var debugFramerateLast = 0;
 	var debugFramerateTime = 0;
-	var writeRoundedCursor = false;
+	var ctrlHeld = false;
 
 	//		camera position and scale. These coordinates are the position of the upper left corner of the screen.
 	var screenWidth = 1600;
@@ -109,6 +109,7 @@
 
 	//		gameplay state
 	var simulating = false;//		game is running. Sled is moving.
+	var camLocked = false;
 	var paused = false;//		player has not paused and window is in focus
 	var menuOpen = false;//		game is paused because the menu is open
 	var writeCursor = false;
@@ -271,7 +272,7 @@
 		document.body.onkeydown = function(e){
 		//	console.log("Pressed Key " + e.keyCode);
 			if(e.keyCode == 17){//		Ctrl
-				writeRoundedCursor = true;
+				ctrlHeld = true;
 			}
 			if(e.keyCode == 20){//		CapsLock
 				debugSkipFrame = true;
@@ -283,7 +284,7 @@
 			}
 		}
 
-		document.onkeyup = function(e){
+		document.onkeyup = function(e){//			Key UP
 		//	console.log("Released Key " + e.keyCode);
 			//		update the active input 
 			if(usePiecewise){//		if multiple inputs and current input is not mainInput
@@ -297,7 +298,7 @@
 				checkInputFields(0);//		see EquationLine.js
 			}
 			if(e.keyCode == 17){//		Ctrl
-				writeRoundedCursor = false;
+				ctrlHeld = false;
 			}
 			if(e.keyCode == 16){//		Shift
 				writeCursor = false;
@@ -307,9 +308,8 @@
 			}
 		}
 		
-		if(writeRoundedCursor){
-			dt *= 4;
-			//console.log("a " + dt);
+		if(ctrlHeld){//		speed up game x5
+			dt *= 5;
 		}
 
 		if(debugSkipFrame && !debugSingleFrame){
@@ -327,14 +327,13 @@
 		//		get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
 		document.body.onkeyup = function(e){
 			if(e.keyCode == 13){//		enter
+				if(simulating)//		when resetting, only reset camera if it was locked
+					camLocked = !writeCursor;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
 				resetSledder();
 				checkInputFields();//		update line. (useful if the player types something while the simulation is running)
 			}
 		}
-
-
 		
-		//		console.log("c " + dt);
 		if(simulating){
 			frameTime += dt;
 		}else{//		-----------------------------------------------------------------------		[   Editing Equation   ]		-----------------------------------------------------------------------
@@ -345,53 +344,19 @@
 		moveSledder();//		see sledder.js
 		
 		
-		if(writeCursor){
-			cursorPosition();//		see EquationLine.js
+		if(writeCursor && (!simulating || !camLocked)){
+			cursorPosition();//		see SvgEditor.js
 		}
-
+		if(graphingPoints)
+			drawGraphedPoints();//		see SvgEditor.js
+		drawColliders();//		see collisions.js
+		drawNumberLines();//		see 3B1BAnimations.js
+		
 		ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.85));
 		//ctx.fillText("Scale = " + String(Math.round(screenScale)) , Math.round(screenWidth * 0.7) , Math.round(screenHeight*0.92));
 
 		//ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
-		drawColliders();//		see collisions.js
-		drawNumberLines();//		see 3B1BAnimations
-
-		//		display X and Y of graph closest to cursor when I hold Ctrl
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 
-</script>
-
-
-<div id="slidecontainer">
-	<!--
-	<input type="range" min="-3000" max="3000" value="400" class="slider" id="rangeX" width="400">
-	-->
-
-	<!--
-	<input type="range" min="0" max="100" value="100" class="slider" id="rangeY" width="400">
-	<input type="range" min="0" max="100" value="0" class="slider" id="rangeZ" width="400">
-	
-	<input type="range" min="-200" max="200" value="0" class="slider" id="viewY" width="400">
-	<input type="range" min="-314" max="314" value="-100" class="slider" id="viewRotate" width="400">-->
-</div>
-
-<script>
-	/*document.getElementById("rangeX").oninput = function () {
-		camx = Math.round(this.value);
-	}
-	document.getElementById("rangeY").oninput = function () {
-		animX = this.value/100;
-	}
-	document.getElementById("rangeZ").oninput = function () {
-		animY = this.value/100;
-	}
-
-	
-	document.getElementById("viewY").oninput = function () {
-		apz = this.value/10;
-	}
-	document.getElementById("viewRotate").oninput = function () {
-		viewAngle = -this.value/100;
-	}*/
 </script>
