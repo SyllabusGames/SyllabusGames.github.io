@@ -1,7 +1,9 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
-/*		contains line from equation
- *			equation text input
- *			background grid draw
+/*		File contains:
+ *			Equation for line function
+ *			Background grid draw
+ *			Display point at cursor position (fi shift is held)
+ *			Display points in graphPointXs list
  * 
  */
 
@@ -19,7 +21,6 @@ var equChars;
 var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', '#d12020', '#7820d1', '#20d120', '#20b0d1'];
 
 //		Text colors, [0-9] Partenthasis, [11] x, [12] t, [13] z
-//var textColor = ["#00AAFF" , "#660066" , "#33AA33" , "#990033" , "#009999" , "#FF3300" , "#0066AA" , "#FF9900" , "#003399" , "#AAAA00", //		0-9
 //	"#FF0000" , "#009900" , "#0000FF"];//	10-12
 var parenOpen = 0;
 var defaultEqu = "-x-5";
@@ -28,6 +29,9 @@ var equInputField;
 var background = new Image;
 var colliders;
 var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
+
+var graphingPoints = false;
+var graphPointXs = new Array();//		X coordinates to graph
 
 //		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
 function drawGrid(){//		draw a line at every 10 units
@@ -39,9 +43,10 @@ function drawGrid(){//		draw a line at every 10 units
 	else{
 		//		if scale is not huge and game is not running, lable the 10 meter marks
 		if(!simulating){
-			ctx.fillText("10m" , -screenx*screenScale-50 , (-10+screeny)*screenScale+20);
-			ctx.fillText("10m" , (10-screenx)*screenScale-50 , screeny*screenScale+20);
-			ctx.fillText("0m" , 0-screenx*screenScale-30 , screeny*screenScale+20);
+			ctx.font = "30px Arial";
+			ctx.fillText("10m" , -screenx*screenScale-30 , (-10+screeny)*screenScale+10);
+			ctx.fillText("10m" , (10-screenx)*screenScale-30 , screeny*screenScale+10);
+			ctx.fillText("0m" , 0-screenx*screenScale-10 , screeny*screenScale+10);
 		}
 		if(screenScale < 25)
 			gridScale = 10;
@@ -198,5 +203,98 @@ function equation(input){
 //	return Math.sin(frameTime*2)*100+input+200;//		sloppede trampoline
 //	return (input/200*20*screenScale*(2+Math.sin(input/10))+Math.sin(frameTime)*50+100);//		bounching sin wave
 //	return (150+10*screenScale*Math.sign(Math.sin(input/10)))+input*2;//		square wave
+}
+
+
+
+//		----------------------------------------------------		[   Graphed Points   ]		----------------------------------------------------
+function drawGraphedPoints(){
+	ctx.font = "25px Arial";
+	ctx.fillStyle = "#00A0E0";
+	for(i = graphPointXs.length-1 ; i > -1 ; i--){
+		dx = graphPointXs[i];
+		dy = equation(dx);
+		
+		ctx.fillText( '(' + (Math.round(dx*100)/100).toString() + ',' + (Math.round(dy*100)/100).toString() + ')', (dx - screenx)*screenScale + 5 , -(dy-screeny)*screenScale);
+	
+		//		draw dot on graph at coordinates above
+		ctx.beginPath();
+		ctx.arc( (dx - screenx)*screenScale , -(dy-screeny)*screenScale , 4 , 0 , endAngle);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+	}
+}
+
+//	----------------------------------		[   Display coordinates on line near cursor   ]		----------------------------------
+function cursorPosition(){
+	dx = mouseX/screenScale + screenx;
+	if(ctrlHeld)//		round x input
+		dx = Math.round(dx);
+	dy = equation(dx);
+
+	//		show mouse X and corisponding graph Y on screen
+	ctx.fillText( "X = " + (Math.round(dx*100)/100).toString() + " Y = " + (Math.round(dy*100)/100).toString(),
+		Math.max(Math.min(mouseX , Math.round(screenWidth - 600)) , 10) ,
+		Math.max(Math.min(mouseY , Math.round(screenHeight - 140)) , 50));
+	
+	//		draw dot on graph at coordinates above
+	ctx.beginPath();
+	ctx.arc( (dx - screenx)*screenScale , -(dy-screeny)*screenScale , 4 , 0 , endAngle);
+	ctx.stroke();
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+	
+//	----------------------------------		[   Local Minima/Maxima   ]		----------------------------------
+	ftmp = 15/Math.sqrt(screenScale);//		2x gap between ltmp and rtmp
+	onOff = false;
+	if(equation(dx + ftmp) < dy && equation(dx - ftmp) < dy){//		close to a local maxima
+		stmp = "Local Maxima:";
+		onOff = true;
+	}else if(equation(dx + ftmp) > dy && equation(dx - ftmp) > dy){
+		stmp = "Local Minima:";
+		onOff = true;
+	}
+	if(onOff){
+		ltmp = dx - ftmp;//		left x value
+		lyy = equation(ltmp);//	left y value
+		rtmp = dx + ftmp;//	right x value
+		ryy = equation(rtmp);//		right y value
+		dtmp = dy;//		center y value
+
+		for(i = 0 ; i < 25 ; i++){//		covering an area of x, the precision will be x/2^25 = 0.0000122
+			if(Math.abs(lyy - dtmp) < Math.abs(ryy - dtmp)){//		slope is less (closer to maxima) on the left side
+				rtmp -= ftmp;//		shift right point to where the center used to be
+				ryy = dtmp;//		set right y value to center y value
+				dtmp = equation(ltmp + ftmp/2);//		shift center y ftmp/2 to the left
+			}else{
+				ltmp += ftmp;
+				lyy = dtmp;
+				dtmp = equation(rtmp - ftmp/2);
+			}
+			ftmp *= 0.5;//		half the gap between left and right
+		}
+
+		ctx.fillText(stmp,
+			Math.max(Math.min(mouseX , Math.round(screenWidth - 400)) , 10) ,
+			Math.max(Math.min(mouseY-100 , Math.round(screenHeight - 200)) , 50));
+
+		ctx.fillText("X = " + (Math.round((ltmp+rtmp)/2*1000)/1000).toString() + "\nY = " + (Math.round(dtmp*1000)/1000).toString(),
+			Math.max(Math.min(mouseX , Math.round(screenWidth - 400)) , 10) ,
+			Math.max(Math.min(mouseY-50 , Math.round(screenHeight - 250)) , 100));
+		//		draw dot at maxima
+		ctx.strokeStyle="#00AAFF";
+		ctx.fillStyle=="#00AAFF";
+		ctx.beginPath();
+		ctx.arc( ((ltmp+rtmp)/2-screenx)*screenScale , -(dtmp-screeny)*screenScale , 4 , 0 , endAngle);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+		ctx.strokeStyle="#000000";
+		ctx.fillStyle=="#000000";
+	}
 }
 

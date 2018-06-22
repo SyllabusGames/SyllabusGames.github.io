@@ -1,4 +1,6 @@
 ﻿<!-------	[  This is free and unencumbered software released into the public domain  ]	------->
+<!-------	[  All function calls originate from this file , KeyboardMouseInput.js , and TextInput.js. Start reading in those files to understand what's going on.   ]		------->
+
 <!DOCTYPE html>
 <canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
 <canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
@@ -30,9 +32,11 @@
 <script type="text/javascript" src="js/SvgEditor.js"></script>
 <script type="text/javascript" src="js/AudioControl.js"></script>
 <script type="text/javascript" src="js/Pause.js"></script>
-<script type="text/javascript" src="js/InputManager.js"></script>
 <script type="text/javascript" src="js/Menu.js"></script>
 <script type="text/javascript" src="js/3Numberline.js"></script>
+
+<script type="text/javascript" src="js/KeyboardMouseInput.js"></script>
+<script type="text/javascript" src="js/TextInput.js"></script>
 
 <!--		Remove white space around canvas (also makes cursor more accurate)		-->
 <body style="margin: 0;"></body>
@@ -58,8 +62,6 @@
 	document.getElementById('files').addEventListener('change', handleFileSelect, false);
 </script>
 <!--		File Loader		-->
-
-
 
 <script>
 	//		Ctrl+Shift+J	shows error log in Chrome
@@ -144,7 +146,7 @@
 		mainInput = document.createElement("p");
 		mainInput.setAttribute("id" , "input0");
 		mainInput.setAttribute("contentEditable" , "true");
-		mainInput.style = "position:absolute;left:80px;top:680px;width:1440px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
+		mainInput.style = "position:absolute;left:80px;top:680px;width:1440px;font-size:35px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
 		mainInput.innerHTML = "-x"
 		document.body.appendChild(mainInput);
 		piecInput.push(mainInput);
@@ -169,67 +171,7 @@
 		document.getElementsByTagName('head')[0].appendChild(link);
 	}
 	
-//		-----------------------------------------------------------------------		[   Toggle FullScreen   ]		-----------------------------------------------------------------------
-	document.addEventListener("keydown", function(e){
-	//	stmp = "cow";
-	//	mainInput.setAttribute("value", "<span style='color:red;'>cat</span>");
-	//	mainInput.html("<span style='color:red;'>cow</span>");
-	//	console.log(mainInput.contentEditable);
-		if (e.keyCode == 32){//		shift = 16		//		escape = 27
-			//		folowing code from		https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
-			if((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-				//		switch to fullscreen
-				screenWidth = window.screen.width * window.devicePixelRatio;
-				screenHeight = window.screen.height * window.devicePixelRatio;
-				if(document.documentElement.requestFullScreen) {
-					document.documentElement.requestFullScreen();
-				}else if (document.documentElement.mozRequestFullScreen) {
-					document.documentElement.mozRequestFullScreen();
-				}else if (document.documentElement.webkitRequestFullScreen) {
-					document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-				}
-				//		make sure the screen is always landscape
-				if(screenHeight > screenWidth){
-					k = screenHeight;
-					screenHeight = screenWidth;
-					screenWidth = k;
-				}
-			}else{//		exit fullscreen
-				screenWidth = 1600;
-				screenHeight = 800;
-				if (document.cancelFullScreen) {
-					document.cancelFullScreen();
-				}else if (document.mozCancelFullScreen) {
-					document.mozCancelFullScreen();
-				}else if (document.webkitCancelFullScreen) {
-					document.webkitCancelFullScreen();
-				}
-			}
-			//		keep 3D view in right corner of view
-			console.log("fullscreen");
-			xyzc.style.left = screenWidth-600 + "px";
-			xyz2c.style.left = screenWidth-600 + "px";
-			canvas.width = screenWidth;
-			canvas.height = screenHeight;
-			equInputField = piecInput[0].style;
-			equInputField.left = Math.round(screenWidth * 0.05) + "px";
-			equInputField.top = Math.round(screenHeight * 0.85) + "px";
-			equInputField.width = Math.round(screenWidth * 0.9) + "px";
-		}
-		//		-----------------------------------------------------------------------		[   MAIN MENU   ]		-----------------------------------------------------------------------
-		if(e.keyCode == 192){
-			if(menuOpen){//		hide main menu
-				showHideInputs(true);
-				menuOpen = false;
-				paused = false;
-			}else{//		show main menu
-				drawMainMenu();//		see Menu.js
-				showHideInputs(false);//		see InputManager.js
-				menuOpen = true;
-				paused = true;
-			}
-		}
-	}, false);
+
 
 		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 	function update(timestamp){
@@ -240,7 +182,7 @@
 			}
 			return;
 		}
-		dt = Math.min(performance.now()*0.001 - lastTime , 0.25);//		no frame can skip more than 1/4 seconds
+		dt = Math.min(performance.now()*0.001 - lastTime , 0.125);//		no frame can skip more than 1/8 seconds. (if framerate is below 8, game will actually slow down)
 		lastTime = performance.now()*0.001;
 		if(useZ)
 			drawXYZ();//		update the 3D view
@@ -268,46 +210,6 @@
 			debugFramerateCount++;
 		}
 		
-		//				Debug pause and frame advance//		Hold Ctrl to pause. Press Z to advance single frames
-		document.body.onkeydown = function(e){
-		//	console.log("Pressed Key " + e.keyCode);
-			if(e.keyCode == 17){//		Ctrl
-				ctrlHeld = true;
-			}
-			if(e.keyCode == 20){//		CapsLock
-				debugSkipFrame = true;
-			}else if(e.keyCode == 16){//		Shift
-				writeCursor = true;
-			}
-			if(e.keyCode == 90){//		Z
-				debugSingleFrame = true;
-			}
-		}
-
-		document.onkeyup = function(e){//			Key UP
-		//	console.log("Released Key " + e.keyCode);
-			//		update the active input 
-			if(usePiecewise){//		if multiple inputs and current input is not mainInput
-				for(i = 0 ; i < piecSecCount ; i++){//		check all input fields and set whichever is avtive as mainInput
-					if(piecInput[i] == document.activeElement){
-						checkInputFields(i);
-						break;
-					}
-				}
-			}else{//		not piecewise. Use normal input (0)
-				checkInputFields(0);//		see EquationLine.js
-			}
-			if(e.keyCode == 17){//		Ctrl
-				ctrlHeld = false;
-			}
-			if(e.keyCode == 16){//		Shift
-				writeCursor = false;
-			}
-			if(e.keyCode == 20){//		CapsLock
-				debugSkipFrame = false;
-			}
-		}
-		
 		if(ctrlHeld){//		speed up game x5
 			dt *= 5;
 		}
@@ -318,25 +220,16 @@
 		}
 		debugSingleFrame = false;
 		//				Debug pause and frame advance
-		//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
+//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
 		
-		//		canvas
+//		-----------------------------------------------------------------------		[   Draw Screen   ]		-----------------------------------------------------------------------
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
 		drawGrid();
-		//		on enter down toggle equation editable and simulation running
-		//		get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
-		document.body.onkeyup = function(e){
-			if(e.keyCode == 13){//		enter
-				if(simulating)//		when resetting, only reset camera if it was locked
-					camLocked = !writeCursor;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
-				resetSledder();
-				checkInputFields();//		update line. (useful if the player types something while the simulation is running)
-			}
-		}
 		
 		if(simulating){
 			frameTime += dt;
-		}else{//		-----------------------------------------------------------------------		[   Editing Equation   ]		-----------------------------------------------------------------------
+		}else{
 			frameTime = 0;
 		}
 
@@ -352,11 +245,10 @@
 		drawColliders();//		see collisions.js
 		drawNumberLines();//		see 3B1BAnimations.js
 		
+
 		ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.85));
 		//ctx.fillText("Scale = " + String(Math.round(screenScale)) , Math.round(screenWidth * 0.7) , Math.round(screenHeight*0.92));
-
 		//ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
 	}
 	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
-
 </script>
