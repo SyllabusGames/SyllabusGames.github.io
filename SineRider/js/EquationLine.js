@@ -17,7 +17,6 @@ var equColored = "";
 var equLast = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
 var equCompiled  = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];//		these are the compiled Math.js parsers. They are initialized as strings just to get length=10
 var equInvalid = false;
-var equChars;
 var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', '#d12020', '#7820d1', '#20d120', '#20b0d1'];
 
 //		Text colors, [0-9] Partenthasis, [11] x, [12] t, [13] z
@@ -47,6 +46,8 @@ function drawGrid(){//		draw a line at every 10 units
 			ctx.fillText("10m" , -screenx*screenScale-30 , (-10+screeny)*screenScale+10);
 			ctx.fillText("10m" , (10-screenx)*screenScale-30 , screeny*screenScale+10);
 			ctx.fillText("0m" , 0-screenx*screenScale-10 , screeny*screenScale+10);
+			ctx.fillText("X axis" , screenWidth - 90 , screeny * screenScale - 2);
+			ctx.fillText("Y axis" , -screenx * screenScale + 2 , 25);
 		}
 		if(screenScale < 25)
 			gridScale = 10;
@@ -95,20 +96,6 @@ function drawGrid(){//		draw a line at every 10 units
 		ctx.lineTo(screenWidth , (screeny + i*gridScale) * screenScale);
 		ctx.stroke();
 	}
-//		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
-		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
-
-//		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
-
-	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
-	if(equInvalid){//		invalid equation, show y = old equation
-		ctx.fillStyle = "#888888";
-		ctx.fillText("y= " + equLast[0] , Math.round(screenWidth * 0.01) , 20+Math.round(screenHeight*0.85));
-	}else{
-		ctx.fillStyle = "black";
-		ctx.fillText("y=", Math.round(screenWidth * 0.01) , 100+Math.round(screenHeight*0.85));
-		//		for piecwise use (y₀₁₂₃₄₅₆₇₈₉=)
-	}
 }
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------
@@ -118,12 +105,12 @@ function drawLine(){
 	//	----------------------------------		[   draw time independent line (light grey)   ]		----------------------------------
 	if(useTime){
 		//		draw time independent (t=0) equation line in grey
-		ctx.strokeStyle="#AAAAAA";
+		ctx.strokeStyle="#BBBBBB";
 		ctx.beginPath();
 		scope = {x: screenx , t: 0 , z: 0};
 		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
-		for(i = 5 ; i < screenWidth ; i+=5){
+		for(i = lineResolution ; i < screenWidth ; i+=lineResolution){
 			scope = {x: i/screenScale + screenx , t: 0 , z: 0};
 			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
 		}
@@ -139,7 +126,7 @@ function drawLine(){
 		scope = {x: screenx , t: frameTime , z: 20};
 		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
-		for(i = 5 ; i < screenWidth ; i+=5){
+		for(i = lineResolution ; i < screenWidth ; i+=lineResolution){
 			scope = {x: i/screenScale + screenx , t: frameTime , z: 20};
 			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
 		}
@@ -150,7 +137,7 @@ function drawLine(){
 		scope = {x: screenx , t: frameTime , z: -20};
 		ctx.moveTo(0 , (-equ.eval(scope) + screeny)*screenScale);
 	
-		for(i = 5 ; i < screenWidth ; i+=5){
+		for(i = lineResolution ; i < screenWidth ; i+=lineResolution){
 			scope = {x: i/screenScale + screenx , t: frameTime , z: -20};
 			ctx.lineTo(i , (-equ.eval(scope) + screeny)*screenScale);
 		}
@@ -163,7 +150,7 @@ function drawLine(){
 	ctx.beginPath();
 	ctx.moveTo(0 , (-equation(screenx) + screeny)*screenScale);
 	
-	for(i = 5 ; i < screenWidth ; i+=5){
+	for(i = lineResolution ; i < screenWidth ; i+=lineResolution){
 		//		min and max are used to make sure the line does not go so far off screen that it doesn't render
 		ctx.lineTo(i , Math.min( Math.max(-equation(i/screenScale + screenx) + screeny , -10)*screenScale , 2000));
 	}

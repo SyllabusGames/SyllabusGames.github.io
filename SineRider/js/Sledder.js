@@ -6,8 +6,8 @@ var defaultPosY = 0;
 //		sled transform
 var av = 0;//	angular velocity
 var rotation = 0;
-var boxx = 0;
-var boxy = 0;
+var rotPointx = 0;
+var rotPointy = 0;
 var apx = 150;//		position in global (absolute) space. This is used for physics and most calculations.
 var apy = 50;
 var apz = 0;
@@ -23,27 +23,31 @@ var ay = -30;
 //		called once when the gamescreen is loaded
 function setUpSledder(){
 	//		set up sledder
-	img = new Image;
-	img.src = "SineRiderSled.svg";
+	sledderSvg = new Image;
+	sledderSvg.src = "SineRiderSledOptimized.svg";
 	apx = defaultPosX;
 	apy = defaultPosY;
 }
 
 //		called every time you win, lose, or reset
 function resetSledder(){
+	checkInputFields();//		update line. (useful if the player types something while the simulation is running)
 	dropTime = 0;//		delete
 	simulating = !simulating;
 	apx = defaultPosX;
 	apy = defaultPosY;
+	sledLastX = apx;//		reset positions for SVG collisions
+	sledLastY = apy;
 	spx = apx*screenScale;
 	spy = -apy*screenScale;//		negative because the Y axis is measured from the top by the canvas
 	av = 0;
 	vx = 0;
 	vy = 0;
 	rotation = 0;
-	if(camLocked)
+	if(camLocked){
 		screenFollowSledder();//		reset screen position
-	//		reset screen too. This should probably be moved somewhere else.
+		dragScreenScale = screenScale;
+	}
 }
 
 	//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
@@ -52,8 +56,8 @@ function moveSledder(){
 		apx += vx*dt*0.15;//		absolute position (in meters)
 		apy += vy*dt*0.15;
 
-		spx = (apx)*screenScale - screenx*screenScale;//		screen position (in pixels)
-		spy = -(apy)*screenScale + screeny*screenScale;//		y is flipped since the top of the screen is 0
+		spx = apx*screenScale - screenx*screenScale;//		screen position (in pixels)
+		spy = -apy*screenScale + screeny*screenScale;//		y is flipped since the top of the screen is 0
 
 		drawSledder();
 		//		apply gravity
@@ -62,11 +66,8 @@ function moveSledder(){
 		//		set sledder screen position so the camera will move correctly before the level starts
 		spx = (apx)*screenScale - screenx*screenScale;
 		spy = -(apy)*screenScale + screeny*screenScale;
-		//		draw sledder at default position
-		ctx.translate( spx, spy+10 );
-		//		aspect ratio is 0.8
-		ctx.drawImage( img, -0.875*screenScale , -1.8125*screenScale , 1.75*screenScale , 2.5*screenScale);//		position here is is local space and therefore is only usefuly to center the image on the sled
-		ctx.translate( -spx, -spy-10 );
+		//		draw sledder
+		ctx.drawImage( sledderSvg, spx-screenScale , spy-screenScale ,  2*screenScale , 2*screenScale);
 	}
 
 	//		----------------------------------------------------		[   Move/Scale Screen   ]		----------------------------------------------------
@@ -79,13 +80,18 @@ function moveSledder(){
 
 //		----------------------------------------------------		[   Move/Scale Screen   ]		----------------------------------------------------
 function screenFollowSledder(){
+	//		ftmp = distance between track point and sled
 	ftmp = Math.sqrt((apx-trackPointx)*(apx-trackPointx) + (apy-trackPointy)*(apy-trackPointy)*3.16);//		multiply y by 3.16 (16/9) (Screen ratio) So the target does not go off the top of the screen
-	screenScale = 1200/Math.max(ftmp , 24);//		set a max scale of 50 24 = (1200/50). A minimum scale of 7 was set above by using < 171 (1200/7)
-	if(ftmp > 171){//		keep the sledder on screen
-		if(screenx < apx - (screenWidth-200)/screenScale){//		< 200 pixels from right edge of screen
-			screenx = apx - (screenWidth-200)/screenScale;
-		}else if(screenx > apx - 200/screenScale){//	< 200 pixels from left edge of screen
-			screenx = apx - 200/screenScale;
+	if(ftmp > 171)
+		screenScale = Math.min(screenScale * (1 + 0.5*dt) , 40);//		slowly decrease scale until it reaches 15
+	else
+		screenScale = 1200/Math.max(ftmp , 24);//		set a max scale of 50 24 = (1200/50). A minimum scale of 7 was set above by using < 171 (1200/7)
+	
+	if(ftmp > 201){//		keep the sledder on screen
+		if(screenx < apx - (screenWidth-400)/screenScale){//		< 200 pixels from right edge of screen
+			screenx = apx - (screenWidth-400)/screenScale;
+		}else if(screenx > apx - 400/screenScale){//	< 200 pixels from left edge of screen
+			screenx = apx - 400/screenScale;
 		}
 
 		if(screeny < apy + 200/screenScale){//	< 200 pixels from top edge of screen
@@ -93,32 +99,44 @@ function screenFollowSledder(){
 		}else if(screeny > apy + (screenHeight-200)/screenScale){//		< 200 pixels from bottom edge of screen
 			screeny = apy + (screenHeight-200)/screenScale;
 		}
+		
+		
+	}else if(ftmp > 171){//		interpolate between the two screen behaviours
+		dtmp = (ftmp - 171)/30;//		0-1 range to interpolate screen styles
+		
+		if(screenx < apx - (screenWidth-400)/screenScale){//		< 200 pixels from right edge of screen
+			screenx = dtmp*(apx - (screenWidth-400)/screenScale) + (1-dtmp)*((apx + trackPointx)/2 - screenWidth/2/screenScale);
+		}else if(screenx > apx - 400/screenScale){//	< 200 pixels from left edge of screen
+			screenx = dtmp*(apx - 400/screenScale) + (1-dtmp)*((apx + trackPointx)/2 - screenWidth/2/screenScale);
+		}
+
+		if(screeny < apy + 200/screenScale){//	< 200 pixels from top edge of screen
+			screeny = dtmp*(apy + 200/screenScaleP) + (1-dtmp)*((apy + trackPointy)/2 + screenHeight/2/screenScale);
+		}else if(screeny > apy + (screenHeight-200)/screenScale){//		< 200 pixels from bottom edge of screen
+			screeny = dtmp*(apy + (screenHeight-200)/screenScale) + (1-dtmp)*((apy + trackPointy)/2 + screenHeight/2/screenScale);
+		}
+		
+		
 	}else{//		keep sledder and trackPoint on screen.
 		screenx = (apx + trackPointx)/2 - screenWidth/2/screenScale;
 		screeny = (apy + trackPointy)/2 + screenHeight/2/screenScale;
-	//	ftmp = Math.abs(apx-trackPointx);
-	//	if(Math.abs(apy-trackPointy) > ftmp)
-	//		ftmp = Math.abs(apy-trackPointy);
-	//		1200 = scale of screen. Increase to zoom in.
 	}
 }
 
 function drawSledder(){
 	rotation = rotation%(Math.PI*2);
-	boxy = Math.sin(-rotation)*40;
-	boxx = Math.cos(-rotation)*40;
 
 	tempZ = apz;
 	ftmp = equation(apx);//		Y position of line under sled
 
 	//		----------------------------------------------------		[   Draw Sledder   ]		----------------------------------------------------
-	ctx.translate( spx, spy+10 );
+	ctx.translate( spx, spy );
 	ctx.rotate( -rotation );//		rotation in radians
-	//		aspect ratio is 0.8
-	ctx.drawImage( img, -0.875*screenScale , -1.8125*screenScale , 1.75*screenScale , 2.5*screenScale);//		position here is is local space and therefore is only usefuly to center the image on the sled
+
+	ctx.drawImage( sledderSvg, -screenScale , -screenScale ,  2*screenScale , 2*screenScale);
 
 	ctx.rotate( rotation );
-	ctx.translate( -spx, -spy-10 );
+	ctx.translate( -spx, -spy );
 
 	/*	. is sledder position
 			\.--dx--|				
@@ -178,16 +196,22 @@ function drawSledder(){
 				While less accurate, this should be more stable.
 		*/
 		//		this should push the sled normal to the curve instead of just straight up
-		
-		av = 0;//		set angular velocity to 0 as it will be set below if the sled is not level on the track
+		av = 0;
 	}
-		
+	
 	//		----------------------------------------------------		[   Set Rotation   ]		----------------------------------------------------
-	if((equation(apx + boxx) <  apy + boxy)		||		(equation(apx - boxx) <  apy - boxy)){//		one of the lower corners is below the line
-	//if((equation((spx + boxx - boxy/4)/screenScale) <  spy + boxx - boxy/4)		||		(equation((spx - boxx - boxy/4)/screenScale) <  spy - boxx - boxy/4)){//		one of the lower corners is below the line
-		av = ((equation(apx - boxx - boxy/4) - (apy - boxy - boxx/4)) - (equation(apx + boxx - boxy/4) - (apy + boxy - boxx/4)))*dt*0.08;
+	//		get the vector from the center to the end of the sled
+	rotPointx = Math.cos(-rotation)*0.6;
+	rotPointy = Math.sin(-rotation)*0.6;
+	/*
+	drawPoint(apx + rotPointx , apy - rotPointy);
+	drawPoint(apx - rotPointx , apy + rotPointy);
+	drawPoint(apx + rotPointx , equation(apx + rotPointx));
+	drawPoint(apx - rotPointx , equation(apx - rotPointx));
+	*/
+	if((-equation(apx + rotPointx) < (-apy + rotPointy))		||		(-equation(apx - rotPointx) < (-apy - rotPointy))){//		one of the sled's ends is below the line
+		av = -((equation(apx - rotPointx) - (apy + rotPointy)) - (equation(apx + rotPointx) - (apy - rotPointy)))*dt*20;
 	}
 	rotation += av;
-	av *= 0.992;//		dampen rotation as it flies above the track so the sled eventually stopps spinning
-
+	av = Math.max( Math.min( 0.992 * av , 0.4) , -0.4);//		dampen rotation as it flies above the track so the sled eventually stopps spinning. Also, limit the speed to 0.4 radians per frame
 }

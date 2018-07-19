@@ -2,7 +2,7 @@
 var loadedLevel;
 var levelType = "";
 var levelCode = "";//		Used by Goal (in Collidions.js) to save the current level as complete
-var substring;
+var substring = "";
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
@@ -123,62 +123,11 @@ function loadBuiltInLevel(){
 			substring = loadedLevel[i].split(',');//		camera track point
 			trackPointx = parseFloat(substring[0]);
 			trackPointy = parseFloat(substring[1]);
-			i+=2;//		line 5 was the word Goal
-			//		-----------------------------------------------------------------------		[   GOALS   ]		-----------------------------------------------------------------------
-			//		blank out existing goal colliders
-			gCircleX = [];
-			gCircleY = [];
-			gCircleR = []
-			
-			gRectX = [];
-			gRectY = [];
-			gRectSideX = [];
-			gRectSideY = [];
-			substring = loadedLevel[i].split(',');//		load in first goal collider
-			while(substring.length > 1){//		reading in text will make this false (text contains no ,)
-				if(substring.length = 3){//		circle goal
-					gCircleX.push(parseFloat(substring[0]));
-					gCircleY.push(parseFloat(substring[1]));
-					gCircleR.push(parseFloat(substring[2]));
-				}else{//			rectangle goal
-					gRectX.push(parseFloat(substring[0]));
-					gRectY.push(parseFloat(substring[1]));
-					gRectSideX.push(parseFloat(substring[2]));
-					gRectSideY.push(parseFloat(substring[3]));
-				}
-				i++;
-				substring = loadedLevel[i].split(',');//		load in first goal collider
-			}
-			i++;//		the current line should be "Resets"
-			//		-----------------------------------------------------------------------		[   RESETS   ]		-----------------------------------------------------------------------
-			rCircleX = [];
-			rCircleY = [];
-			rCircleR = [];
-			rRectX = [];
-			rRectY = [];
-			rRecSideX = [];
-			rRecSideY = [];
-			substring = loadedLevel[i].split(',');//		load in first goal collider
-			while(substring.length > 1){//		reading in text will make this false (text contains no ,)
-				if(substring.length = 3){//		circle goal
-					rCircleX.push(parseFloat(substring[0]));
-					rCircleY.push(parseFloat(substring[1]));
-					rCircleR.push(parseFloat(substring[2]));
-				}else{//			rectangle goal
-					rRectX.push(parseFloat(substring[0]));
-					rRectY.push(parseFloat(substring[1]));
-					rRectSideX.push(parseFloat(substring[2]));
-					rRectSideY.push(parseFloat(substring[3]));
-				}
-				i++;
-				substring = loadedLevel[i].split(',');//		load in next goal collider
-			}
-			background.src = "Levels/" + loadedLevel[i];
+			i++;
+			//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
+			background.src = "Levels/" + loadedLevel[i]+ ".svg";//		load background SVG
+			loadCollidersFromSvg(localStorage.getItem(loadedLevel[i] + "Colliders"));//		load collider SVG
 
-			//		request txt file of level colliders
-			//		load internal .txt
-			//loadCollidersFromTex(localStorage.getItem("SR001colliders"));
-			//		load external .txt
 			/*var client = new XMLHttpRequest();
 			client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
 			client.onreadystatechange = function() {
@@ -202,13 +151,13 @@ function loadBuiltInLevel(){
 	//		if a 3B1B animation is called for, set up the input for that
 	setUpNumberLines();//		see 3B1BAnimations.js
 	screenFollowSledder();//	move the screen to show the sledder and goal. See Sledder.js
+		//		set default drag screen positioin so it doesn't jump when you start moving the screen
+	dragScreenX = screenx + screenWidth/2/screenScale;
+	dragScreenY = -screeny + screenHeight/2/screenScale;
+	dragScreenScale = screenScale;
 	if(usePiecewise)
 		setUpPiecewise();
 	checkInputFields();
-	loadCollidersFromSvg(localStorage.getItem("SVGcolliders"));
-//	loadCollidersFromSvg(localStorage.getItem("SvgExported"));
-//	animSteps = 
-//	animLerps = 
 }
 
 function setUpPiecewise(){
@@ -219,12 +168,12 @@ function setUpPiecewise(){
 		for(i = piecInput.length ; i < piecSecCount ; i++){
 			piecInput.push(document.createElement("p"));
 			piecInput[i].setAttribute("id" , "input" + String(i));
-			console.log("input" + String(i));
+//			console.log("input" + String(i));
 			piecInput[i].setAttribute("contentEditable" , "true");
 			piecInput[i].style = "position:absolute;left:"+lyy+"px;top:"+Math.round(ftmp-70*i)+"px;width:"+(ryy-15*i)+"px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
 			piecInput[i].innerHTML = "-x+00000+5"
 			document.body.appendChild(piecInput[i]);
-			console.log("added input");
+//			console.log("added input");
 		}
 	}
 	checkInputFields(0);
@@ -232,137 +181,87 @@ function setUpPiecewise(){
 	checkInputFields(2);
 }
 
-function loadCollidersFromTex(sss){
-	 //= "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";//		load "LevelName".tex
-	 /*
-	console.log("Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
-	var end = "";
-	end.src = "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex";
-	//end = end.substring(end.indexOf("newrgbcolor"));
-	alert("Loaded Level" + loadedLevel[i] + "\n" + end);
-	//https://stackoverflow.com/questions/14446447/how-to-read-a-local-text-file
-	fetch('file.txt').then(response => response.text()).then(text => console.log(text));
-	console.log("fetched\n" + stmp);*/
-	//var read = new FileReader
-	/*// Check for the various File API support.
-	if (window.File && window.FileReader && window.FileList && window.Blob) {
-	  // Great success! All the File APIs are supported.
-	} else {
-	  alert('The File APIs are not fully supported in this browser.');
-	}*/
-
-	//		create array of arrays so collision points can be stored in the array based on their position. (-200 < x < -180, point is stored in groundPoints[0])
-	/*
-	//		-----------------------------------------------------------------------		[   Import to array[20]   ]		-----------------------------------------------------------------------
-
-	groundPointsX = new Array(20);
-	groundPointsY = new Array(20);
-	ceilingPointsX = new Array(20);
-	ceilingPointsY = new Array(20);
-	for(i = 0 ; i < 20 ; i++){
-		groundPointsX[i] = new Array();
-		groundPointsY[i] = new Array();
-		ceilingPointsX[i] = new Array();
-		ceilingPointsY[i] = new Array();
-	}
-
-
-	substring = sss.split("ewpath");
-	var ministring;
-	var microstring;
-	var k = 0;
-	//		loop through each line, through each set of points, then split X and Y on the ,
-	for(i = substring.length-1 ; i > 0  ; i--){//		>0 because the 0ith entry is just the file header information
-	console.log("\n\n\n" + substring[i]);
-		ministring = substring[i].split("(");
-		for(k = ministring.length-1 ; k > 0 ; k--){//		>0 because ministring[0] is "moveto"
-			microstring = ministring[k].split(",");
-			//		microstring[0] = "#"		microstring[1] = "#)\n\moveto"		# is the X or Y coordinate numeber
-			ftmp = (parseFloat(microstring[0]) - 1000)/5;
-			fftmp = Math.max( Math.min(Math.round((ftmp+200)/20) , 19) , 0);//		get the index of where this point should be places and clamp it from 0 to 19
-			console.log(ftmp + " - " + fftmp);
-			groundPointsX[fftmp].push(ftmp);//		add the x coordiante to the correct group
-
-			ftmp = (-parseFloat(microstring[1].substring(0 , microstring[1].indexOf(')'))) + 1000)/5;
-			groundPointsY[fftmp].push(ftmp);//		add the Y coordiante to the same group
-		//	console.log(groundPointsX[fftmp][groundPointsX[fftmp].length-1] + " , " + groundPointsY[fftmp][groundPointsY[fftmp].length-1]);
-		}
-	}
-	stmp = sss.substring(sss.indexOf("new"));
-	//alert(sss.indexOf("new") + "Final"+stmp);
-	*/
-	
-	//		-----------------------------------------------------------------------		[   Import .tex to single array   ]		-----------------------------------------------------------------------
-	allGroundPointsX = new Array();
-	allGroundPointsY = new Array();
-	allGroundBreaks = new Array();
-
-	substring = sss.split("ewpath");
-	var ministring;
-	var microstring;
-	var k = 0;
-	//		loop through each line, through each set of points, then split X and Y on the ,
-	for(i = substring.length-1 ; i > 0  ; i--){//		>0 because the 0ith entry is just the file header information
-		ministring = substring[i].split("(");
-		for(k = ministring.length-1 ; k > 0 ; k--){//		>0 because ministring[0] is "moveto"
-			microstring = ministring[k].split(",");
-			//		microstring[0] = "#"		microstring[1] = "#)\n\moveto"		# is the X or Y coordinate numeber
-			ftmp = (parseFloat(microstring[0]) - 1000)/5;
-			allGroundPointsX.push(ftmp);//		add the x coordiante to the correct group
-
-			ftmp = (-parseFloat(microstring[1].substring(0 , microstring[1].indexOf(')'))) + 1000)/5;
-			allGroundPointsY.push(ftmp);//		add the Y coordiante to the same group
-			allGroundBreaks.push(true);
-		}
-		//		change the last entry in this array to false so a line is not drawn between the end of one line and start of the next
-		allGroundBreaks[allGroundBreaks.length-1] = false;
-	}
-	//stmp = sss.substring(sss.indexOf("new"));
-	//alert(sss.indexOf("new") + "Final"+stmp);
-}
-
 function loadCollidersFromSvg(sss){
-	//		-----------------------------------------------------------------------		[   Import .tex to single array   ]		-----------------------------------------------------------------------
+	//		-----------------------------------------------------------------------		[   Import .svg to single array   ]		-----------------------------------------------------------------------
 	allGroundPointsX = new Array();
 	allGroundPointsY = new Array();
 	allGroundBreaks = new Array();
+	gCircleX = new Array();
+	gCircleY = new Array();
+	gCircleR = new Array();
 	var absolute = false;
-
+//		get the translation of the eniter image
+	substring = sss.substring(sss.indexOf("translate(") + 10);
+//	console.log(substring)
+	substring = substring.substring(0 , substring.indexOf(")") );
+	ministring = substring.split(" ");
+	dx = 200 + parseFloat(ministring[0])/5;
+	dy = 200 - parseFloat(ministring[1])/5;
+	
+//	console.log(substring + "  dx = " + ministring[0] + " dy= " + ministring[1]);
+	
 	substring = sss.split('<path');//		each substring contains one path
 	var ministring = "";//		each ministring contains one string of points
-	var k = 0;
-	var color = "#000000";
 	//		loop through each line, through each set of points, then split X and Y on the ,
-	//		loop forward so if stroke color is left the same between paths, it will inherit the correct color
 	for(i = 1 ; i < substring.length  ; i++){//		i=1 because the 0ith entry is just the file header information
-		k = substring.indexOf("stroke:");
-		if(k != null)//		if the stroke color changes, get new color; otherwise, leave it as the last line's color.
-			color = substring[i].substring(k , 7);
+//		console.log(substring[i]);
 
 		substring[i] = substring[i].substring(3+substring[i].search(/d="m/i));//		cut fluff off the start of substring[i]
 		absolute = (substring[i][0] == 'M');
+		
+		//		check for goal (circle) in this path's substring
+		k = substring[i].indexOf("<circle");
+		if(k != -1){//		if a circle is in this substring
+			ministring = substring[i].substring(k);
+			
+			k = ministring.indexOf('cx="') + 4;
+			ministring = ministring.substring(k);//		cut ministring to start with circle center.x
+			gCircleX.push(parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5 - dx);
 
+//			console.log("Circle added " + ministring + " - " + gCircleX[gCircleX.length-1]);
+			
+			k = ministring.indexOf('cy="') + 4;
+			ministring = ministring.substring(k);//		cut ministring to start with circle center.x
+			gCircleY.push(dy - parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5);
+
+//			console.log("Circle added " + ministring + " - " + gCircleY[gCircleY.length-1]);
+			
+			k = ministring.indexOf('r="') + 3;
+			ministring = ministring.substring(k);//		cut ministring to start with circle center.x
+			gCircleR.push(parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5);
+			
+//			console.log("Circle added " + ministring + " - " + gCircleR[gCircleR.length-1]);
+		}
+		
+		//		remove unwanted markers and make all points in this line coma seperated
 		substring[i] = substring[i].substring(0 , substring[i].indexOf('"'));//		cut fluff off the end of substring[i]
 		substring[i] = substring[i].replace(/-/g , ' -');//		replace - with _- so if points are listed 15-35 they will go to 15 -35 and can be split on the space
-		substring[i] = substring[i].replace(/[MmLlHhVvCcSsQqTtAaZz]/g , '');//		remove all path types. Everything will be treated as 'lineto'
+		substring[i] = substring[i].replace(/[MmLCcSsQqTtAaZz]/g , '');//		remove all path types. Everything will be treated as 'lineto'
+		substring[i] = substring[i].replace(/h/g , ',h,');//		replace h with ,h, so h is read in as a point
+		substring[i] = substring[i].replace(/l/g , ',');//		replace l with , so when l is erased, the points it was between do not become one number
 		substring[i] = substring[i].replace(/  /g , ',');//		if it was formatted 15 -35 already, the last opperation will take it to 15  -35 so this will remove the redundant space
 		substring[i] = substring[i].replace(/ /g , ',');//		replace all single spaces with , so substring[i] is csv
-		substring[i] = substring[i].replace(/,,/g , ',');//		#,-# will be turned into #,,-#		This fixes that
-		if(substring[i][0] == ',')		
+		substring[i] = substring[i].replace(/,,/g , ',');//		#,-# will be turned into #,,-#		This fixes that*/
+		if(substring[i][0] == ',')
 			substring[i] = substring[i].substring(1);//		if the first character is , remove it
 		//		all points should now be sepperated by a , or a space
 		ministring = substring[i].split(',');//		make ministring a list of X and Y coordinates
 
-		allGroundPointsX.push( (parseFloat(ministring[0]) - 1000)/5);
-		allGroundPointsY.push( parseFloat(ministring[1])/5 - 10);
-		//console.log(substring[i]);
+		allGroundPointsX.push( parseFloat(ministring[0])/5 - dx);
+		allGroundPointsY.push( parseFloat(ministring[1])/5 - dy);
+//		console.log("Input " + substring[i]);
 		if(allGroundBreaks.length > 0)
 			allGroundBreaks[allGroundBreaks.length] = false;
 		for(k = 2 ; k < ministring.length ; k += 2){
-			allGroundPointsX.push( parseFloat(ministring[k])/5 + (absolute? -200 : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
-			//console.log('x = '+allGroundPointsX[allGroundPointsX.length-2]);
-
-			allGroundPointsY.push( parseFloat(ministring[k+1])/5 + (absolute? -10 : allGroundPointsY[allGroundPointsY.length-1]));
+//			console.log(ministring[k] + " _ " + ministring[k+1]);
+			if(ministring[k][0] == 'h'){//		h means this is a horizontal line and this point's x is the same as the last
+				allGroundPointsX.push( parseFloat(ministring[k+1])/5 + (absolute? - dx : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
+				allGroundPointsY.push( allGroundPointsY[allGroundPointsY.length-1]);
+			}else{
+				allGroundPointsX.push( parseFloat(ministring[k])/5 + (absolute? -dx : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
+				allGroundPointsY.push( parseFloat(ministring[k+1])/5 + (absolute? - dy : allGroundPointsY[allGroundPointsY.length-1]));
+			}			//console.log('x = '+allGroundPointsX[allGroundPointsX.length-2]);
+		
 			allGroundBreaks.push(true);
 			//console.log('y = '+allGroundPointsY[allGroundPointsY.length-2]);
 		}

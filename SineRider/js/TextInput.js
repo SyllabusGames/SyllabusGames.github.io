@@ -1,4 +1,6 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+var equChars;
+var containsVariables = false;
 
 //	copied from		http://jsfiddle.net/WeWy7/3/
 function restoreSelection(){
@@ -72,6 +74,8 @@ function checkInputFields(inputNum = 0){
 	ryy = 0;//		right end of selection. lyy is left end of selection.
 	//	----------------------------------		[   Recolor Input Text   ]		----------------------------------
 	parenOpen = 0;
+	//if(!simulating)
+		containsVariables = false;
 	equChars = equRaw[inputNum].split("");
 	k = equChars.length;
 	equColored = "";
@@ -81,20 +85,22 @@ function checkInputFields(inputNum = 0){
 	for(i = 0 ; i < k ; i++){
 		switch(equChars[i]){
 			case 'x':
-				equColored += '<a style="color:#800080">x</a>';//		not using pure colors to help partially coloblind
+				equColored += '<a style="color:#A00040">x</a>';//		not using pure colors to help partially coloblind
 				rtmp++;
+				containsVariables = true;
 				break;
 			case 't':
-				equColored += '<a style="color:#008080">t</a>';
+				equColored += '<a style="color:#40A000">t</a>';
 				rtmp++;
+				containsVariables = true;
 				break;
 			case 'z':
-				equColored += '<a style="color:#808000">z</a>';
+				equColored += '<a style="color:#0040A0">z</a>';
 				rtmp++;
+				containsVariables = true;
 				break;
 			case '(':
 				equColored += '<a style="color:' + colors[parenOpen%10] + '">(</a>';
-				console.log(parenOpen%10);
 				parenOpen++;
 				rtmp++;
 				break;
@@ -109,6 +115,27 @@ function checkInputFields(inputNum = 0){
 				break;
 			case ' ':
 				break;//		remove spaces
+			case 'p':
+				if(i < equChars.length-1 && equChars[i+1] == 'i'){
+					equColored += '<a style="color:#F08030">p</a>';
+				}else{//		run default
+					equColored += equChars[i];
+				}
+				rtmp++;
+				break;
+			case 'e':
+				equColored += '<a style="color:#F08030">e</a>';
+				rtmp++;
+				break;
+			case 'i'://		this has to be last so it can fall through to default
+				if(i == 0 || equChars[i-1] != 's'){//		only color i as an imaginary number if it is not part of the word sin
+					if(equChars[i-1] == 'p')//		this is the i in pi
+						equColored += '<a style="color:#F08030">i</a>';
+					else//		this i is immaginary
+						equColored += '<a style="color:#F08030"><em>i</em></a>';
+					rtmp++;
+					break;
+				}
 			default:
 				equColored += equChars[i];
 				rtmp++;
@@ -117,7 +144,8 @@ function checkInputFields(inputNum = 0){
 		ftmp--;
 		if(ftmp == 0){//		current character is the caret position
 			lyy = rtmp;
-		}if(ftmp == dtmp){//	current character is the end of the selection
+		}
+		if(ftmp == dtmp){//	current character is the end of the selection
 			ryy = rtmp;
 		}
 	}

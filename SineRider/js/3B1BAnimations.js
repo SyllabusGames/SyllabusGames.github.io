@@ -125,7 +125,6 @@ function pullNextStage(){
 }
 
 function drawNumberLines(){
-	return;
 	animTime += dt*0.5;
 	
 	//		-------------------------------------------------------------		[   Load next equation/Stage   ]		-------------------------------------------------------------
@@ -231,7 +230,7 @@ function numberLine(xxx , dy , yyy){
 	//	ctx.strokeStyle="#D08080";
 		
 		ctx.beginPath();
-		ctx.lineTo(xxx , screenHeight);
+		ctx.moveTo(xxx , screenHeight);
 		ctx.lineTo(xxx , screeny*screenScale);
 		ctx.stroke();
 		//		draw a tic-marked line in the posative direction

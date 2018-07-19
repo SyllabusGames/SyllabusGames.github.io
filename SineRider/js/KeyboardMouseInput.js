@@ -15,19 +15,27 @@ document.addEventListener("keydown", function(e){
 	}
 	if(e.keyCode == 20){//		CapsLock
 		debugSkipFrame = true;
-	}else if(e.keyCode == 16){//		Shift
+	//	draggingScreen = true;
+	}
+	if(e.keyCode == 36){//		Home
+		draggingScreen = true;
+	}
+	if(e.keyCode == 16){//		Shift
 		writeCursor = true;
 	}
-	console.log(writeCursor);
-	if(e.keyCode == 13){//		enter.		This has to come after Shift
+	if(e.keyCode == 13){//		enter.		(this has to come after Shift)
+		e.preventDefault();//		don't type a newline character
+		animCanProceed = true;
 		if(!simulating)//		if not simulating (and about to start) lock the camera if shift is not held down.
 			camLocked = !writeCursor;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
 		resetSledder();
-		checkInputFields();//		update line. (useful if the player types something while the simulation is running)
 	console.log("Play");
 	}
-	if(e.keyCode == 90){//		Z
-		debugSingleFrame = true;
+	if(e.keyCode == 34){//		Pare Down
+		zoomScreen(0.2114);
+	}
+	if(e.keyCode == 33){//		Page Up
+		zoomScreen(-0.2686);
 	}
 
 	//		-----------------------------------------------------------------------		[   MAIN MENU   ]		-----------------------------------------------------------------------
@@ -45,6 +53,7 @@ document.addEventListener("keydown", function(e){
 	}
 
 	if (e.keyCode == 32){//		SpaceBar
+		e.preventDefault();//		don't type a space
 //		-----------------------------------------------------------------------		[   Toggle FullScreen   ]		-----------------------------------------------------------------------
 		//		folowing code from		https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
 		if((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
@@ -110,6 +119,10 @@ document.addEventListener("keyup", function(e){
 	}
 	if(e.keyCode == 20){//		CapsLock
 		debugSkipFrame = false;
+	//	draggingScreen = false;
+	}
+	if(e.keyCode == 36){//		Home
+		draggingScreen = false;
 	}
 });
 
@@ -118,21 +131,21 @@ document.addEventListener('mousedown', function(e){
 	var evt = e==null ? event : e;//		firefox compatibility	
 	
 	if( evt.which == 1 ){//		left click
+		animCanProceed = true;
 		if(useZ){
 			xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
 		}
 	}
-	console.log("Cam Locked = " + camLocked);
+//	console.log("Cam Locked = " + camLocked);
 	if(!simulating || !camLocked){//		run when camera is not locked
-		if( evt.which == 2 ) {//		middle click
+		if( evt.which == 2 ){//		middle click
 			evt.preventDefault();//		turn off page scrolling
 			draggingScreen = true;
-			if(dragScreenX == 0){//		the screen is currently in its default position
-				dragScreenX = screenx + screenWidth/2/screenScale;
-				dragScreenY = -screeny + screenHeight/2/screenScale;
-			
-				dragScreenScale = screenScale;
-			}
+			mouseX = evt.clientX;
+			mouseY = evt.clientY;
+			dragScreenX = screenx + screenWidth/2/screenScale;
+			dragScreenY = -screeny + screenHeight/2/screenScale;
+			dragScreenScale = screenScale;
 		}
 
 		if( evt.which == 3 ){//		right click
@@ -175,17 +188,24 @@ document.addEventListener('mouseup', function(e){
 //		----------------------------------------------------		[   Scroll Wheel (Screen Zoom)   ]		----------------------------------------------------
 document.addEventListener('wheel', function(e){
 	if(!simulating || !camLocked){//		run when camera is not locked
-		ftmp = 0.24*Math.sign(e.deltaY) - 0.0286;//		makes scroll speed brouser independent.
+		zoomScreen(0.24*Math.sign(e.deltaY) - 0.0286);//		makes scroll speed brouser independent.
 			//		The first number (0.24) is the zoom speed / step size. (Larger number → faster zoom)
 			//		The second number (-0.0286) is the offset so zooming in and out 1 step each puts the camera where it was before zooming. 0.0286 ≈ (0.24^2)/2
-		dragScreenScale = Math.min(Math.max(dragScreenScale - ftmp*dragScreenScale , 0.15) , 17000);//		scale is non-linear so multiplying by dragScreenScale makes changes close to linear
+	}
+});
+
+function zoomScreen(change){
+	dragScreenScale = Math.min(Math.max(dragScreenScale - change*dragScreenScale , 0.15) , 17000);//		scale is non-linear so multiplying by dragScreenScale makes changes close to linear
+	if(screenScale != dragScreenScale){//		if you are at max or min zoom, do not move the screen
 		screenScale = dragScreenScale;
 		screenx = dragScreenX - screenWidth/2/screenScale;
 		screeny = -dragScreenY + screenHeight/2/screenScale;
 		//				Zoom twards mouse so mouse does not move on screen (Comment out following 4 lines to zoom on screen center)
-		dragScreenX -= ftmp*(mouseX - screenWidth/2)/screenScale;
-		dragScreenY -= ftmp*(mouseY - screenHeight/2)/screenScale;
+		dragScreenX -= change*(mouseX - screenWidth/2)/screenScale;
+		dragScreenY -= change*(mouseY - screenHeight/2)/screenScale;
 		screenx = dragScreenX - screenWidth/2/screenScale;
 		screeny = -dragScreenY + screenHeight/2/screenScale;
+	}else{
+		screenScale = dragScreenScale;
 	}
-});
+}

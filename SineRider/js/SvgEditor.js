@@ -12,7 +12,7 @@ var dragScreenScale = 15;
 
 function drawSVGColliders(){//		called from the end of Collisiions.js
 
-	ctx.strokeStyle.lineWidth = 30;
+	ctx.lineWidth = screenScale/3;
 
 	ctx.strokeStyle="#900000";
 
@@ -54,7 +54,7 @@ function updateMousePosition(e){
 		mouseX = evt.clientX;
 		mouseY = evt.clientY;
 
-		if(draggingPoint && selectedPoint != -1){//		highlight selected point and move with cursor
+		if(!simulating && showSVGPoints && draggingPoint && selectedPoint != -1){//		highlight selected point and move with cursor if (not running, points are visible, mouse held down, and a point is under the cursor)
 			allGroundPointsX[selectedPoint] += (mouseX - mouseLastX)/screenScale;
 			allGroundPointsY[selectedPoint] += (mouseY - mouseLastY)/screenScale;
 		}else{//		highlight closest point

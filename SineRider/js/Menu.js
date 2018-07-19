@@ -4,7 +4,7 @@ function drawMainMenu(){
 	//		pause the music
 	themeEqu.pause();
 	MMTime = -25;//		25=line length
-	
+	showSVGPoints = true;
 	//		hide the 2d view
 	xyzc.style.display="none";
 	xyz2c.style.display="none";
