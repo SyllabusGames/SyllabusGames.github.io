@@ -79,6 +79,8 @@ function updateMousePosition(e){
 		
 			screenx = dragScreenX - screenWidth/2/screenScale;
 			screeny = -dragScreenY + screenHeight/2/screenScale;
+			if(useRender)
+				renderCenter();//		see 2dRender.js
 		}
 	}
 }

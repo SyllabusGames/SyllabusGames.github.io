@@ -68,6 +68,17 @@ function checkInputFields(inputNum = 0){
 
 	equRaw[inputNum] = mainInput.innerText.toLowerCase().replace("**" , "^");
 
+	if(useRender)//		clear this canvas so if it isn't used, it won't still be shown
+		renderCanvas.clearRect(0, 0, xyzWidth, xyzHeight);
+	useRender = (equRaw[inputNum].indexOf('=')+equRaw[inputNum].indexOf('<')+equRaw[inputNum].indexOf('>') > -3);//		start full screen renderer if the equation contains = < or >
+	if(useRender){//		start the first render pass to load in the new equation
+		document.getElementById('render').width = screenWidth;
+		document.getElementById('render').height = screenHeight;
+		console.log(mainInput.innerHTML);
+		console.log(equRaw[inputNum]);
+		render2d();
+	}
+
 	ftmp = getCaretLocation(mainInput);//		ftmp is current caret position
 	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
 	rtmp = 0;//		rtmp is the number of characters over the caret is in the current node (current font style/color)
@@ -127,6 +138,10 @@ function checkInputFields(inputNum = 0){
 				equColored += '<a style="color:#F08030">e</a>';
 				rtmp++;
 				break;
+			case '<':
+				equColored += '&lt';
+				rtmp++;
+				break;
 			case 'i'://		this has to be last so it can fall through to default
 				if(i == 0 || equChars[i-1] != 's'){//		only color i as an imaginary number if it is not part of the word sin
 					if(equChars[i-1] == 'p')//		this is the i in pi
@@ -141,6 +156,7 @@ function checkInputFields(inputNum = 0){
 				rtmp++;
 				break;
 		}
+		console.log(equColored);
 		ftmp--;
 		if(ftmp == 0){//		current character is the caret position
 			lyy = rtmp;

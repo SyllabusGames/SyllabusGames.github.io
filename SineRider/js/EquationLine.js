@@ -100,6 +100,8 @@ function drawGrid(){//		draw a line at every 10 units
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------
 function drawLine(){
+	if(useRender)//		do not try to draw the line if the equation is an inequality or contans an =. It will almost allways cause problems.
+		return;
 	ctx.lineWidth = 3;
 	//		testing		(x-13)^2-20+sin(t/2)*20
 	//	----------------------------------		[   draw time independent line (light grey)   ]		----------------------------------

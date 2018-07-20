@@ -109,6 +109,8 @@ function setUpXYZ(){
 
 	//	----------------------------------		[   Draw 3D View   ]		----------------------------------
 function drawXYZ(){
+	if(useRender)//		do not try to draw the line if the equation is an inequality or contans an =. It will almost allways cause problems.
+		return;
 	//		the camera never looks up or down. This means cForwardy and cLefty are always 0 and cUpx = 0, cUpy = 1, and cUpz = 0
 
 	//		use the viewAngle to find the X and Z components of the vector of the direction the camera is facing
@@ -200,8 +202,6 @@ function drawXYZ(){
 		passTime = frameTime;
 		scanLine = -15;
 		renderFlipX = (passViewAngle > 3.14159 || passViewAngle < 0);
-		//		erase the last render
-		xyz.clearRect(0, 0, xyzWidth, xyzHeight);
 
 		//	----------------------------------		[   draw origin   ]		----------------------------------
 		//		Here I copied over the projection to camera space and perspective scripts, then removed all the parts that were just 0

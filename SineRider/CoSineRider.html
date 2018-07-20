@@ -3,7 +3,8 @@
 
 <!DOCTYPE html>
 <canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
-<canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
+<canvas id="render" width="1600" height="800" style="z-index: 2; position:absolute; left:0px; top:0px;"></canvas>
+<canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px; pointer-events: none"></canvas>
 <canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
 
 <head>
@@ -34,6 +35,7 @@
 <script type="text/javascript" src="js/Pause.js"></script>
 <script type="text/javascript" src="js/Menu.js"></script>
 <script type="text/javascript" src="js/3Numberline.js"></script>
+<script type="text/javascript" src="js/2dRender.js"></script>
 
 <script type="text/javascript" src="js/KeyboardMouseInput.js"></script>
 <script type="text/javascript" src="js/TextInput.js"></script>
@@ -270,6 +272,19 @@
 		drawLine();
 		moveSledder();//		see sledder.js
 		
+		//		call a full screen render if render2d is used. Call only on renderFullTimer=0 so it is only called once
+		if(useRender){
+			renderFullTimer--;
+			if(renderFullTimer == 0){
+				//		clear render buffer, then call first pass of renderer
+				/*renderImageData = renderCanvas.getImageData(0, 0, screenWidth, screenHeight);
+				renderBuf = new ArrayBuffer(renderImageData.data.length);
+				renderBuf8 = new Uint8ClampedArray(renderBuf);
+				renderData = new Uint32Array(renderBuf);*/
+				renderx = screenWidth;
+				renderPass();
+			}
+		}
 		
 		if(writeCursor && (!simulating || !camLocked)){
 			cursorPosition();//		see SvgEditor.js

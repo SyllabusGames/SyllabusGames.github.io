@@ -12,6 +12,7 @@ var use2Equ = false;//		piecewise with 2 equations
 var use3Equ = false;//		piecewise with 3 equations
 var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
+var useRender = false;
 var show3D = true;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
 var usePiecewise = false;
 var piecSections = [10,25,50];
