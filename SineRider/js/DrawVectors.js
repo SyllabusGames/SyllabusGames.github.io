@@ -1,4 +1,5 @@
-﻿function drawForceVectors(){
+﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
+function drawForceVectors(){
 	//		Draw force from line moving
 	ctx.strokeStyle="#FF0000";
 	ctx.beginPath();

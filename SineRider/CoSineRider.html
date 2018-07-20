@@ -3,7 +3,8 @@
 
 <!DOCTYPE html>
 <canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
-<canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
+<canvas id="render" width="1600" height="800" style="z-index: 2; position:absolute; left:0px; top:0px;"></canvas>
+<canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px; pointer-events: none"></canvas>
 <canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
 
 <head>
@@ -34,9 +35,12 @@
 <script type="text/javascript" src="js/Pause.js"></script>
 <script type="text/javascript" src="js/Menu.js"></script>
 <script type="text/javascript" src="js/3Numberline.js"></script>
+<script type="text/javascript" src="js/2dRender.js"></script>
 
 <script type="text/javascript" src="js/KeyboardMouseInput.js"></script>
 <script type="text/javascript" src="js/TextInput.js"></script>
+
+<script type="text/javascript" src="js/DebugView.js"></script>
 
 <!--		Remove white space around canvas (also makes cursor more accurate)		-->
 <body style="margin: 0;"></body>
@@ -82,6 +86,7 @@
 	var dxdt = 0;//	float
 	var i = 0;//	int
 	var k = 0;//	int
+	var itmp = 0;//	int
 	var ftmp = 0;//	float
 	var dtmp = 0;//	float
 	var ltmp = 0;//	float
@@ -93,12 +98,16 @@
 	var onOff = false;
 
 	//		should be deleted before launch
+	var lineResolution = 5;//		pixels per vertex (vertex every _ pixels)
 	var debugSkipFrame = false;
 	var debugSingleFrame = false;
 	var debugFramerateCount = 0;
 	var debugFramerateLast = 0;
 	var debugFramerateTime = 0;
 	var ctrlHeld = false;
+	var showMessage = false;
+	var messageTime = 10;
+	var messageText = "";
 
 	//		camera position and scale. These coordinates are the position of the upper left corner of the screen.
 	var screenWidth = 1600;
@@ -146,7 +155,7 @@
 		mainInput = document.createElement("p");
 		mainInput.setAttribute("id" , "input0");
 		mainInput.setAttribute("contentEditable" , "true");
-		mainInput.style = "position:absolute;left:80px;top:680px;width:1440px;font-size:35px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
+		mainInput.style = "position:absolute;left:50px;top:715px;width:1440px;font-size:35px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
 		mainInput.innerHTML = "-x"
 		document.body.appendChild(mainInput);
 		piecInput.push(mainInput);
@@ -154,6 +163,9 @@
 		saveLevel();//		for testing
 		buildLevelMap();//		for testing
 		loadLevelMap();//		for testing
+	//			setUpAnim();
+		ctx.textAlign="center";
+
 		//ctx.save();
 		/*c.addEventListener('mousemove' , function(e){
 			mx = e.clientX-6;
@@ -195,15 +207,21 @@
 			debugFramerateCount = 0;
 			if(useZ){//		change the 3D view update frequency based on framerate
 				if(debugFramerateLast < 30){
-					if(debugFramerateLast < 20)
+					if(debugFramerateLast < 20){
 						scanStep = 2;
-					else
+						lineResolution = 8;
+					}else{
 						scanStep = 6;
+						lineResolution = 7;
+					}
 				}else{
-					if(debugFramerateLast > 57)
+					if(debugFramerateLast > 57){
 						scanStep = 12;
-					else
+						lineResolution = 3;
+					}else{
 						scanStep = 8;
+						lineResolution = 5;
+					}
 				}
 			}
 		}else{
@@ -226,6 +244,24 @@
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		drawGrid();
+//		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
+		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
+
+//		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
+
+	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
+	if(equInvalid){//		invalid equation, show y = old equation
+		ctx.fillStyle = "#888888";
+		ctx.fillText("y= " + equLast[0] , Math.round(screenWidth * 0.01) , 50+Math.round(screenHeight*0.85));
+	}else{
+		ctx.fillStyle = "black";
+		ctx.fillText("y=", Math.round(screenWidth * 0.01) , 100+Math.round(screenHeight * 0.85));
+		//		for piecwise use (y₀₁₂₃₄₅₆₇₈₉=)
+		if(!containsVariables)//		if equation does not contain x, z, or t, (output is constant) show the answer next to the input line.
+			ctx.fillText("y = " + equation(0).toString() , Math.round(screenWidth * 0.02) , 50 + Math.round(screenHeight * 0.85));
+			//ctx.fillText("=" + equation(0).toString() , Math.round(screenWidth * 0.935) , 100+Math.round(screenHeight*0.85));
+	}
+		
 		
 		if(simulating){
 			frameTime += dt;
@@ -236,6 +272,19 @@
 		drawLine();
 		moveSledder();//		see sledder.js
 		
+		//		call a full screen render if render2d is used. Call only on renderFullTimer=0 so it is only called once
+		if(useRender){
+			renderFullTimer--;
+			if(renderFullTimer == 0){
+				//		clear render buffer, then call first pass of renderer
+				/*renderImageData = renderCanvas.getImageData(0, 0, screenWidth, screenHeight);
+				renderBuf = new ArrayBuffer(renderImageData.data.length);
+				renderBuf8 = new Uint8ClampedArray(renderBuf);
+				renderData = new Uint32Array(renderBuf);*/
+				renderx = screenWidth;
+				renderPass();
+			}
+		}
 		
 		if(writeCursor && (!simulating || !camLocked)){
 			cursorPosition();//		see SvgEditor.js
@@ -243,9 +292,21 @@
 		if(graphingPoints)
 			drawGraphedPoints();//		see SvgEditor.js
 		drawColliders();//		see collisions.js
-		drawNumberLines();//		see 3B1BAnimations.js
-		
+	//	drawNumberLines();//		see 3B1BAnimations.js
+	//	numberLine(5,2,4);
 
+	//			animCore();
+
+		if(showMessage){
+			messageTime += dt;
+			ctx.fillStyle = "#A00000" + Math.round(Math.max(Math.min(Math.min(messageTime*8-1,-messageTime+2)+1 , 1) *255, 17)).toString(16);//		font color for text overlay
+			ctx.font = "bold 80px Arial";
+			ctx.fillText(messageText , screenWidth/2 , screenHeight/5);
+			if(messageTime > 3)
+				showMessage = false;
+		}
+		
+	
 		ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.85));
 		//ctx.fillText("Scale = " + String(Math.round(screenScale)) , Math.round(screenWidth * 0.7) , Math.round(screenHeight*0.92));
 		//ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
