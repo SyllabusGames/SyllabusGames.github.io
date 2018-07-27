@@ -74,8 +74,6 @@ function checkInputFields(inputNum = 0){
 	if(useRender){//		start the first render pass to load in the new equation
 		document.getElementById('render').width = screenWidth;
 		document.getElementById('render').height = screenHeight;
-		console.log(mainInput.innerHTML);
-		console.log(equRaw[inputNum]);
 		render2d();
 	}
 
@@ -96,17 +94,17 @@ function checkInputFields(inputNum = 0){
 	for(i = 0 ; i < k ; i++){
 		switch(equChars[i]){
 			case 'x':
-				equColored += '<a style="color:#A00040">x</a>';//		not using pure colors to help partially coloblind
+				equColored += '<a style="color:#FF0000">x</a>';
 				rtmp++;
 				containsVariables = true;
 				break;
 			case 't':
-				equColored += '<a style="color:#40A000">t</a>';
+				equColored += '<a style="color:#00A000">t</a>';
 				rtmp++;
 				containsVariables = true;
 				break;
 			case 'z':
-				equColored += '<a style="color:#0040A0">z</a>';
+				equColored += '<a style="color:#0000FF">z</a>';
 				rtmp++;
 				containsVariables = true;
 				break;
@@ -156,7 +154,6 @@ function checkInputFields(inputNum = 0){
 				rtmp++;
 				break;
 		}
-		console.log(equColored);
 		ftmp--;
 		if(ftmp == 0){//		current character is the caret position
 			lyy = rtmp;

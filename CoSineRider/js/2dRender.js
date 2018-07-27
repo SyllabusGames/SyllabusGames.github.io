@@ -1,8 +1,14 @@
-﻿/*
+﻿//-------	[  This is free and unencumbered software released into the public domain  ]	------
+//		these scripts run when a <, >, or = is present in the typed equation. It renders that equation for the entire screen.
+/*
 	(x*x+y*y-1)^3-x^2*y^3=0
 	1=x*x+y*y
 	0.1=sin(x)+sin(y)
 	6.5=((x+2)^2+y^2)^0.5+((x-1.4)^2+(y+1.4)^2)^0.5+((x-1.4)^2+(y-1.4)^2)^0.5
+	tan(x)<tan(y)
+	tan(y/50)^2<cos(x/10)
+	sin(cos(x*y))<tan(y)
+	(x%2)+(y%2)<round((x*y)%4)
 */
 	var renderx = 1600;
 	var rendery;
@@ -78,17 +84,17 @@ function renderCenter(){//		this is called every thime the screen is moved or re
 			switch(renderType){
 				case 0://	=
 					if(Math.pow(leftEqu.eval(scope) - rightEqu.eval(scope) , 2) < 10/(screenScale*screenScale)){//		equation is true for this point
-						renderData[rendery*screenWidth+xx] = (255 << 24) | (125 << 16) |	(125 <<  8) | 0;
+						renderData[rendery*screenWidth+xx] = (200 << 24) | (150 << 16) |	(150 <<  8) | 0;
 					}
 					break;
 				case 1://	>
 					if(leftEqu.eval(scope) > rightEqu.eval(scope)){//		equation is true for this point
-						renderData[rendery*screenWidth+xx] = (150 << 24) | (0 << 16) |	(255 <<  8) | 0;
+						renderData[rendery*screenWidth+xx] = (150 << 24) | (0 << 16) |	(220 <<  8) | 0;
 					}
 					break;
 				default://	<
 					if(leftEqu.eval(scope) < rightEqu.eval(scope)){//		equation is true for this point
-						renderData[rendery*screenWidth+xx] = (150 << 24) | (255 << 16) |	(0 <<  8) | 0;
+						renderData[rendery*screenWidth+xx] = (150 << 24) | (220 << 16) |	(0 <<  8) | 0;
 					}
 					break;
 			}
@@ -108,17 +114,17 @@ function renderPass(){
 			switch(renderType){
 				case 0://	=
 					if(Math.pow(leftEqu.eval(scope) - rightEqu.eval(scope) , 2) < 10/(screenScale*screenScale)){//		equation is true for this point
-						renderData[rendery*screenWidth+renderx] = (255 << 24) | (125 << 16) |	(125 <<  8) | 0;
+						renderData[rendery*screenWidth+renderx] = (200 << 24) | (150 << 16) |	(150 <<  8) | 0;
 					}
 					break;
 				case 1://	>
 					if(leftEqu.eval(scope) > rightEqu.eval(scope)){//		equation is true for this point
-						renderData[rendery*screenWidth+renderx] = (150 << 24) | (0 << 16) |	(255 <<  8) | 0;
+						renderData[rendery*screenWidth+renderx] = (150 << 24) | (0 << 16) |	(220 <<  8) | 0;
 					}
 					break;
 				default://	<
 					if(leftEqu.eval(scope) < rightEqu.eval(scope)){//		equation is true for this point
-						renderData[rendery*screenWidth+renderx] = (150 << 24) | (255 << 16) |	(0 <<  8) | 0;
+						renderData[rendery*screenWidth+renderx] = (150 << 24) | (220 << 16) |	(0 <<  8) | 0;
 					}
 					break;
 			}

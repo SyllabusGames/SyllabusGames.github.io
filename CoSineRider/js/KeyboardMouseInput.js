@@ -26,8 +26,15 @@ document.addEventListener("keydown", function(e){
 	if(e.keyCode == 13){//		enter.		(this has to come after Shift)
 		e.preventDefault();//		don't type a newline character
 		animCanProceed = true;
-		if(!simulating)//		if not simulating (and about to start) lock the camera if shift is not held down.
+		if(!simulating){//		if not simulating (and about to start) lock the camera if shift is not held down.
 			camLocked = !writeCursor;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
+			if(useRender){//	Cannot start sledding when rendering an inequality. Display error message.
+				showMessage = true;//		see CoSineRider.html
+				messageTime = 0;
+				messageText = "REMOVE < > = FROM EQUATION";
+				return;
+			}
+		}
 		resetSledder();
 	console.log("Play");
 	}

@@ -147,9 +147,9 @@ function drawColliders(){
 
 							apy = ftmp + Math.sign(dydt)*0.0005;//		snap sled to just above/below line
 							if(apy + 0.5 < equation(apx)){
-								showMessage = true;
+								showMessage = true;//		see CoSineRider.html
 								messageTime = 0;
-								messageText = "CRUSHED AGAINST CEILING" ;
+								messageText = "CRUSHED AGAINST CEILING";
 								resetSledder();
 							}
 						}
