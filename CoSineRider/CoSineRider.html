@@ -68,7 +68,7 @@
 <!--		File Loader		-->
 
 <!--		Banner		-->
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" transform="translate(1230,500)" height="240" width="420" style="z-index: 10; position:absolute; left:0px; top:0px;">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="240" width="420" style="z-index: 10; position:absolute; left:1230px; top:500px;">
 	<g id="onScreenKeypad" transform="translate(60 4)"><!--		Offset slightly so the top is not clipped		-->
 		<!--		Move and ( )		-->
 		<g transform="translate(-60,0)">
@@ -411,6 +411,7 @@
 	function keyPress(key){
 		mainInput.innerText = mainInput.innerText + key;
 		checkInputFields(0);
+		mainInput.blur();
 	}
 
 
