@@ -129,7 +129,7 @@ function renderPass(){
 					break;
 			}
 		}
-		if((performance.now() - renderTime) > 15){//		start a new pass every 15ms
+		if((performance.now() - renderTime) > 10){//		start a new pass every 10ms
 			renderImageData.data.set(renderBuf8);//		push partial render to screen
 			renderCanvas.putImageData(renderImageData, 0, 0);
 			window.requestAnimationFrame(renderPass);//		call renderPass() next frame to continue the rendering
