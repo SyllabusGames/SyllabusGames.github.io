@@ -2,7 +2,7 @@
 
 function drawMainMenu(){
 	//		pause the music
-	themeEqu.pause();
+	pauseEquationTheme();
 	MMTime = -25;//		25=line length
 	showSVGPoints = true;
 	//		hide the 2d view

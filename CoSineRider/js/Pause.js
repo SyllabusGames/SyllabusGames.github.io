@@ -6,12 +6,12 @@
 //		stop audio when someone switches tabs
 window.addEventListener("blur",  function(){
 	paused = true;
-	themeEqu.pause();
+	pauseEquationTheme();
 });
 
 //		resume audio when someone switches back to the game
 window.addEventListener("focus", function(){
-	if(!menuOpen){//		do not un-pause if it is paused because a menu is open
+	if(!menuOpen && themeEqu != null){//		do not un-pause if it is paused because a menu is open
 		paused = false;
 		themeEqu.play();
 		themeEqu.volume = 0.4;

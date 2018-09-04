@@ -7,6 +7,14 @@ var themeEqu = new Audio('../../../UnchartedWatersNewHorizonsSNES.mp3');
 //var themeSledding = new Audio('..../BackgroundOutside1.mp3');
 
 function playEquationTheme(){
-	themeEqu.play();
+	if(themeEqu != null)
+		themeEqu.play();
+}
+
+
+
+function pauseEquationTheme(){
+	if(themeEqu != null)
+		themeEqu.pause();
 }
 
