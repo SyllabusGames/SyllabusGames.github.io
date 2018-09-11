@@ -14,6 +14,6 @@ window.addEventListener("focus", function(){
 	if(!menuOpen && themeEqu != null){//		do not un-pause if it is paused because a menu is open
 		paused = false;
 		themeEqu.play();
-		themeEqu.volume = 0.4;
+		themeEqu.volume = 0.6;
 	}
 });
