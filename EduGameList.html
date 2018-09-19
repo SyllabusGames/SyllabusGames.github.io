@@ -447,6 +447,9 @@
 			rect.setAttribute('height', 25);
 			rect.setAttribute('class', 'button');
 			rect.setAttribute('id', 'clickable');
+			
+			rect.setAttribute('onmouseover', "imageUpdate('" + list[i][9] + "');");
+			rect.setAttribute('onmouseout', "imageUpdate('');");
 
 			var link = document.createElementNS(svg.namespaceURI, 'a');
 			link.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', list[i][10]);
