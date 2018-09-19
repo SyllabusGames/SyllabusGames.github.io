@@ -3,6 +3,9 @@
 	<link rel="icon" href="SGLogo.png">
 	<link rel="shortcut icon" href="SGLogo.png">
 </head>
+
+<script type="text/javascript" src="SmoothScrolling.js"></script>
+
 <body style="background-color:#23d9b0;" onresize="scaleImages()">
 	<style>
 		@font-face {
@@ -16,10 +19,15 @@
 			padding: 0;
 		}
 
-		#clickable {
+		.button {
 			transition: 0.2s;
 			cursor: pointer;
+			fill-opacity: 0;
 		}
+
+			.button:hover {
+				fill-opacity: 0.2;
+			}
 
 		body {
 			margin: 0;
@@ -30,7 +38,7 @@
 	<object id='sled' data="CoSineRider/SineRiderSled.svg" type="image/svg+xml" height="140" style="text-align: center; margin-top: 9.5%; margin-left: 25%; position: absolute;"></object>
 
 	<!--		CoSine Rider		-->
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 600">
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1200">
 		<g transform="translate(0 0)">
 			<rect x="407" y="122" width="800" height="130" fill="#33e9c0" style="paint-order:normal" />
 			<rect x="415" y="131" width="784" height="114" fill="none" stroke="#5cc0a8" stroke-width="6" style="paint-order:normal" />
@@ -50,21 +58,15 @@
 			<!--		CoSine Rider (Clickable rectangles)		-->
 			<!--		Mouse-over script from http://www.petercollingridge.co.uk/data-visualisation/mouseover-effects-svgs		-->
 			<a xlink:href="CoSineRider/CoSineRider.html" target="_parent">
-				<rect x="415" y="130" width="620" height="114" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	Play		-->
+				<rect x="415" y="130" width="620" height="114" class="button" /><!--	Play		-->
 			</a>
 
 			<a href="CoSineRider/CoSineRiderSourceCode.zip" download="CoSineRiderSourceCode.zip.zip">
-				<rect x="1042" y="131" width="74" height="114" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	Source code download	-->
+				<rect x="1042" y="131" width="74" height="114" class="button" /><!--	Source code download	-->
 			</a>
 
 			<a xlink:href="CoSineRider/CoSineRiderAbout.html" target="_parent">
-				<rect x="1122" y="131" width="77" height="114" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	Info Page	-->
+				<rect x="1122" y="131" width="77" height="114" class="button" /><!--	Info Page	-->
 			</a>
 		</g>
 
@@ -92,21 +94,15 @@
 
 			<!--		Clickable Paths		-->
 			<a xlink:href="EduGameList.html" target="_parent">
-				<path d="m173 4-43 71h420l43-71z" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	EDU List		-->
+				<path d="m173 4-43 71h420l43-71z" class="button" /><!--	EDU List		-->
 			</a>
 
 			<a xlink:href="index.html" target="_parent">
-				<path d="m593 4h403l43 71h-490l43-71" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	index		-->
+				<path d="m593 4h403l43 71h-490l43-71" class="button" /><!--	index		-->
 			</a>
 
 			<a xlink:href="WIP.html" target="_parent">
-				<path d="m1415 4 43 71h-420l-43-71z" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	WIP Page		-->
+				<path d="m1415 4 43 71h-420l-43-71z" class="button" /><!--	WIP Page		-->
 			</a>
 		</g>
 	</svg>
@@ -116,8 +112,8 @@
 </body>
 <script>
 	scaleImages();
-	function scaleImages(){
-		document.getElementById("sled").style.height = window.innerWidth*0.09;//document.getElementsByTagName('body')[0];
+	function scaleImages() {
+		document.getElementById("sled").style.height = window.innerWidth * 0.09;//document.getElementsByTagName('body')[0];
 
 	}
 </script>
