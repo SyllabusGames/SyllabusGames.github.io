@@ -1,9 +1,10 @@
-﻿//	0			1			2		3										4		5	6	7		8		9			10									11	12
-//["Edu", "Programming", "No", "Basic Programming (Drag 'n drop)", "Run Marco!", "4+", "1", "0", "Web", "RunMarko", "https://www.brainpop.com/games/runmarco/",,],
+﻿//	0		1		2		3					4							5	6	7		8		9			10									11	12
+//["Edu","No","Run Marco!","Programming","Basic Programming (Drag 'n drop)","4+","1","0","Web","RunMarko","https://www.brainpop.com/games/runmarco/",,],
+
 
 function sortList(a, b) {
 //		store the variable used to sort the list in slot 12 so the list can be grouped by that variable
-	if(sortVar[0] < 4){//		only type, subject, and rating get grouped. Everything else gets set to be the same group.
+	if(sortVar[0] < 2 || sortVar[0] == 3){//		only type, subject, and rating get grouped. Everything else gets set drawn in a continuous list
 		a[11] = a[sortVar[0]];
 		b[11] = b[sortVar[0]];
 	}else{
@@ -16,14 +17,14 @@ function sortList(a, b) {
 			case 0://	type
 				itmp = sortByType(a, b);
 				break;
-			case 1://	subject
-				itmp = a[1].localeCompare(b[1]);
-				break;
-			case 2://	rating
+			case 1://	rating
 				itmp = sortByRating(a, b);
 				break;
-			case 4://	name
-				itmp = a[4].localeCompare(b[4]);
+			case 2://	name
+				itmp = a[2].localeCompare(b[2]);
+				break;
+			case 3://	subject
+				itmp = a[3].localeCompare(b[3]);
 				break;
 			case 5://	age
 				itmp = a[5].localeCompare(b[5]);
@@ -78,7 +79,7 @@ function sortByType(a, b) {
 }
 
 function sortByRating(a, b) {
-	switch (a[2]) {//		No just leaves itmp at 0
+	switch (a[1]) {//		No just leaves itmp at 0
 		case "YES!":
 			itmp = -3;
 			break;
@@ -95,7 +96,7 @@ function sortByRating(a, b) {
 			itmp = 1;
 			break;
 	}
-	switch (b[2]) {
+	switch (b[1]) {
 		case "YES!":
 			itmp += 3;
 			break;
