@@ -16,7 +16,8 @@
 </head>
 
 <!--		Dissable right click menu		-->
-<body oncontextmenu="return false;"></body>
+<body oncontextmenu="return false;">
+</body>
 
 <!--	Load External Libraries	-->
 <!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
@@ -39,6 +40,7 @@
 
 <script type="text/javascript" src="js/KeyboardMouseInput.js"></script>
 <script type="text/javascript" src="js/TextInput.js"></script>
+<script type="text/javascript" src="js/DraggableText.js"></script>
 
 <script type="text/javascript" src="js/DebugView.js"></script>
 
@@ -67,129 +69,125 @@
 </script>
 <!--		File Loader		-->
 
+<style>
+	.button {
+		transition: 0.1s;
+		cursor: pointer;
+		fill-opacity: 0.9;
+		fill: #FFFFFF;
+	}
+
+		.button:hover {
+			fill: #CCCCCC;
+		}
+</style>
+
 <!--		Banner		-->
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" height="240" width="420" style="z-index: 10; position:absolute; left:1185px; top:500px;">
 	<g id="onScreenKeypad" transform="translate(60 4)"><!--		Offset slightly so the top is not clipped		-->
 		<!--		Move and ( )		-->
 		<g transform="translate(-60,0)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('(')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('(')"/>
 			<text style="text-anchor:middle;" font-size="40px" y="36" x="16" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">(</text>
 		</g>
 
 		<g transform="translate(-60,60)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(')')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(')')"/>
 			<text style="text-anchor:middle;" font-size="40px" y="36" x="38" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">)</text>
 		</g>
 
 		<g transform="translate(-60,120)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('<')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('<')"/>
 			<text style="text-anchor:middle;" font-size="40px" y="36" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">←</text>
 		</g>
 
 		<g transform="translate(-60,180)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('>')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('>')"/>
 			<text style="text-anchor:middle;" font-size="40px" y="36" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">→</text>
 		</g>
 
 		<!--		Standard number keypad		-->
 		<g transform="translate(0,180)">
 			<rect ry="13" height="50" width="110" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="106" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(0)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">0</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(0)"/>
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">0</text>
 		</g>
 
 		<g transform="translate(120,180)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('.')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">.</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('.')"/>
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">.</text>
 		</g>
 
 		<g transform="translate(0,120)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(1)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">1</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(1)"/>
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">1</text>
 		</g>
 
 		<g transform="translate(60,120)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(2)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">2</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(2)"/>
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">2</text>
 		</g>
 
 		<g transform="translate(120,120)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(3)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">3</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(3)"/>
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">3</text>
 		</g>
 
 		<g transform="translate(0,60)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(4)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(4)"/>
 			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">4</text>
 		</g>
 
 		<g transform="translate(60,60)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(5)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">5</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(5)" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">5</text>
 		</g>
 
 		<g transform="translate(120,60)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(6)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">6</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(6)" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">6</text>
 		</g>
 
 		<g transform="translate(0,0)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(7)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">7</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(7)" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">7</text>
 		</g>
 
 		<g transform="translate(60,0)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(8)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">8</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(8)" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">8</text>
 		</g>
 
 		<g transform="translate(120,0)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress(9)"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">9</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(9)" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">9</text>
 		</g>
 
 		<!--		+ - / *		-->
 		<g transform="translate(180,0)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('+')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">+</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('+')" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">+</text>
 		</g>
 
 		<g transform="translate(180,60)">
 			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('-')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">-</text>
+			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('-')" />
+			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">-</text>
 		</g>
 
 		<g transform="translate(180,120)">

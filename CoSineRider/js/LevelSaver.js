@@ -1,6 +1,6 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 function saveLevel(){
-	localStorage.setItem("SR001" , "LV1: Using Time\nSR\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nuseTime\nuseZ\n44,4\nCave\nEnd");
+	localStorage.setItem("SR001" , "LV1: Using Time\nSR\n0,0\n-x-t*1\nuseTime\nuseZ\n44,4\nCave\nEnd");//	sin(x-8*t)+(x-12)^2/300-1
 	localStorage.setItem("SR002" , "LV2: Using Z\nSR\n0,0\n-x/4+10t-(t*0.74)^2\n91,17\nTower\nEnd");
 	localStorage.setItem("SR003" , "LV3: Using Time and Z\nSR\n0,0\n-x-t*5+((z+5)^2)/20\nuseTime\nuseZ\n91,17\nTower\nEnd");
 	localStorage.setItem("SR004" , "LV2: Using __ and Z\nSR\n0,20\n-x/3+_+2\nuseZ\n30,0\nCave\nEnd");

@@ -195,11 +195,14 @@ document.addEventListener('mouseup', function(e){
 //		----------------------------------------------------		[   Scroll Wheel (Screen Zoom)   ]		----------------------------------------------------
 document.addEventListener('wheel', function(e){
 	if(!simulating || !camLocked){//		run when camera is not locked
-		zoomScreen(0.24*Math.sign(e.deltaY) - 0.0286);//		makes scroll speed brouser independent.
-			//		The first number (0.24) is the zoom speed / step size. (Larger number → faster zoom)
-			//		The second number (-0.0286) is the offset so zooming in and out 1 step each puts the camera where it was before zooming. 0.0286 ≈ (0.24^2)/2
-		if(useRender)
-			renderCenter();//		see 2dRender.js
+	var evt = e==null ? event : e;//		firefox compatibility	
+		if(Math.abs(evt.clientY - (parseInt(mainInput.style.top) + 57)) > 32){//		do not scroll if the cursor is over (on the Y axis) an input field
+			zoomScreen(0.24*Math.sign(e.deltaY) - 0.0286);//		makes scroll speed brouser independent.
+				//		The first number (0.24) is the zoom speed / step size. (Larger number → faster zoom)
+				//		The second number (-0.0286) is the offset so zooming in and out 1 step each puts the camera where it was before zooming. 0.0286 ≈ (0.24^2)/2
+			if(useRender)
+				renderCenter();//		see 2dRender.js
+		}
 	}
 });
 
