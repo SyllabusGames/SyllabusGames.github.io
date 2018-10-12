@@ -229,4 +229,4 @@ function dragMouseMove(e){
 			}
 		}
 	}
-});
+}

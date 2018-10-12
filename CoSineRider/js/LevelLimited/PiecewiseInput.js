@@ -56,8 +56,6 @@
 //		equation input
 var scope;
 var eqinput;
-var passUsesT0 = false;//		used to temporarily set t to 0 for grey t=0 line
-var passUsesZ0 = false;//		used to temporarily set Z to 0 for green/red Z=+-20 lines
 var equRaw = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
 var equColored = "";
 var equLast = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
@@ -69,17 +67,15 @@ var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', 
 //	"#FF0000" , "#009900" , "#0000FF"];//	10-12
 var parenOpen = 0;
 var defaultEqu = "-x-5";
-var graphResolution = 0.25;
 var equInputField;
 var background = new Image;
-var colliders;
 var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
 
 var graphingPoints = false;
 var graphPointXs = [];//new Array();//		X coordinates to graph
 
 //		temp variables
-var onOff = false;
+var minMax = false;
 
 
 //		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
@@ -286,15 +282,15 @@ function cursorPosition(){
 	
 //	----------------------------------		[   Local Minima/Maxima   ]		----------------------------------
 	ftmp = 15/Math.sqrt(screenScale);//		2x gap between ltmp and rtmp
-	onOff = false;
+	minMax = false;
 	if(equation(dx + ftmp) < dy && equation(dx - ftmp) < dy){//		close to a local maxima
 		stmp = "Local Maxima:";
-		onOff = true;
+		minMax = true;
 	}else if(equation(dx + ftmp) > dy && equation(dx - ftmp) > dy){
 		stmp = "Local Minima:";
-		onOff = true;
+		minMax = true;
 	}
-	if(onOff){
+	if(minMax){
 		ltmp = dx - ftmp;//		left x value
 		lyy = equation(ltmp);//	left y value
 		rtmp = dx + ftmp;//	right x value

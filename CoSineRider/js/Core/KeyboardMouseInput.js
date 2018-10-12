@@ -6,6 +6,7 @@
  *	get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
 */
 document.addEventListener('mousemove', updateMousePosition);
+document.addEventListener('touchmove', updateMousePosition);
 
 //		----------------------------------------------------		[   Key Down   ]		----------------------------------------------------
 document.addEventListener("keydown", function(e){
@@ -188,7 +189,10 @@ document.addEventListener("keyup", function(e){
 });
 
 //		----------------------------------------------------		[   Mouse Down   ]		----------------------------------------------------
-document.addEventListener('mousedown', function(e){
+document.addEventListener('mousedown', mouseDown);
+document.addEventListener('touchstart', mouseDown);
+
+function mouseDown(e){
 	var evt = e==null ? event : e;//		firefox compatibility	
 	
 	if( evt.which == 1 ){//		left click
@@ -226,11 +230,14 @@ document.addEventListener('mousedown', function(e){
 			}
 		}
 	}
-});
+}
 
 //		----------------------------------------------------		[   Mouse Up   ]		----------------------------------------------------
-document.addEventListener('mouseup', function(e){
-	var evt = e==null ? event : e;//		firefox compatibility	
+document.addEventListener('mouseup' , mouseUp);
+document.addEventListener('touchend' , mouseUp);
+
+function mouseUp(e){
+	var evt = e==null ? event : e;//		firefox compatibility
 
 	if( evt.which == 2 ) {//		middle click
 		draggingScreen = false;
@@ -243,7 +250,7 @@ document.addEventListener('mouseup', function(e){
 	if( evt.which == 3 ){//		right click
 		writeCursor = false;
 	}
-});
+}
 
 
 //		----------------------------------------------------		[   Scroll Wheel (Screen Zoom)   ]		----------------------------------------------------

@@ -10,8 +10,6 @@
 //		equation input
 var scope;
 var eqinput;
-var passUsesT0 = false;//		used to temporarily set t to 0 for grey t=0 line
-var passUsesZ0 = false;//		used to temporarily set Z to 0 for green/red Z=+-20 lines
 var equRaw = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
 var equColored = "";
 var equLast = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
@@ -23,85 +21,17 @@ var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', 
 //	"#FF0000" , "#009900" , "#0000FF"];//	10-12
 var parenOpen = 0;
 var defaultEqu = "-x-5";
-var graphResolution = 0.25;
 var equInputField;
-var background = new Image;
-var colliders;
+var background;
 var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
 
 var graphingPoints = false;
-var graphPointXs = [];//new Array();//		X coordinates to graph
+var graphPointXs = [];//		X coordinates to graph
 
 //		temp variables
-var onOff = false;
+var minMax = false;
 
 
-//		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
-function drawGrid(){//		draw a line at every 10 units
-	ctx.strokeStyle="#C5C5C5";
-	
-	//		change what grid incraments are visible based on screen scale
-	if(screenScale < 1.5)
-		gridScale = 100;
-	else{
-		//		if scale is not huge and game is not running, lable the 10 meter marks
-		if(!simulating){
-			ctx.font = "30px Arial";
-			ctx.fillStyle = "black";
-			ctx.fillText("10m" , -screenx*screenScale-30 , (-10+screeny)*screenScale+10);
-			ctx.fillText("10m" , (10-screenx)*screenScale-30 , screeny*screenScale+10);
-			ctx.fillText("0m" , 0-screenx*screenScale-10 , screeny*screenScale+10);
-			ctx.fillText("X axis" , screenWidth - 90 , screeny * screenScale - 2);
-			ctx.fillText("Y axis" , -screenx * screenScale + 2 , 25);
-		}
-		if(screenScale < 25)
-			gridScale = 10;
-		else if(screenScale < 350)
-			gridScale = 1;
-		else
-			gridScale = 0.1;
-	}
-	for(i = Math.round(screenx/gridScale) ; i < (screenx+screenWidth/screenScale)/gridScale ; i++){//		vertical lines
-		if(i%10 == 0){
-			ctx.lineWidth = 3;
-			if(i == 0){//		Origin line
-				ctx.strokeStyle="#505050";
-				ctx.beginPath();
-				ctx.moveTo(-screenx * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
-				ctx.lineTo(-screenx * screenScale , screenHeight);
-				ctx.stroke();
-				ctx.strokeStyle="#C5C5C5";
-				continue;
-			}
-		}else{
-			ctx.lineWidth = 1;
-		}
-		ctx.beginPath();
-		ctx.moveTo((-screenx + i*gridScale) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
-		ctx.lineTo((-screenx + i*gridScale) * screenScale , screenHeight);
-		ctx.stroke();
-	}
-	for(i = Math.round(-screeny/gridScale) ; i < (-screeny+screenHeight/screenScale)/gridScale ; i++){//		horizontal lines
-		if(i%10 == 0){
-				ctx.lineWidth = 3;
-			if(i == 0){//		Origin line
-				ctx.strokeStyle="#505050";
-				ctx.beginPath();
-				ctx.moveTo(0 , screeny * screenScale);
-				ctx.lineTo(screenWidth , screeny * screenScale);
-				ctx.stroke();
-				ctx.strokeStyle="#C5C5C5";
-				continue;
-			}
-		}else{
-			ctx.lineWidth = 1;
-		}
-		ctx.beginPath();
-		ctx.moveTo(0 , (screeny + i*gridScale) * screenScale);
-		ctx.lineTo(screenWidth , (screeny + i*gridScale) * screenScale);
-		ctx.stroke();
-	}
-}
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------
 function drawLine(){
@@ -225,15 +155,15 @@ function cursorPosition(){
 	
 //	----------------------------------		[   Local Minima/Maxima   ]		----------------------------------
 	ftmp = 15/Math.sqrt(screenScale);//		2x gap between ltmp and rtmp
-	onOff = false;
+	minMax = false;
 	if(equation(dx + ftmp) < dy && equation(dx - ftmp) < dy){//		close to a local maxima
 		stmp = "Local Maxima:";
-		onOff = true;
+		minMax = true;
 	}else if(equation(dx + ftmp) > dy && equation(dx - ftmp) > dy){
 		stmp = "Local Minima:";
-		onOff = true;
+		minMax = true;
 	}
-	if(onOff){
+	if(minMax){
 		ltmp = dx - ftmp;//		left x value
 		lyy = equation(ltmp);//	left y value
 		rtmp = dx + ftmp;//	right x value
