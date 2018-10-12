@@ -139,8 +139,8 @@ function newScreenSize(){
 window.addEventListener("resize", screenResize);
 
 function screenResize(){
-	screenWidth = document.documentElement.clientWidth;
-	screenHeight = document.documentElement.clientHeight;
+	screenWidth = document.documentElement.clientWidth * window.devicePixelRatio;
+	screenHeight = document.documentElement.clientHeigh * window.devicePixelRatiot;
 	//screenWidth = window.innerWidth * window.devicePixelRatio;
 	//screenHeight = window.innerHeight * window.devicePixelRatio;
 	console.log("Resized Screen " + screenWidth + " - " + screenHeight);
