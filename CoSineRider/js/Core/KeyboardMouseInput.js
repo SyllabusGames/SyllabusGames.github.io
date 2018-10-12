@@ -139,14 +139,13 @@ function newScreenSize(){
 window.addEventListener("resize", screenResize);
 
 function screenResize(){
-	screenWidth = document.documentElement.clientWidth * window.devicePixelRatio;
-	screenHeight = document.documentElement.clientHeigh * window.devicePixelRatiot;
+	screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
+	screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
 	//screenWidth = window.innerWidth * window.devicePixelRatio;
 	//screenHeight = window.innerHeight * window.devicePixelRatio;
-	console.log("Resized Screen " + screenWidth + " - " + screenHeight);
+//	console.log("Resized Screen " + screenWidth + " - " + screenHeight);
 	newScreenSize();
 	window.scrollTo(0, 0);
-	console.log("Resized Canvas " + canvas.width + " - " + canvas.height);
 }
 
 //		----------------------------------------------------		[   Key Up   ]		----------------------------------------------------
