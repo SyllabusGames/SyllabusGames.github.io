@@ -2,10 +2,10 @@
 <!-------	[  All function calls originate from this file , KeyboardMouseInput.js , and TextInput.js. Start reading in those files to understand what's going on.   ]		------->
 
 <!DOCTYPE html>
-<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
+<canvas id="gc" width="1600" height="800" style="z-index: -2; background:#FFFFFF;"></canvas>
 <canvas id="render" width="1600" height="800" style="z-index: 2; position:absolute; left:0px; top:0px; pointer-events:none; touch-action:none;"></canvas>
 <canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px; pointer-events: none"></canvas>
-<canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
+<canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;"></canvas>
 
 <head>
 	<link rel="icon" href="SineRiderSGLogo.png">
@@ -16,36 +16,41 @@
 </head>
 
 <!--		Dissable right click menu		-->
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false;" style="background-color:#DDDDDD; margin: 0;">
 </body>
 
 <!--	Load External Libraries	-->
 <!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
-<script src="js/Math.js"></script>
+<script src="js/Core/Math.js"></script>
 
 <!--	Load Internal Scripts	-->
-<script type="text/javascript" src="js/Collisions.js"></script>
-<script type="text/javascript" src="js/Sledder.js"></script>
-<script type="text/javascript" src="js/EquationLine.js"></script>
-<script type="text/javascript" src="js/LevelSaver.js"></script>
-<script type="text/javascript" src="js/LevelLoader.js"></script>
-<script type="text/javascript" src="js/XYZView.js"></script>
-<script type="text/javascript" src="js/3B1BAnimations.js"></script>
+<script type="text/javascript" src="js/Core/Main.js"></script>
+<script type="text/javascript" src="js/Core/Collisions.js"></script>
+<script type="text/javascript" src="js/Core/Sledder.js"></script>
+<script type="text/javascript" src="js/Core/EquationLine.js"></script>
+<script type="text/javascript" src="js/Core/LevelSaver.js"></script>
+<script type="text/javascript" src="js/Core/LevelLoader.js"></script>
 <script type="text/javascript" src="js/SvgEditor.js"></script>
 <script type="text/javascript" src="js/AudioControl.js"></script>
-<script type="text/javascript" src="js/Pause.js"></script>
-<script type="text/javascript" src="js/Menu.js"></script>
-<script type="text/javascript" src="js/3Numberline.js"></script>
-<script type="text/javascript" src="js/2dRender.js"></script>
+<script type="text/javascript" src="js/Core/Pause.js"></script>
+<script type="text/javascript" src="js/Core/Menu.js"></script>
+<script type="text/javascript" src="js/Core/TextInput.js"></script>
 
-<script type="text/javascript" src="js/KeyboardMouseInput.js"></script>
-<script type="text/javascript" src="js/TextInput.js"></script>
-<script type="text/javascript" src="js/DraggableText.js"></script>
+<script type="text/javascript" src="js/LevelLimited/2dRender.js"></script>
+<script type="text/javascript" src="js/LevelLimited/3Numberline.js"></script>
+<script type="text/javascript" src="js/LevelLimited/3B1BAnimations.js"></script>
+<script type="text/javascript" src="js/LevelLimited/PiecewiseInput.js"></script>
+<script type="text/javascript" src="js/LevelLimited/XYZView.js"></script>
 
-<script type="text/javascript" src="js/DebugView.js"></script>
+<script type="text/javascript" src="js/Core/KeyboardMouseInput.js"></script>
+<script type="text/javascript" src="js/Core/TextInput.js"></script>
+
+<script type="text/javascript" src="js/Mods/DraggableText.js"></script>
+<script type="text/javascript" src="js/Mods/DebugView.js"></script>
 
 <!--		Remove white space around canvas (also makes cursor more accurate)		-->
-<body style="margin: 0;"></body>
+<body style="margin: 0;">
+</body>
 
 <!--		File Loader		-->
 <input type="file" id="files" hidden="hidden" name="files[]" multiple />
@@ -80,464 +85,253 @@
 		.button:hover {
 			fill: #CCCCCC;
 		}
+
+	.unselectable {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		pointer-events: none;
+		touch-action: none;
+	}
 </style>
 
-<!--		Banner		-->
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="240" width="420" style="z-index: 10; position:absolute; left:1185px; top:500px;">
-	<g id="onScreenKeypad" transform="translate(60 4)"><!--		Offset slightly so the top is not clipped		-->
-		<!--		Move and ( )		-->
-		<g transform="translate(-60,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('(')"/>
-			<text style="text-anchor:middle;" font-size="40px" y="36" x="16" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">(</text>
-		</g>
+<!--		On Screen Keyboard		-->
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="240" width="420" style="z-index: 10; position:absolute; left:1185px; top:300px;">
+	<text x="1220" y="720" font-size="135px" style="position: absolute;">AND THE END SHALL GO ON</text>
+	<!--		-->
+	<defs>
+		<!--		-->
 
-		<g transform="translate(-60,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(')')"/>
-			<text style="text-anchor:middle;" font-size="40px" y="36" x="38" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">)</text>
-		</g>
+		<g id="onScreenKeypad" transform="translate(60 4)">
+			<!--		Offset slightly so the top is not clipped		-->
+			<!--		Move and ( )		-->
+			<g transform="translate(-60,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('(')" />
+				<text style="text-anchor:middle;" font-size="40px" y="36" x="16" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">(</text>
+			</g>
 
-		<g transform="translate(-60,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('<')"/>
-			<text style="text-anchor:middle;" font-size="40px" y="36" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">←</text>
-		</g>
+			<g transform="translate(-60,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(')')" />
+				<text style="text-anchor:middle;" font-size="40px" y="36" x="38" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">)</text>
+			</g>
 
-		<g transform="translate(-60,180)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('>')"/>
-			<text style="text-anchor:middle;" font-size="40px" y="36" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">→</text>
-		</g>
+			<g transform="translate(-60,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('<')" />
+				<text style="text-anchor:middle;" font-size="40px" y="36" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">←</text>
+			</g>
 
-		<!--		Standard number keypad		-->
-		<g transform="translate(0,180)">
-			<rect ry="13" height="50" width="110" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(0)"/>
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">0</text>
-		</g>
+			<g transform="translate(-60,180)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('>')" />
+				<text style="text-anchor:middle;" font-size="40px" y="36" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">→</text>
+			</g>
 
-		<g transform="translate(120,180)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('.')"/>
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">.</text>
-		</g>
+			<!--		Standard number keypad		-->
+			<g transform="translate(0,180)">
+				<rect ry="13" height="50" width="110" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="106" y="2" x="4" class="button" onclick="top.keyPress(0)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">0</text>
+			</g>
 
-		<g transform="translate(0,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(1)"/>
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">1</text>
-		</g>
+			<g transform="translate(120,180)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('.')" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">.</text>
+			</g>
 
-		<g transform="translate(60,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(2)"/>
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">2</text>
-		</g>
+			<g transform="translate(0,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(1)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">1</text>
+			</g>
 
-		<g transform="translate(120,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(3)"/>
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">3</text>
-		</g>
+			<g transform="translate(60,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(2)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">2</text>
+			</g>
 
-		<g transform="translate(0,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(4)"/>
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">4</text>
-		</g>
+			<g transform="translate(120,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(3)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">3</text>
+			</g>
 
-		<g transform="translate(60,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(5)" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">5</text>
-		</g>
+			<g transform="translate(0,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(4)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">4</text>
+			</g>
 
-		<g transform="translate(120,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(6)" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">6</text>
-		</g>
+			<g transform="translate(60,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(5)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">5</text>
+			</g>
 
-		<g transform="translate(0,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(7)" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">7</text>
-		</g>
+			<g transform="translate(120,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(6)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">6</text>
+			</g>
 
-		<g transform="translate(60,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(8)" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">8</text>
-		</g>
+			<g transform="translate(0,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(7)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">7</text>
+			</g>
 
-		<g transform="translate(120,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(9)" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">9</text>
-		</g>
+			<g transform="translate(60,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(8)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">8</text>
+			</g>
 
-		<!--		+ - / *		-->
-		<g transform="translate(180,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('+')" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">+</text>
-		</g>
+			<g transform="translate(120,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress(9)" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">9</text>
+			</g>
 
-		<g transform="translate(180,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('-')" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">-</text>
-		</g>
+			<!--		+ - / *		-->
+			<g transform="translate(180,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('+')" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">+</text>
+			</g>
 
-		<g transform="translate(180,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('*')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">*</text>
-		</g>
+			<g transform="translate(180,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect ry="11" height="46" width="46" y="2" x="4" class="button" onclick="top.keyPress('-')" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">-</text>
+			</g>
 
-		<g transform="translate(180,180)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('/')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">/</text>
-		</g>
+			<g transform="translate(180,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('*')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">*</text>
+			</g>
 
-		<!--		4 Functions		+ - / *		-->
-		<g transform="translate(180,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('+')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">+</text>
-		</g>
+			<g transform="translate(180,180)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('/')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">/</text>
+			</g>
 
-		<g transform="translate(180,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('-')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">-</text>
-		</g>
+			<!--		4 Functions		+ - / *		-->
+			<g transform="translate(180,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('+')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">+</text>
+			</g>
 
-		<g transform="translate(180,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('*')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">*</text>
-		</g>
+			<g transform="translate(180,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('-')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">-</text>
+			</g>
 
-		<!--		Variables		-->
-		<g transform="translate(240,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('x')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#F00" pointer-events="none"; touch-action="none">x</text>
-		</g>
+			<g transform="translate(180,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('*')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">*</text>
+			</g>
 
-		<g transform="translate(240,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('t')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#0F0" pointer-events="none"; touch-action="none">t</text>
-		</g>
+			<!--		Variables		-->
+			<g transform="translate(240,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('x')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#F00" pointer-events="none" ; touch-action="none">x</text>
+			</g>
 
-		<g transform="translate(240,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('z')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#00F" pointer-events="none"; touch-action="none">z</text>
-		</g>
+			<g transform="translate(240,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('t')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#0F0" pointer-events="none" ; touch-action="none">t</text>
+			</g>
 
-		<g transform="translate(240,180)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('?')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">?</text>
-		</g>
+			<g transform="translate(240,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('z')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#00F" pointer-events="none" ; touch-action="none">z</text>
+			</g>
 
-		<!--		Advanced Functions		-->
-		<g transform="translate(300,0)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('s')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="32px" y="35" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">sin</text>
-		</g>
+			<g transform="translate(240,180)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('?')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="50px" y="43" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">?</text>
+			</g>
 
-		<g transform="translate(300,60)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('c')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="32px" y="35" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">cos</text>
-		</g>
+			<!--		Advanced Functions		-->
+			<g transform="translate(300,0)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('sin')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="32px" y="35" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">sin</text>
+			</g>
 
-		<g transform="translate(300,120)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('t')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="32px" y="35" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">tan</text>
-		</g>
+			<g transform="translate(300,60)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('cos')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="32px" y="35" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">cos</text>
+			</g>
 
-		<g transform="translate(300,180)">
-			<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
-			<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('^')"
-				onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
-			<text style="text-anchor:middle;" font-size="40px" y="40" x="27" font-family="sans-serif" fill="#000" pointer-events="none"; touch-action="none">^</text>
-		</g>
-	</g><!--		This is the group all all keyPad elements are added to		-->
+			<g transform="translate(300,120)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('tan')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="32px" y="35" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">tan</text>
+			</g>
+
+			<g transform="translate(300,180)">
+				<rect ry="13" height="50" width="50" stroke="#5cc0a8" stroke-linecap="round" y="0" x="2" stroke-width="4" fill="none" />
+				<rect fill-opacity="0.9" ry="11" height="46" width="46" y="2" x="4" fill="#FFFFFF" class="button" onclick="top.keyPress('^')"
+					  onmouseover="evt.target.setAttribute('fill', '#CCCCCC');" onmouseout="evt.target.setAttribute('fill','#FFFFFF');" />
+				<text style="text-anchor:middle;" font-size="40px" y="40" x="27" font-family="sans-serif" fill="#000" pointer-events="none" ; touch-action="none">^</text>
+			</g>
+		</g><!--		This is the group all all keyPad elements are added to		-->
+		<!--		-->
+	</defs>
+	<!--		-->
 </svg>
 
 <script>
-	//		Ctrl+Shift+J	shows error log in Chrome
-	
-	//		time
-	var frameTime = 0;//		time since level started (used as t in equations)
-	var lastTime = 0;
-	var dt = 0.01;//		change in time since last frame
-	//var lastTimeRaw = 0;
-
-	//		temporary variables (all of these are used in multiple places. This is to avoid the inefficiency of redeclaring i 10 times a frame)
-	//		all these variables should be assumed to be reset outside the context of a single function
-	var dx = 0;//	float
-	var dy = 0;//	float
-	var lyy = 0;//	float
-	var ryy = 0;//	float
-	var dydt = 0;//	float
-	var dxdt = 0;//	float
-	var i = 0;//	int
-	var k = 0;//	int
-	var itmp = 0;//	int
-	var ftmp = 0;//	float
-	var dtmp = 0;//	float
-	var ltmp = 0;//	float
-	var rtmp = 0;//	float
-	var stmp = "";//	string
-	var tmspx;
-	var tmspy;
-	var tmspz;
-	var onOff = false;
-
-	//		should be deleted before launch
-	var lineResolution = 5;//		pixels per vertex (vertex every _ pixels)
-	var debugSkipFrame = false;
-	var debugSingleFrame = false;
-	var debugFramerateCount = 0;
-	var debugFramerateLast = 0;
-	var debugFramerateTime = 0;
-	var ctrlHeld = false;
-	var showMessage = false;
-	var messageTime = 10;
-	var messageText = "";
-
-	//		camera position and scale. These coordinates are the position of the upper left corner of the screen.
-	var screenWidth = 1600;
-	var screenHeight = 800;
-	var screenx = 0;
-	var screeny = 0;
-	var screenScale = 20;
-	var trackPointx = 0;//		point the camera will try to keep on screen
-	var trackPointy = 0;
-
-	//		gameplay state
-	var simulating = false;//		game is running. Sled is moving.
-	var camLocked = false;
-	var paused = false;//		player has not paused and window is in focus
-	var menuOpen = false;//		game is paused because the menu is open
-	var writeCursor = false;
-
-	//		canvas
-	var canvas;//		main canvas for 2D elements
-	var ctx;
-	var xyz;//		canvas for 3D elements
-	var xyzc;
-	var xyzWidth = 500;
-	var xyzHeight = 500;
-	var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel gaps caused by a low sample rate.
-	var xyz2c;
-
-	var mainInput;
-	var piecInput = new Array();
-
-	var parenOpen = 0;
-
-	var timestamp;//		used only for running update()
-
-	window.onload = function(){
-		canvas = document.getElementById('gc');
-		ctx = canvas.getContext('2d');
-		xyzc = document.getElementById('XYZ');
-		xyz  = xyzc.getContext('2d');
-		xyz2c = document.getElementById('XYZ2');
-		xyz2  = xyz2c.getContext('2d');
-		document.body.style.overflow = 'hidden';//		turn off page scrolling
-		lastTime = performance.now()*0.001;
-
-		mainInput = document.createElement("p");
-		mainInput.setAttribute("id" , "input0");
-		mainInput.setAttribute("contentEditable" , "true");
-		mainInput.style = "position:absolute;left:50px;top:715px;width:1440px;font-size:35px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
-		mainInput.innerHTML = "-x";
-		document.body.appendChild(mainInput);
-		piecInput.push(mainInput);
-
-		saveLevel();//		for testing
-		buildLevelMap();//		for testing
-		loadLevelMap();//		for testing
-	//			setUpAnim();
-		ctx.textAlign="center";
-
-		//ctx.save();
-		/*c.addEventListener('mousemove' , function(e){
-			mx = e.clientX-6;
-			my = e.clientY-6;
-		})*/
-		setUpSledder();
-		window.requestAnimationFrame(update);
-		setUpXYZ();
-
-		//		-----------------------------------------------------------------------		[   Page Icon   ]		-----------------------------------------------------------------------
-		var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-		link.type = 'image/x-icon';
-		link.rel = 'shortcut icon';
-		link.href = 'SineRiderSGLogo.png';
-		document.getElementsByTagName('head')[0].appendChild(link);
-
-		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){//		load onScreenKeypad if on mobile
-			
+	//		get inputs from on screen keyboard
+	function keyPress(key) {
+		switch (key) {
+			case '<':
+				break;
+			case '>':
+				break;
+			case 'sin':
+				mainInput.innerText = mainInput.innerText + "sin(";
+				break;
+			case 'cos':
+				mainInput.innerText = mainInput.innerText + "cos(";
+				break;
+			case 'tan':
+				mainInput.innerText = mainInput.innerText + "tan(";
+				break;
+			default:
+				mainInput.innerText = mainInput.innerText + key;
 		}
-	}
-	
-	function keyPress(key){
-		mainInput.innerText = mainInput.innerText + key;
 		checkInputFields(0);
 		mainInput.blur();
 	}
-
-
-		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
-	function update(timestamp){
-		window.requestAnimationFrame(update);
-		if(paused){
-			if(menuOpen){
-				MMDrawLine();
-			}
-			return;
-		}
-		dt = Math.min(performance.now()*0.001 - lastTime , 0.125);//		no frame can skip more than 1/8 seconds. (if framerate is below 8, game will actually slow down)
-		lastTime = performance.now()*0.001;
-		if(useZ)
-			drawXYZ();//		update the 3D view
-
-		//		-----------------------------------------------------------------------		[   Debugging   ]		-----------------------------------------------------------------------
-		//		incrament every frame. Reset at every second.
-		if(lastTime - debugFramerateTime > 1){
-			debugFramerateTime = lastTime;
-			debugFramerateLast = debugFramerateCount;
-			debugFramerateCount = 0;
-			if(useZ){//		change the 3D view update frequency based on framerate
-				if(debugFramerateLast < 30){
-					if(debugFramerateLast < 20){
-						scanStep = 2;
-						lineResolution = 8;
-					}else{
-						scanStep = 6;
-						lineResolution = 7;
-					}
-				}else{
-					if(debugFramerateLast > 57){
-						scanStep = 12;
-						lineResolution = 3;
-					}else{
-						scanStep = 8;
-						lineResolution = 5;
-					}
-				}
-			}
-		}else{
-			debugFramerateCount++;
-		}
-		
-		if(ctrlHeld){//		speed up game x5
-			dt *= 5;
-		}
-
-		if(debugSkipFrame && !debugSingleFrame){
-			//drawNumberLines();//		see 3B1BAnimations
-			return;
-		}
-		debugSingleFrame = false;
-		//				Debug pause and frame advance
-//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
-		
-//		-----------------------------------------------------------------------		[   Draw Screen   ]		-----------------------------------------------------------------------
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-		drawGrid();
-//		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
-		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
-
-//		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
-
-	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
-	if(equInvalid){//		invalid equation, show y = old equation
-		ctx.fillStyle = "#888888";
-		ctx.fillText("y= " + equLast[0] , Math.round(screenWidth * 0.01) , 50+Math.round(screenHeight*0.85));
-	}else{
-		ctx.fillStyle = "black";
-		ctx.fillText("y=", Math.round(screenWidth * 0.01) , 100+Math.round(screenHeight * 0.85));
-		//		for piecwise use (y₀₁₂₃₄₅₆₇₈₉=)
-		if(!containsVariables)//		if equation does not contain x, z, or t, (output is constant) show the answer next to the input line.
-			ctx.fillText("y = " + equation(0).toString() , Math.round(screenWidth * 0.02) , 50 + Math.round(screenHeight * 0.85));
-			//ctx.fillText("=" + equation(0).toString() , Math.round(screenWidth * 0.935) , 100+Math.round(screenHeight*0.85));
-	}
-		
-		
-		if(simulating){
-			frameTime += dt;
-		}else{
-			frameTime = 0;
-		}
-
-		drawLine();
-		moveSledder();//		see sledder.js
-		
-		//		call a full screen render if render2d is used. Call only on renderFullTimer=0 so it is only called once
-		if(useRender){
-			renderFullTimer--;
-			if(renderFullTimer == 0){
-				//		clear render buffer, then call first pass of renderer
-				/*renderImageData = renderCanvas.getImageData(0, 0, screenWidth, screenHeight);
-				renderBuf = new ArrayBuffer(renderImageData.data.length);
-				renderBuf8 = new Uint8ClampedArray(renderBuf);
-				renderData = new Uint32Array(renderBuf);*/
-				renderx = screenWidth;
-				renderPass();
-			}
-		}
-		
-		if(writeCursor && (!simulating || !camLocked)){
-			cursorPosition();//		see SvgEditor.js
-		}
-		if(graphingPoints)
-			drawGraphedPoints();//		see SvgEditor.js
-		drawColliders();//		see collisions.js
-	//	drawNumberLines();//		see 3B1BAnimations.js
-	//	numberLine(5,2,4);
-
-	//			animCore();
-
-		if(showMessage){
-			messageTime += dt;
-			ctx.fillStyle = "#A00000" + Math.round(Math.max(Math.min(Math.min(messageTime*8-1,-messageTime+2)+1 , 1) *255, 17)).toString(16);//		font color for text overlay
-			ctx.font = "bold 80px Arial";
-			ctx.fillText(messageText , screenWidth/2 , screenHeight/5);
-			if(messageTime > 3)
-				showMessage = false;
-		}
-		
-	
-		ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.85));
-		//ctx.fillText("Scale = " + String(Math.round(screenScale)) , Math.round(screenWidth * 0.7) , Math.round(screenHeight*0.92));
-		//ctx.fillText( "Scale = " + Math.round(screenScale).toString() , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.9));
-	}
-	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
 </script>
