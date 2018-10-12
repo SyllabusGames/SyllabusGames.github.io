@@ -153,6 +153,40 @@ document.addEventListener('mousedown', function(e){
 	}
 });
 
+
+//		----------------------------------------------------		[   Touch Down   ]		----------------------------------------------------
+document.addEventListener('touchstart', function(e){
+	var evt = e==null ? event : e;//		firefox compatibility	
+		
+	stringYScreen = parseInt(mainInput.style.top) + 57;
+	if(Math.abs(evt.clientY - stringYScreen) < 32){//		skip all if cursor is not at the right Y position to be over any variables
+			
+		stmp = mainInput.innerText;
+		ctx.font="35px Arial";
+		stringXScreen = parseInt(mainInput.style.left);//		left edge of textBox in screen coordinates
+
+		var regex = /\+?-?\d+\.?\d*/g;
+
+		while(match = regex.exec(stmp)){
+			ftmp = ctx.measureText(stmp.substring(0 , match.index)).width;//		get length of text that is left of the target string
+			dragStringLength = ctx.measureText(match).width;//		screen length of string to be selected
+			if(Math.abs(evt.clientX - stringXScreen - dragStringLength/2 - ftmp) < dragStringLength/2 + 2){//		cursor is over this text
+				dragHold = true;
+				dragFirst = true;
+				dragString0 = stmp.substring(0 , match.index);//		string before the bit being changed
+				dragVar1 = parseFloat(match);//		store the number being dragged
+				dragString2 = stmp.substring(match.index + match.toString().length);
+				dragAddPlus = !(match.index == 0 || stmp[match.index-1] == '*' || stmp[match.index-1] == '/' || stmp[match.index-1] == '^' || stmp[match.index-1] == '%' || stmp[match.index-1] == '(');
+				dragY = evt.clientY;
+				console.log(dragAddPlus + " at " + stmp[match.index-1]);
+				console.log(dragString0 + " - " +  dragVar1  + " - " + dragString2);
+				document.body.style.cursor = "ns-resize";
+				break;
+			}
+		}
+	}
+});
+
 //		----------------------------------------------------		[   Mouse Up   ]		----------------------------------------------------
 document.addEventListener('mouseup', function(e){
 	var evt = e==null ? event : e;//		firefox compatibility	
@@ -163,8 +197,17 @@ document.addEventListener('mouseup', function(e){
 	}
 });
 
+
+//		----------------------------------------------------		[   Touch Up   ]		----------------------------------------------------
+document.addEventListener('touchend', function(e){
+	dragHold = false;
+});
+
 //		----------------------------------------------------		[   Mouse Move   ]		----------------------------------------------------
-document.addEventListener('mousemove', function(e){
+document.addEventListener('mousemove', dragMouseMove);
+document.addEventListener('touchmove', dragMouseMove);
+
+function dragMouseMove(e){
 	if(dragHold){//		if dragging a variable, incrament that variable
 		var evt = e==null ? event : e;//		firefox compatibility	
 		//		require the cursor to move 45 before changing the variable initially so you don't accidentally change variables while highlighting.
