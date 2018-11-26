@@ -64,8 +64,9 @@ var xyzHeight = 500;
 var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel gaps caused by a low sample rate.
 var xyz2c;
 
-var mainInput;
-var piecInput = [];//new Array();
+var activeInput;//		the currently selected text input field
+var mainInput;//		the first (botom left) input field and the one that is used if only one is active
+var pieEquInput = [];//new Array();
 
 var parenOpen = 0;
 
@@ -90,7 +91,7 @@ window.onload = function(){
 	mainInput.innerHTML = "-x";
 	document.body.appendChild(mainInput);
 //		Move ↓ to PiecwiseInput.js
-	piecInput.push(mainInput);
+	pieEquInput.push(mainInput);
 	
 
 	saveLevel();//		for testing
@@ -189,7 +190,7 @@ function update(timestamp){
 	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
 	if(equInvalid){//		invalid equation, show y = old equation
 		ctx.fillStyle = "#888888";
-		ctx.fillText("y= " + equLast[0] , Math.round(screenWidth * 0.01) , screenHeight - 60);
+		ctx.fillText("y= " + equLast , Math.round(screenWidth * 0.01) , screenHeight - 60);
 	}else{
 		ctx.fillStyle = "black";
 		ctx.fillText("y=", Math.round(screenWidth * 0.01) , screenHeight - 20);

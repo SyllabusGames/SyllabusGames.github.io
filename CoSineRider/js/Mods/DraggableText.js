@@ -67,7 +67,7 @@ document.addEventListener('wheel', function(e){
 				}
 			}); 
 
-			checkInputFields();
+			checkInputFields(mainInput);
 
 		}else{//		drag only designated text
 			dragStringLength = ctx.measureText(dragLast).width;
@@ -99,7 +99,7 @@ document.addEventListener('wheel', function(e){
 				dragLast = dragNew;
 
 
-				checkInputFields();
+				checkInputFields(mainInput);
 			}
 		}
 	}
@@ -143,8 +143,8 @@ document.addEventListener('mousedown', function(e){
 					//	only add a plus if not the first text || not preceded by * || not preceded by * / etc.
 					dragAddPlus = !(match.index == 0 || stmp[match.index-1] == '*' || stmp[match.index-1] == '/' || stmp[match.index-1] == '^' || stmp[match.index-1] == '%' || stmp[match.index-1] == '(');
 					dragY = evt.clientY;
-					console.log(dragAddPlus + " at " + stmp[match.index-1]);
-					console.log(dragString0 + " - " +  dragVar1  + " - " + dragString2);
+//					console.log(dragAddPlus + " at " + stmp[match.index-1]);
+//					console.log(dragString0 + " - " +  dragVar1  + " - " + dragString2);
 					document.body.style.cursor = "ns-resize";
 					break;
 				}
@@ -224,7 +224,7 @@ function dragMouseMove(e){
 				dragY = evt.clientY;
 				//mainInput.innerText = dragString0 + dragVar1 + dragString2;
 				mainInput.innerText = dragString0 + ((dragAddPlus && dragVar1 >= 0) ?"+":"") + dragVar1 + dragString2;
-				checkInputFields();
+				checkInputFields(mainInput);
 				dragFirst = false;
 			}
 		}

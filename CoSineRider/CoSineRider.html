@@ -38,19 +38,25 @@
 <script type="text/javascript" src="js/Core/DrawBackground.js"></script>
 
 <script type="text/javascript" src="js/LevelLimited/2dRender.js"></script>
-<script type="text/javascript" src="js/LevelLimited/3Numberline.js"></script>
 <script type="text/javascript" src="js/LevelLimited/3B1BAnimations.js"></script>
-<script type="text/javascript" src="js/LevelLimited/PiecewiseInput.js"></script>
+<script type="text/javascript" src="js/LevelLimited/3Numberline.js"></script>
+<script type="text/javascript" src="js/LevelLimited/InputPiecewise.js"></script>
+<script type="text/javascript" src="js/LevelLimited/InputTyped.js"></script>
 <script type="text/javascript" src="js/LevelLimited/XYZView.js"></script>
 
 <script type="text/javascript" src="js/Core/KeyboardMouseInput.js"></script>
 <script type="text/javascript" src="js/Core/TextInput.js"></script>
 
+<script type="text/javascript" src="js/Mods/CsvPointGraph.js"></script>
 <script type="text/javascript" src="js/Mods/DraggableText.js"></script>
 <script type="text/javascript" src="js/Mods/DebugView.js"></script>
 
 <!--		Remove white space around canvas (also makes cursor more accurate)		-->
 <body style="margin: 0;">
+	<form method="post" enctype="multipart/form-data">
+		<input type="file" name="files[]" multiple>
+		<input type="submit" value="Upload File" name="submit">
+	</form>
 </body>
 
 <!--		File Loader		-->
@@ -332,7 +338,8 @@
 			default:
 				mainInput.innerText = mainInput.innerText + key;
 		}
-		checkInputFields(0);
+		console.log("html");
+		checkInputFields(mainInput);
 		mainInput.blur();
 	}
 </script>

@@ -31,7 +31,7 @@ function setUpSledder(){
 
 //		called every time you win, lose, or reset
 function resetSledder(){
-	checkInputFields();//		update line. (useful if the player types something while the simulation is running)
+	checkInputFields("all");//		update line. (useful if the player types something while the simulation is running)
 	dropTime = 0;//		delete
 	simulating = !simulating;
 	apx = defaultPosX;
@@ -92,7 +92,9 @@ function moveSledder(){
 //		----------------------------------------------------		[   Move/Scale Screen   ]		----------------------------------------------------
 function screenFollowSledder(){
 	//		dist = distance between track point/goal and sled
-	var dist = Math.sqrt((apx-trackPointx)*(apx-trackPointx) + (apy-trackPointy)*(apy-trackPointy)*screenWidth/screenHeight);//		multiply y by Screen ratio so the target does not go off the top of the screen
+	var dx = apx-trackPointx;
+	var dy = (apy-trackPointy)*screenWidth/screenHeight;//		multiply y by Screen ratio so the target does not go off the top of the screen
+	var dist = Math.sqrt(dx*dx + dy*dy);
 	var weight = Math.max(Math.min(Math.log(Math.max(dist-5,0)/Math.max(151-dist,0))*0.05+0.5 , 1) , 0);//	Logit curve.	//	y = log(max(x-5,0)/max(150-x,0))*0.05+0.5
 //		weight is set to 0 (view is based only on target/goal position) when the sled is < 5m from the target
 //		weight is set to 1 (view is based only on sled position) when the sled is > 45m from the target

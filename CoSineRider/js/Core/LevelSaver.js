@@ -1,7 +1,8 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 function saveLevel(){
+	localStorage.setItem("SR000" , "LV1: Drag Points\nRD\n0,0\n_*x+_\n2,v,1,1,1\n44,4\nCave\nEnd");//	sin(x-8*t)+(x-12)^2/300-1
 	localStorage.setItem("SR001" , "LV1: Using Time\nSR\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nuseTime\nuseZ\n44,4\nCave\nEnd");//	sin(x-8*t)+(x-12)^2/300-1
-	localStorage.setItem("SR002" , "LV2: Using Z\nSR\n0,0\n-x/4+10t-(t*0.74)^2\n91,17\nTower\nEnd");
+	localStorage.setItem("SR002" , "LV2: Using Z\nPW\n0,0\n3\n-999,20,-x/2+t*1.5\n20,60,t*1.5-10\n60,200,x/10-16+t*1.5\n91,17\nTower\nEnd");
 	localStorage.setItem("SR003" , "LV3: Using Time and Z\nSR\n0,0\n-x-t*5+((z+5)^2)/20\nuseTime\nuseZ\n91,17\nTower\nEnd");
 	localStorage.setItem("SR004" , "LV2: Using __ and Z\nSR\n0,20\n-x/3+_+2\nuseZ\n30,0\nCave\nEnd");
 	localStorage.setItem("CaveColliders" , '<svg width="2e3" height="2e3" version="1.1" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0 947.64)" stroke="#000000"><path d="m1187.8 38.78-4.5114 4.6461-10.734 4.6196-12.908-1.7663-18.071 0.13588-23.506 4.0761-40.626 2.7174-17.392-4.212-10.87-2.038-11.142-1.087-5.5707-3.6685-1.9022-3.6685 1.7919-4.1638 10.642-11.331 34.578-7.8748 34.376 0.54348 59.39-9.1243 16.64 23.431-0.1853 8.7645" fill="#ffffff" fill-rule="evenodd"/><path d="m0 78.696 949.47-15.024 24.593-0.74728 15.218-1.9022h19.905l8.6145 1.4618 2.7862 0.33626 2.546 0.7686 0.4803 0.72056 5.0921 8.1107 3.6029 1.8254 1.345 2.1752 2.8343 1.2009 1.9215 1.8735 3.8911 2.2578 4.0832 1.6813 3.5548 1.1049 3.747 2.0176 5.8127 2.4019 7.8302 3.891 3.843 2.1617 1.9216 0.0961 1.2489-0.57644 0.9608 0.19214 1.297 0.76861 3.6029 0.1441 0.4324-1.0088 3.2665-0.24019 3.0264 0.33626 1.6333-0.14411 2.9784 0.81663 5.8606-0.1441 10.04-2.4019 0.8647-1.1529 2.2098-0.72056 1.4891 0.28822 1.4412-0.048 2.0176-0.9127-0.3363-0.62449 0.1441-1.0088 4.3235-2.1617 7.4459-0.24018 1.2009 0.5284 7.5901-2.1136 12.826-0.43233 1.7774-0.43233 2.6421-0.048 2.2577 0.57645 1.6333 1.0088h4.8519l4.0832-0.86467 6.245 1.1048 11.322-0.24559 7.9272-5.0115 3.4649-7.7949 4.7994-3.7885 2.5388-5.0776 3.0829-4.8963 2.5692-1.7327 11.827-5.7659 15.468-0.91271 33.002-5.14 731.85-3.7593" fill="none"/><circle cx="1222.1" cy="38.434" r="8.6607" fill="none" stroke-width=".94488"/></g></svg>');
@@ -11,28 +12,52 @@ function saveLevel(){
 /*
 M = moveto
 L = lineto
-H = horizontal lineto
-V = vertical lineto
-C = curveto
-S = smooth curveto
+H = horizontal line to
+V = vertical line to
+C = curve to
+S = smooth curve to
 Q = quadratic Bézier curve
-T = smooth quadratic Bézier curveto
+T = smooth quadratic Bézier curve to
 A = elliptical Arc
 Z = closepath
 */
 
-/*
-LV1: Easy as it gets
-Level Type (SR , PW)
-Player start position
-useBlanks//	Optional declaration
-Default Equation
-useTime//	Optional declaration
-useZ//	Optional declaration
-Camera track point
-.svg background to load
+/*	Standard Sine Rider level
+LV1: Easy				Name
+SR						Level Type
+0,0						Sled start position
+-x/2-3					Default equation
+useTime//				Optional declaration. Allows t to be used in equation
+useZ//					Optional declaration. Allows z to be used in equation
+30,10					Camera track point
+nTower					.svg background to load
 End
 */
+
+/*		Piecewise
+LV1: Easy				Name
+PW						Level Type
+0,0						Sled start position
+3						Number of equations
+-999,20,-x/2+t*1.5		Equation #1 range minimum, range maximum, default equation
+20,60,t*1.5-10			Equation #2 range minimum, range maximum, default equation
+60,200,x/10-16+t*1.5	Equation #3 range minimum, range maximum, default equation
+91,17					Camera track point
+nTower					.svg background to load
+End
+*/
+
+/*		Point Drag
+LV1: Easy				Name
+DR						Level Type
+0,0						Sled start position
+_*x+_					Equation with _ where dragable variables will be placed
+2,v,1,1,1				Default value, (h-Horizonatal drag || v-Vertical drag), default world position for drag point.x,.y,ratio for drag distance to value change
+91,17					Camera track point
+nTower					.svg background to load
+End
+*/
+
 
 function buildLevelMap(){
 	localStorage.setItem("LevelMap" , "SR001,SR002,SR003,SR004")

@@ -6,20 +6,22 @@
 
 
 /*
-	(x*x+y*y-1)^3-x^2*y^3=0
-	1=x*x+y*y
+	(x*x+y*y-1)^3-x^2*y^3<0
+	1<x*x+y*y
 	0.1=sin(x)+sin(y)
 	6.5=((x+2)^2+y^2)^0.5+((x-1.4)^2+(y+1.4)^2)^0.5+((x-1.4)^2+(y-1.4)^2)^0.5
 	tan(x)<tan(y)
-	tan(y/50)^2<cos(x/10)
+	sin(x+y)<cos(y)*tan(x*y)
+	tan(y/10)^2<cos(x/2)
 	sin(cos(x*y))<tan(y)
 	(x%2)+(y%2)<round((x*y)%4)
 */
 	var renderx = 1600;
 	var rendery;
 	var renderType = -1;
+	var pieRenderType = [-1, -1, -1, -1, -1, -1];
 	var renderEquation;
-	var renderCanvas
+	var renderCanvas;
 
 	var renderImageData;
 	var renderBuf;
@@ -47,18 +49,34 @@ function render2d(){//		called from checkInputFields() of TextInput.js
 	renderData = new Uint32Array(renderBuf);
 
 	//		record what type of equation / inequality this is
-	if(equRaw[0].indexOf('=') > -1){
-		renderType = 0;
-		renderEquation = equRaw[0].split('=');
-	}else if(equRaw[0].indexOf('>') > -1){
-		renderType = 1;
-		renderEquation = equRaw[0].split('>');
-	}else if(equRaw[0].indexOf('<') > -1){
-		renderType = 2;
-		renderEquation = equRaw[0].split('<');
+	if(usePiecewise){
+		if(equRaw.indexOf('=') > -1){
+			renderType = 0;
+			renderEquation = equRaw.split('=');
+		}else if(equRaw.indexOf('>') > -1){
+			renderType = 1;
+			renderEquation = equRaw.split('>');
+		}else if(equRaw.indexOf('<') > -1){
+			renderType = 2;
+			renderEquation = equRaw.split('<');
+		}else{
+			return;
+		}
 	}else{
-		return;
+		if(equRaw.indexOf('=') > -1){
+			renderType = 0;
+			renderEquation = equRaw.split('=');
+		}else if(equRaw.indexOf('>') > -1){
+			renderType = 1;
+			renderEquation = equRaw.split('>');
+		}else if(equRaw.indexOf('<') > -1){
+			renderType = 2;
+			renderEquation = equRaw.split('<');
+		}else{
+			return;
+		}
 	}
+	
 	
 	//		initilalize equations for both sides of the = < or >
 	scope = {x: 0 , y: 0};

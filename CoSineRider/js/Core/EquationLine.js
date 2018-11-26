@@ -10,10 +10,7 @@
 //		equation input
 var scope;
 var eqinput;
-var equRaw = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
-var equColored = "";
-var equLast = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];
-var equCompiled  = ["0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , "0"];//		these are the compiled Math.js parsers. They are initialized as strings just to get length=10
+var equCompiled;//		compiled Math.js parsers
 var equInvalid = false;
 var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', '#d12020', '#7820d1', '#20d120', '#20b0d1'];
 
@@ -22,7 +19,7 @@ var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', 
 var parenOpen = 0;
 var defaultEqu = "-x-5";
 var equInputField;
-var background;
+var background = new Image;
 var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
 
 var graphingPoints = false;
@@ -102,10 +99,12 @@ function equation(input){
 	}
 	
 	if(usePiecewise){
-		for(q = 0 ; q < piecInputsUsed ; q++){
-			return equCompiled[q].eval(scope);
+		for(q = 0 ; q < pieEquInputsUsed ; q++){
+			if(input < pieRightLimit[q] && input >= pieLeftLimit[q])
+				return pieEquCompiled[q].eval(scope);
 		}
-		return (-5);
+		//		current X position is not within a range so set to very low value to make a pit.
+		return (-9001);
 	}else{
 		return equ.eval(scope);
 	}

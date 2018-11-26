@@ -6,19 +6,18 @@ var substring = "";
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
-var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
 var useTime = false;//		time is not just set to zero
 //var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
 var useRender = false;
 var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
+
 var usePiecewise = false;
-var piecInputsUsed = 1;
-var piecLimitsLeft = [];//		the limit input boxes to the left in the format __ < x < __
-var piecLimitsRight = [];
-var piecLimitsText = [];//		elements holding the "< x <" text on screen
+var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
+
 //var usePolar = false;
 
+var lineNum = 0;
 
 
 function loadLevel(){
@@ -70,89 +69,152 @@ function loadLevelMap(){//		load the list of levels which was created in LevelSa
 }
 
 function loadBuiltInLevel(){
+	simulating = false;
+	
 	levelCode = levelMap[mapIndex];
 	loadedLevel = localStorage.getItem(levelCode).split('\n');
 	levelName = loadedLevel[0];
 	levelType = loadedLevel[1];
+	lineNum = 2;
 
-	//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
+	substring = loadedLevel[lineNum].split(',');//		sledder start position
+	defaultPosX = parseFloat(substring[0]);
+	defaultPosY = parseFloat(substring[1]);
+	apx = defaultPosX;
+	apy = defaultPosY;
+	lineNum++;
+
+	//		last level was piecwise but this one isn't so hide all inputs
+	if (usePiecewise && levelType != "PW"){
+		for(k = 0 ; k < 5 ; k++){
+			pieEquInput[k].style.display = "none";
+			pieLeftInput[k].style.display = "none";
+			pieRightInput[k].style.display = "none";
+			piecLimitsText[k].style.display = "none";
+		}
+	}
+
+	usePiecewise = false;
+	
+	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
+		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 		case "SR":
-			i = 2;
-			substring = loadedLevel[i].split(',');//		sledder start position
-			defaultPosX = parseFloat(substring[0]);
-			defaultPosY = parseFloat(substring[1]);
-			apx = defaultPosX;
-			apy = defaultPosY;
-			i++;
+			defaultEqu = loadedLevel[lineNum];
+			mainInput.innerHTML = defaultEqu;
+			mainInput.style.display = "block";
+			activeInput = mainInput;//		set the active input field to the only input field
+			lineNum++;
 
-			if(loadedLevel[i] == "useBlanks"){
-				useFillBlanks = true;
-				i++;
-				substring = loadedLevel[i].split('_');//		sledder start position
-				defaultEqu = loadedLevel[i];
-				mainInput.innerHTML = defaultEqu;
-			}else{
-				defaultEqu = loadedLevel[i];
-				mainInput.innerHTML = defaultEqu;
-			}
-			i++;
-
-			if(loadedLevel[i] == "useTime"){
-				useTime = true;
-				i++;
-			}else{
-				useTime = false;
-			}
-			
-			if(loadedLevel[i] == "useZ"){
-				if(useZ === false){//		if it is being turned on instead of just kept on, display the render so the player notices the 3D is back.
-					show3D = true;
-					useZ = true;
-					//		show the canvases showing the 3D render
-//			these 3↓ used to be outside the second if statement
-					xyzc.style.display="block";
-					xyz2c.style.display="block";
-					setUpXYZ();
-				}
-				i++;
-			}else{
-				useZ = false;
-				//		hide the canvases showing the 3D render
-				xyzc.style.display="none";
-				xyz2c.style.display="none";
-			//	xyzc.style.display="none !important";
-			//	xyz2c.style.display="none !important";
-			}
-			
-			substring = loadedLevel[i].split(',');//		camera track point
-			trackPointx = parseFloat(substring[0]);
-			trackPointy = parseFloat(substring[1]);
-			i++;
-			//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
-			background.src = "Levels/" + loadedLevel[i]+ ".svg";//		load background SVG
-			loadCollidersFromSvg(localStorage.getItem(loadedLevel[i] + "Colliders"));//		load collider SVG
-
-			/*var client = new XMLHttpRequest();
-			client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
-			client.onreadystatechange = function() {
-				if(client.responseText.length > 0){
-					loadCollidersFromTex(client.responseText);//		call loadCollidersFromTex() when the txt is loaded
-					console.log(client.responseText);
-				}
-			}
-			client.send();
-			*/
 
 			break;
-	//		-----------------------------------------------------------------------		[   Piecewise Gapless   ]		-----------------------------------------------------------------------
+		//		-----------------------------------------------------------------------		[   Piecewise Typed Input   ]		-----------------------------------------------------------------------
 		case "PW":
+			usePiecewise = true;
+
+			pieInitialize();//		see InputPiecewise.js
+			pieEquInputsUsed = parseInt(loadedLevel[lineNum]);//		get total number of input fields used
+			console.log("equ# = " + pieEquInputsUsed);
+			lineNum++;
+
+			for(k = 0 ; k < pieEquInputsUsed ; k++){//		for each input field excluding the main input [0]
+				console.log(loadedLevel[k+lineNum]);
+				pieEquInput[k].style.display = "block";
+				pieLeftInput[k].style.display = "block";
+				pieRightInput[k].style.display = "block";
+				piecLimitsText[k].style.display = "block";
+
+
+				substring = loadedLevel[k+lineNum].split(',');//		equations are stored as LeftLimit,RightLimit,Equation
+
+				pieLeftLimit[k] = parseInt(substring[0]);
+				pieLeftInput[k].innerHTML = substring[0];
+
+				pieRightLimit[k] = parseInt(substring[1]);
+				pieRightInput[k].innerHTML = substring[1];
+
+				pieEquInput[k].innerHTML = substring[2];
+			}
+			while(k < 5){//		hide each input field not used
+				pieEquInput[k].style.display = "none";
+				pieLeftInput[k].style.display = "none";
+				pieRightInput[k].style.display = "none";
+				piecLimitsText[k].style.display = "none";
+				k++;
+			}
+			lineNum += pieEquInputsUsed;
+
 			break;
+			//		-----------------------------------------------------------------------		[   Drag Points   ]		-----------------------------------------------------------------------
+		case "DR":
+			//		load like a standard typed input level
+			defaultEqu = loadedLevel[lineNum];
+			mainInput.innerHTML = defaultEqu;
+			mainInput.setAttribute("contentEditable" , "false");
+			mainInput.style.display = "block";
+			activeInput = mainInput;//		set the active input field to the only input field
+			lineNum++;
+
+			//		now load in the controlls for draging points
+			substring = loadedLevel[lineNum].split(',');//		data is stored as default value,v/h,x,y,scale
+
+
+			break;
+
+
+	}
+
+
+	if(loadedLevel[lineNum] == "useTime"){
+		useTime = true;
+		lineNum++;
+	}else{
+		useTime = false;
+	}
+
+	if(loadedLevel[lineNum] == "useZ"){
+		if(useZ === false){//		if it is being turned on instead of just kept on, display the render so the player notices the 3D is back.
+			show3D = true;
+			useZ = true;
+			//		show the canvases showing the 3D render
+//			these 3↓ used to be outside the second if statement
+			xyzc.style.display="block";
+			xyz2c.style.display="block";
+			setUpXYZ();
+		}
+		lineNum++;
+	}else{
+		useZ = false;
+		//		hide the canvases showing the 3D render
+		xyzc.style.display="none";
+		xyz2c.style.display="none";
 	}
 	
+	substring = loadedLevel[lineNum].split(',');//		camera track point
+	trackPointx = parseFloat(substring[0]);
+	trackPointy = parseFloat(substring[1]);
+	lineNum++;
+	//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
+	background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
+	loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
+	
+	/*var client = new XMLHttpRequest();
+	client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
+	client.onreadystatechange = function() {
+		if(client.responseText.length > 0){
+			loadCollidersFromTex(client.responseText);//		call loadCollidersFromTex() when the txt is loaded
+			console.log(client.responseText);
+		}
+	}
+	client.send();
+	*/
+
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
-	setUpInput();//		see EquationLine.js
+	if(usePiecewise){
+	}else
+		typeInitialize();//		see InputTyped.js
+
 	//		if a 3B1B animation is called for, set up the input for that
 	setUpNumberLines();//		see 3B1BAnimations.js
 	screenFollowSledder();//	move the screen to show the sledder and goal. See Sledder.js
@@ -160,34 +222,19 @@ function loadBuiltInLevel(){
 	dragScreenX = screenx + screenWidth/2/screenScale;
 	dragScreenY = -screeny + screenHeight/2/screenScale;
 	dragScreenScale = screenScale;
-	if(usePiecewise)
-		setUpPiecewise();
-	checkInputFields();
+	//		initializing equation formatting here is unnessisary as it is doen when the sleder is reset
+	/*if (usePiecewise){
+		console.log("Made I");
+		pieCheckInput("all");
+	}else{
+		typeCheckInput();
+	}*/
+	resetSledder();
+	simulating = false;//		resetSledder() always flips the simulating value so set it to false so the sled doesn't move.
+
 }
 
-function setUpPiecewise(){
-	for(i = piecInputsUsed-1 ; i > 0 ; i--){//		for each input field excluding the main input [0]
-		
-	}
-	/*if(piecInput.length < piecInputsUsed){//		more equations used than inputs for equations
-		lyy =  Math.round(screenWidth * 0.05);//		left property
-		ftmp = Math.round(screenHeight * 0.85);//		top
-		ryy = Math.round(screenWidth * 0.9);//			width
-		for(i = piecInput.length ; i < piecInputsUsed ; i++){
-			piecInput.push(document.createElement("p"));
-			piecInput[i].setAttribute("id" , "input" + String(i));
-//			console.log("input" + String(i));
-			piecInput[i].setAttribute("contentEditable" , "true");
-			piecInput[i].style = "position:absolute;left:"+lyy+"px;top:"+Math.round(ftmp-70*i)+"px;width:"+(ryy-15*i)+"px;font-size:50px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
-			piecInput[i].innerHTML = "-x+00000+5"
-			document.body.appendChild(piecInput[i]);
-//			console.log("added input");
-		}
-	}*/
-	checkInputFields(0);
-	checkInputFields(1);
-	checkInputFields(2);
-}
+	
 
 function loadCollidersFromSvg(sss){
 	//		-----------------------------------------------------------------------		[   Import .svg to single array   ]		-----------------------------------------------------------------------

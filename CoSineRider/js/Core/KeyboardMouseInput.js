@@ -10,7 +10,7 @@ document.addEventListener('touchmove', updateMousePosition);
 
 //		----------------------------------------------------		[   Key Down   ]		----------------------------------------------------
 document.addEventListener("keydown", function(e){
-	console.log("Pressed Key " + e.keyCode);
+//	console.log("Pressed Key " + e.keyCode);
 	if(e.keyCode == 17){//		Ctrl
 		ctrlHeld = true;
 	}
@@ -39,7 +39,7 @@ document.addEventListener("keydown", function(e){
 			}
 		}
 		resetSledder();
-	console.log("Play");
+//	console.log("Play");
 	}
 	if(e.keyCode == 34){//		Pare Down
 		zoomScreen(0.2114);
@@ -102,7 +102,7 @@ document.addEventListener("keydown", function(e){
 		xyz2c.style.left = screenWidth-500 + "px";
 		canvas.height = screenHeight;
 		canvas.width = screenWidth;
-		equInputField = piecInput[0].style;
+		equInputField = pieEquInput[0].style;
 		equInputField.left = Math.round(screenWidth * 0.0375) + "px";
 		equInputField.top = Math.round(screenHeight * 0.9) + "px";
 		equInputField.width = Math.round(screenWidth * 0.925) + "px";*/
@@ -131,10 +131,10 @@ function newScreenSize(){
 	xyz2c.style.left = screenWidth-500 + "px";
 	canvas.width = screenWidth;
 	canvas.height = screenHeight;
-	equInputField = piecInput[0].style;
-	equInputField.left = Math.round(screenWidth * 0.0375) + "px";
-	equInputField.top = Math.round(screenHeight  - 85) + "px";
-	equInputField.width = Math.round(screenWidth * 0.925) + "px";
+	if(usePiecewise)
+		pieScreenResize();
+	else
+		typeScreenResize();
 }
 
 window.addEventListener("resize", screenResize);
@@ -152,17 +152,11 @@ function screenResize(){
 //		----------------------------------------------------		[   Key Up   ]		----------------------------------------------------
 document.addEventListener("keyup", function(e){
 	//	console.log("Released Key " + e.keyCode);
+
+	//		the console logs an error here if you refresh using the F5 key.
 	//		update the active input 
-	if(usePiecewise){//		if multiple inputs and current input is not mainInput
-		for(i = 0 ; i < piecInputsUsed ; i++){//		check all input fields and set whichever is avtive as mainInput
-			if(piecInput[i] == document.activeElement){
-				checkInputFields(i);
-				break;
-			}
-		}
-	}else{//		not piecewise. Use normal input (0)
-		checkInputFields(0);//		see EquationLine.js
-	}
+	checkInputFields(document.activeElement);
+	
 	if(e.keyCode == 17){//		Ctrl
 		ctrlHeld = false;
 	}

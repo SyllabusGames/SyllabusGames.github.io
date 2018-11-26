@@ -1,15 +1,15 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 var equChars;
 var containsVariables = false;
-var piecInput = [];//new Array();
+var pieEquInput = [];//new Array();
 
 
 //	copied from		http://jsfiddle.net/WeWy7/3/
 function restoreSelection(){
 	var charIndex = 0, range = document.createRange();
-	range.setStart(mainInput, 0);
+	range.setStart(activeInput, 0);
 	range.collapse(true);
-	var nodeStack = [mainInput], node, foundStart = false, stop = false;
+	var nodeStack = [activeInput], node, foundStart = false, stop = false;
         
 	while (!stop && (node = nodeStack.pop())) {
 		if (node.nodeType == 3) {
@@ -51,45 +51,42 @@ function getCaretLocation(element){
 	return preCaretRange.toString().length;
 }
 
+//		hides the input fields when a menu is opened
 function showHideInputs(show){
 	if(show)
 		stmp = "block";
 	else
 		stmp = "none";
-	for(i = piecInput.length-1 ; i > -1 ; i--){
-		piecInput[i].style.display = stmp;
+	for(i = pieEquInput.length-1 ; i > -1 ; i--){
+		pieEquInput[i].style.display = stmp;
 	}
 }
 
 	//	----------------------------------		[   Equation Changed   ]		----------------------------------
 var inputZ = 0;
-function checkInputFields(inputNum = 0){
-	mainInput = piecInput[inputNum];
-	equInputField = mainInput.style;
-	mainInput.setAttribute("z-index" , ++inputZ);
+function checkInputFields(selectedElement){
+//	console.log("Input updated");
+//	console.trace();
+	if(selectedElement == "all")
+		if(usePiecewise){
+			for(var num = pieEquInputsUsed-1 ; num > -1 ; num--){//		for each input field excluding the main input [0]
+				pieCheckInput(pieEquInput[num]);
+			}
+			return;
+		}
 
-	equRaw[inputNum] = mainInput.innerText.toLowerCase().replace("**" , "^");
+	if(usePiecewise){
+		pieCheckInput(selectedElement);
+	}else
+		typeCheckInput();
+}
 
-	if(useRender)//		clear this canvas so if it isn't used, it won't still be shown
-		renderCanvas.clearRect(0, 0, xyzWidth, xyzHeight);
-	useRender = (equRaw[inputNum].indexOf('=')+equRaw[inputNum].indexOf('<')+equRaw[inputNum].indexOf('>') > -3);//		start full screen renderer if the equation contains = < or >
-	if(useRender){//		start the first render pass to load in the new equation
-		document.getElementById('render').width = screenWidth;
-		document.getElementById('render').height = screenHeight;
-		render2d();
-	}
-
-	ftmp = getCaretLocation(mainInput);//		ftmp is current caret position
-	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
-	rtmp = 0;//		rtmp is the number of characters over the caret is in the current node (current font style/color)
-	ryy = 0;//		right end of selection. lyy is left end of selection.
-	//	----------------------------------		[   Recolor Input Text   ]		----------------------------------
-	parenOpen = 0;
-	//if(!simulating)
-		containsVariables = false;
-	equChars = equRaw[inputNum].split("");
+//	----------------------------------		[   Recolor Input Text   ]		----------------------------------
+function formatTypedInput(equChars){
 	k = equChars.length;
-	equColored = "";
+	parenOpen = 0;
+	containsVariables = false;
+	var equColored = "";
 	if(ftmp == 0){//		caret is at 0 , 0
 		lyy = 0;
 	}
@@ -164,42 +161,7 @@ function checkInputFields(inputNum = 0){
 			ryy = rtmp;
 		}
 	}
-	mainInput.innerHTML = equColored;
-	restoreSelection();
-
-	//	----------------------------------		[   /Recolor Input Text   ]		----------------------------------
-
-	if(!simulating){//		Only update the equation if the simulation is not running
-		try{//		parse the input text to check if it is a valid equation, if not, reenter the last valid equation
-			eqinput = math.parse(equRaw[inputNum] , scope);
-			equ = eqinput.compile();
-			equCompiled[inputNum] = equ;
-			equInvalid = false;
-		}catch(err){
-			eqinput = math.parse(equLast[inputNum] , scope);
-			equ = eqinput.compile();
-			equCompiled[inputNum] = equ;
-			equInvalid = true;
-			equInputField.borderColor = "#FF0000";
-			equInputField.borderWidth = 2;			
-		}
-		if(!equInvalid){
-			equLast[inputNum] = equRaw[inputNum];
-			equInputField.borderColor = "#AAAAAA";
-			equInputField.borderWidth = 1;
-		}
-	}
+	return equColored;
 }
 
-//		-----------------------------------------------------------------------		[   Set up Equation Input Box   ]		-----------------------------------------------------------------------
-function setUpInput(){
-	//ctx.font = "60px Arial";
-	equInputField = mainInput.style;//		used to set the border color when the equation contains errors
-	equRaw[0] = defaultEqu;
-	equLast[0] = defaultEqu;
-	//mainInput.innerHTML = defaultEqu;//		set the input field to have the default equation. Then update it and set it active (focus).
-	mainInput.focus();
-	scope = {x: 0 , t: 0};
-	eqinput = math.parse(equRaw[0] , scope);
-	equ = eqinput.compile();
-}
+

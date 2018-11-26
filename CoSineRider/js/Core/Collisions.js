@@ -220,7 +220,6 @@ function drawColliders(){
 //		console.log("x=" + gCircleX[i] + " y=" + gCircleY[i] + " r=" + gCircleR[i]);
 		if( (Math.pow(apx-gCircleX[i] , 2) + Math.pow(apy-gCircleY[i] , 2)) < gCircleR[i]*gCircleR[i] ){
 			levelCleared();
-			resetSledder();
 		}
 
 		//		draw circle
