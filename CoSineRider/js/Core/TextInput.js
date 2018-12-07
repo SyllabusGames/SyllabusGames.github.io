@@ -6,7 +6,8 @@ var pieEquInput = [];//new Array();
 
 //	copied from		http://jsfiddle.net/WeWy7/3/
 function restoreSelection(){
-	var charIndex = 0, range = document.createRange();
+	var charIndex = 0
+	var range = document.createRange();
 	range.setStart(activeInput, 0);
 	range.collapse(true);
 	var nodeStack = [activeInput], node, foundStart = false, stop = false;
@@ -77,18 +78,26 @@ function checkInputFields(selectedElement){
 
 	if(usePiecewise){
 		pieCheckInput(selectedElement);
-	}else
+	}else if(useDrag){
+		//		run nothing. Drag input is always updated within InputDrag.js
+	}else if(useFillBlanks){
+		blankCheckInput();
+	}else{
 		typeCheckInput();
+	}
 }
 
 //	----------------------------------		[   Recolor Input Text   ]		----------------------------------
 function formatTypedInput(equChars){
 	k = equChars.length;
 	parenOpen = 0;
+	
+	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
+	rtmp = 0;//		rtmp is the number of characters over the caret is in the current node (current font style/color)
 	containsVariables = false;
 	var equColored = "";
 	if(ftmp == 0){//		caret is at 0 , 0
-		lyy = 0;
+		lyy = 0;//		right end of selection. lyy is left end of selection.
 	}
 	for(i = 0 ; i < k ; i++){
 		switch(equChars[i]){

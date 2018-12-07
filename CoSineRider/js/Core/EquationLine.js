@@ -12,14 +12,14 @@ var scope;
 var eqinput;
 var equCompiled;//		compiled Math.js parsers
 var equInvalid = false;
-var colors = ['#d13120', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', '#d12020', '#7820d1', '#20d120', '#20b0d1'];
+//		All colors have different Hues but the same Saturation and Value 
+var colors = ['#d12020', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', '#D15E20', '#7820d1', '#20d120', '#20b0d1'];
 
 //		Text colors, [0-9] Partenthasis, [11] x, [12] t, [13] z
 //	"#FF0000" , "#009900" , "#0000FF"];//	10-12
 var parenOpen = 0;
 var defaultEqu = "-x-5";
 var equInputField;
-var background = new Image;
 var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
 
 var graphingPoints = false;

@@ -51,23 +51,24 @@ document.getElementById('XYZ2').addEventListener('mousedown', function(e){
 	if(!useZ)
 		return;
 	var evt = e==null ? event : e;//		firefox compatibility	
-	
-	xyzMouseHeld = true;
-	xyzMouseX = evt.clientX;
-	xyzMouseY = evt.clientY;
-	xyzLastMouseX = xyzMouseX;
-	xyzLastMouseY = xyzMouseY;
+	if( evt.which == 1 ){//		left click
+		xyzMouseHeld = true;
+		xyzMouseX = evt.clientX;
+		xyzMouseY = evt.clientY;
+		xyzLastMouseX = xyzMouseX;
+		xyzLastMouseY = xyzMouseY;
 
-	itmp = parseInt(document.getElementById('XYZ2').style.left);
+		itmp = parseInt(document.getElementById('XYZ2').style.left);
 
-	if(xyzMouseY < 45 && xyzMouseX > itmp + 330 && xyzMouseX < itmp + 470 && xyzMouseY > 5 ){//		clicked on the blue Z= button shows/hides the render
-		show3D = !show3D;
-		//		show/hide the 3D view. xyz2 shows the Z UI so it should always be showing on a level using Z
-		if(show3D)
-			xyzc.style.display="block";
-		else
-			xyzc.style.display="none";
+		if(xyzMouseY < 45 && xyzMouseX > itmp + 330 && xyzMouseX < itmp + 470 && xyzMouseY > 5 ){//		clicked on the blue Z= button shows/hides the render
+			show3D = !show3D;
+			//		show/hide the 3D view. xyz2 shows the Z UI so it should always be showing on a level using Z
+			if(show3D)
+				xyzc.style.display="block";
+			else
+				xyzc.style.display="none";
 
+		}
 	}
 });
 

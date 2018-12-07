@@ -1,8 +1,15 @@
-﻿var csvInputString = `0,0
+﻿/*
+	Hit Insert to load a .csv file
+	Only one may be graphed at a time
+	The file must consist of only two collums of data where cloumb 1 is X values and cloumb 2 are the corrisponding Y values
+
+*/
+
+var csvInputString = `0,0
 1,1`;
-//		Acceleration -1/(x/6+0.24)+4.1	or	x/(x*0.3+0.42)*1+0.1 or sin(x^0.9/1.61)*2.49+(x-1.1)^2/11.91
+//		Acceleration -(x+1.53)/((x+0.44)^2+0.71)*2.05+3.45
 //		Decleration	-(x/1.86+0.12)^2+2.77
-//		Change in acceleration graphed by 
+//		Change in acceleration graphed by 512*(250x^2+765x+111)/(250x^2+220x+226)^2
 //		Change in decceleration graphed by	-0.5781x-0.129
 
 //		better change curves
@@ -25,8 +32,28 @@ fileSelector.setAttribute('display' , "none");
 //		activate load file button when Insert is pressed
 document.addEventListener("keydown", function(e){
 	if(e.keyCode == 45){//		Insert
-	console.log("Load?");
+		e.preventDefault();//		don't type a space
 		fileSelector.click();//		open file selector
+	}
+	if(e.keyCode == 13){//		Enter//		everage points' y values with neighbors
+	//		average by moveing points to the average of it and its neightbor and deleting the final point that has noting to average with
+	//		This averaging method is honest, but losing a point with every itteration can be problimatic
+		/*for(i = 0 ; i < csvPointList.length-2 ; i += 2){
+			csvPointList[i] = (csvPointList[i] + csvPointList[i+2])/2;//		set point [0]'s X position to be the average of points [0] and [1]'s Y
+			csvPointList[i+1] = (csvPointList[i+1] + csvPointList[i+3])/2;//		set point [0]'s Y position to be the average of points [0] and [1]'s Y
+		}
+		csvPointList.pop();//		remove the last point in the array because it has nothing to average with
+		csvPointList.pop();*/
+		
+	//		average each point with its two neightbors except for the ends which average with itself and its enighbor
+	//		This can cause some strange behaviour at the end points
+		var tmpPointList = csvPointList;
+		csvPointList[1] = (tmpPointList[1] + tmpPointList[3]*3)/4;//		first point
+		for(i = 3 ; i < csvPointList.length-2 ; i += 2){
+			csvPointList[i] = (tmpPointList[i-2] + tmpPointList[i+2])/2;//		set current point's Y position to be the average of the Y position of the points on either side
+		}
+		csvPointList[tmpPointList.length-1] = (tmpPointList[tmpPointList.length-1] + tmpPointList[tmpPointList.length-3]*3)/4;//		last point
+
 	}
 });
 
@@ -40,8 +67,6 @@ function handleFiles(files){
 		// Handle errors load
 		reader.onload = loadHandler;
 		reader.onerror = error;
-
-		csvInputString = getAsText();
 	} else {
 		alert('FileReader is not supported in this browser.');
 	}

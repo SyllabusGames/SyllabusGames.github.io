@@ -10,21 +10,26 @@ var dt = 0.01;//		change in time since last frame
 //		all these variables should be assumed to be reset outside the context of a single function
 var dx = 0;//	float
 var dy = 0;//	float
-var lyy = 0;//	float
-var ryy = 0;//	float
 var dydt = 0;//	float
 var dxdt = 0;//	float
 var i = 0;//	int
 var k = 0;//	int
-var itmp = 0;//	int
-var ftmp = 0;//	float
-var dtmp = 0;//	float
-var ltmp = 0;//	float
-var rtmp = 0;//	float
 var stmp = "";//	string
-var tmspx;
-var tmspy;
-var tmspz;
+var tmpx;
+var tmpy;
+
+//		these temporary variables need to be phased out at some point or made local
+	var lyy = 0;//	float
+	var ryy = 0;//	float
+	var itmp = 0;//	int
+	var ftmp = 0;//	float
+	var dtmp = 0;//	float
+	var ltmp = 0;//	float
+	var rtmp = 0;//	float
+	var tmspx;
+	var tmspy;
+	var tmspz;
+
 
 //		should be deleted before launch
 var lineResolution = 5;//		pixels per vertex (vertex every _ pixels)
@@ -52,7 +57,7 @@ var simulating = false;//		game is running. Sled is moving.
 var camLocked = false;
 var paused = false;//		player has not paused and window is in focus
 var menuOpen = false;//		game is paused because the menu is open
-var writeCursor = false;
+var shiftHeld = false;
 
 //		canvas
 var canvas;//		main canvas for 2D elements
@@ -67,6 +72,10 @@ var xyz2c;
 var activeInput;//		the currently selected text input field
 var mainInput;//		the first (botom left) input field and the one that is used if only one is active
 var pieEquInput = [];//new Array();
+
+var background = new Image;
+var drawBackground = true;
+//var drawParallax = false;
 
 var parenOpen = 0;
 
@@ -89,7 +98,9 @@ window.onload = function(){
 	mainInput.setAttribute("contentEditable" , "true");
 	mainInput.style = "position:absolute;left:60px;top:720px;width:1480px;font-size:35px; font-family:'Arial'; background-color: #FFFFFFBB; border:1px solid #AAAAAA;";
 	mainInput.innerHTML = "-x";
+	mainInput.focus();//		not nessisary
 	document.body.appendChild(mainInput);
+	
 //		Move ↓ to PiecwiseInput.js
 	pieEquInput.push(mainInput);
 	
@@ -101,8 +112,9 @@ window.onload = function(){
 	ctx.textAlign="center";
 
 	//ctx.save();
-
-	setUpSledder();
+	setUpPlayerInputs();//		see KeyboardMouseInput.js
+	
+	setUpSledder();//		see Sledder.js
 	window.requestAnimationFrame(update);
 
 	//		-----------------------------------------------------------------------		[   Page Icon   ]		-----------------------------------------------------------------------
@@ -116,7 +128,7 @@ window.onload = function(){
 			
 	}
 	
-	screenResize();//			set the canvas size to the window/screen size
+	screenSizeChanged();//			set the canvas size to the window/screen size
 	//		uncomment the following 2 lines if you ever decide automatically sizing to the window at the game's start is a bad idea.
 //	window.scrollTo(0, 0);//		If the screen is windowed, it may be nessisary to reset the scroll position to 0,0
 //	canvas.width = screenWidth;//		this fixes text positions not being updated until you toggle fullscreen. Not sure why.
@@ -183,22 +195,29 @@ function update(timestamp){
 
 	drawGrid();
 //		-----------------------------------------------------------------------		[   Draw background .svg   ]		-----------------------------------------------------------------------
-	ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
+	if(drawBackground)
+		ctx.drawImage( background , (-screenx - 200)* screenScale , (screeny - 200) * screenScale , 400*screenScale , 400*screenScale);
 
 //		-----------------------------------------------------------------------		[   Draw y = next to equation input   ]		-----------------------------------------------------------------------
 
 	//		write equation the line is using if the equation in the input box is invalid and therefore, is not being used
-	if(equInvalid){//		invalid equation, show y = old equation
-		ctx.fillStyle = "#888888";
-		ctx.fillText("y= " + equLast , Math.round(screenWidth * 0.01) , screenHeight - 60);
-	}else{
+	if(usePiecewise){
 		ctx.fillStyle = "black";
-		ctx.fillText("y=", Math.round(screenWidth * 0.01) , screenHeight - 20);
-		if(!containsVariables){//		if equation does not contain x, z, or t, (output is constant) show the answer next to the input line.
-			ctx.fillText("y = " + equation(0).toString() , Math.round(screenWidth * 0.02) , screenHeight - 60);
+		ctx.fillText("y=", Math.round(screenWidth * 0.003) , screenHeight - 20 +22.5 - pieEquInputsUsed*22.5);
+		ctx.font = 10+40*pieEquInputsUsed + "px Arial";
+		ctx.fillText("{", Math.round(screenWidth * 0.003) + 25 , screenHeight + 26 - pieEquInputsUsed*22.5);
+	}else{
+		if(equInvalid){//		invalid equation, show y = old equation
+			ctx.fillStyle = "#888888";
+			ctx.fillText("y= " + equLast , Math.round(screenWidth * 0.01) , screenHeight - 60);
+		}else{
+			ctx.fillStyle = "black";
+			ctx.fillText("y=", Math.round(screenWidth * 0.01) , screenHeight - 20);
+			if(!containsVariables){//		if equation does not contain x, z, or t, (output is constant) show the answer next to the input line.
+				ctx.fillText("y = " + equation(0).toString() , Math.round(screenWidth * 0.02) , screenHeight - 60);
+			}
 		}
 	}
-		
 		
 	if(simulating){
 		frameTime += dt;
@@ -218,7 +237,7 @@ function update(timestamp){
 		}
 	}
 		
-	if(writeCursor && (!simulating || !camLocked)){
+	if(shiftHeld && (!simulating || !camLocked)){
 		cursorPosition();//		see SvgEditor.js
 	}
 	if(graphingPoints)
@@ -229,6 +248,9 @@ function update(timestamp){
 
 //			animCore();
 
+	if(useDrag)//		render drag points
+		dragMain();
+
 	if(showMessage){
 		messageTime += dt;
 		ctx.fillStyle = "#A00000" + Math.round(Math.max(Math.min(Math.min(messageTime*8-1,-messageTime+2)+1 , 1) *255, 17)).toString(16);//		font color for text overlay
@@ -238,6 +260,6 @@ function update(timestamp){
 			showMessage = false;
 	}
 		
-	ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , 40);
+//	ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , 40);
 }
 //		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------

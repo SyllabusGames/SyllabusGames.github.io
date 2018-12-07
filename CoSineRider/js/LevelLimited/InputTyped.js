@@ -1,7 +1,9 @@
 ﻿
 var equRaw = "0";
 var equLast = "0";
-
+var equUndo = [];
+var equExecutingUndo = false;
+var equCurrentUndo = 0;
 
 function typeInitialize(){
 	equInputField = mainInput.style;//		used to set the border color when the equation contains errors
@@ -12,6 +14,9 @@ function typeInitialize(){
 	scope = {x: 0 , t: 0};
 	eqinput = math.parse(equRaw , scope);
 	equ = eqinput.compile();
+	//		reset undo list
+	equUndo = [];
+	equCurrentUndo = 0;
 }
 
 function typeScreenResize(){
@@ -21,15 +26,54 @@ function typeScreenResize(){
 	equInputField.width = Math.round(screenWidth * 0.925) + "px";
 }
 
+function equUndoRedo(undo){//		true = undo, false = redo
+	if(undo){
+		if(equCurrentUndo == 0){//		nothing available to undo
+			equExecutingUndo = false;
+			return;
+		}
+		equCurrentUndo--;
+	}else{
+		if(equCurrentUndo > equUndo.length-2){//		nothing available to redo
+			equExecutingUndo = false;
+			return;
+		}
+		equCurrentUndo++;
+	}
+	mainInput.innerHTML = equUndo[equCurrentUndo];
+	typeCheckInput();// is called from OnKeyUp, so this call is unnessisary except for when someone holds Ctrl+Z
+}
+
+//		called every time the input field changes
 function typeCheckInput(){
 	mainInput = pieEquInput[0];
 	equInputField = mainInput.style;
-	mainInput.setAttribute("z-index" , ++inputZ);
 
 	equRaw = mainInput.innerText.toLowerCase().replace("**" , "^");
+	
+	//		Not using undo and equation has not changed (undo list is not empty and current input is the same as latest entry). Return.
+	if(!equExecutingUndo && equUndo.length != 0 && equRaw == equUndo[equCurrentUndo]){
+	//	console.log("Input has not changed");
+		//		Input has not changed
+		return;
+	}
+	mainInput.setAttribute("z-index" , ++inputZ);
+
+	
+	//		Undo
+	if(!equExecutingUndo){//		if not currently executing an undo/redo function, add current input to the undo list.
+		if(equCurrentUndo < equUndo.length-1){//		undo has been used. Delete all undo list items after the one currently active
+			equUndo.length = equCurrentUndo;
+		}
+		equUndo.push(equRaw);//		add current equation to undo list
+		equCurrentUndo = equUndo.length-1;
+	}
+	equExecutingUndo = false;
+	
 
 	if(useRender)//		clear this canvas so if it isn't used, it won't still be shown
 		renderCanvas.clearRect(0, 0, xyzWidth, xyzHeight);
+		
 	useRender = (equRaw.indexOf('=')+equRaw.indexOf('<')+equRaw.indexOf('>') > -3);//		start full screen renderer if the equation contains = < or >
 	if(useRender){//		start the first render pass to load in the new equation
 		document.getElementById('render').width = screenWidth;
@@ -38,9 +82,7 @@ function typeCheckInput(){
 	}
 
 	ftmp = getCaretLocation(mainInput);//		ftmp is current caret position
-	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
-	rtmp = 0;//		rtmp is the number of characters over the caret is in the current node (current font style/color)
-	ryy = 0;//		right end of selection. lyy is left end of selection.
+	console.log("called from InputTyped");
 	mainInput.innerHTML = formatTypedInput(equRaw.split(""));
 	restoreSelection();
 

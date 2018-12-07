@@ -2,8 +2,6 @@
 var selectedPoint = 8;
 var mouseLastX = 0.0;
 var mouseLastY = 0.0;
-var mouseX = 0.0;
-var mouseY = 0.0;
 var draggingPoint = false;
 var draggingScreen = false;
 var dragScreenX = 0;//		dragScreenX and Y are the coordinates at the center of the screen, making the zooming math simpler
@@ -47,12 +45,13 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 
 //		----------------------------------------------------		[   Mouse Move   ]		----------------------------------------------------
 function updateMousePosition(e){
+	var evt = e==null ? event : e;//		firefox compatibility	
+	mouseLastX = mouseX;
+	mouseLastY = mouseY;
+	mouseX = evt.clientX;
+	mouseY = evt.clientY;
+	
 	if(!simulating || !camLocked){//		run when camera is not locked
-		var evt = e==null ? event : e;//		firefox compatibility	
-		mouseLastX = mouseX;
-		mouseLastY = mouseY;
-		mouseX = evt.clientX;
-		mouseY = evt.clientY;
 
 		if(!simulating && showSVGPoints && draggingPoint && selectedPoint != -1){//		highlight selected point and move with cursor if (not running, points are visible, mouse held down, and a point is under the cursor)
 			allGroundPointsX[selectedPoint] += (mouseX - mouseLastX)/screenScale;

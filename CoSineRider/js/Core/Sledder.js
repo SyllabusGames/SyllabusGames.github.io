@@ -31,6 +31,7 @@ function setUpSledder(){
 
 //		called every time you win, lose, or reset
 function resetSledder(){
+	console.log(equRaw);
 	checkInputFields("all");//		update line. (useful if the player types something while the simulation is running)
 	dropTime = 0;//		delete
 	simulating = !simulating;
@@ -63,6 +64,10 @@ function resetSledder(){
 
 	//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 function moveSledder(){
+	
+	if(useNone)//		do not render or check for level collisions
+		return;
+	
 	if(simulating){
 		apx += vx*dt*0.15;//		absolute position (in meters)
 		apy += vy*dt*0.15;

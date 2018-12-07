@@ -9,10 +9,12 @@ var mapIndex = 0;//	index of current level in levelMap
 var useTime = false;//		time is not just set to zero
 //var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
+var useNone = false;//		This is not a game level so the sledder, background, and colliders will not be loaded
 var useRender = false;
 var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
 
 var usePiecewise = false;
+var useDrag = false;
 var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
 
 //var usePolar = false;
@@ -77,7 +79,8 @@ function loadBuiltInLevel(){
 	levelType = loadedLevel[1];
 	lineNum = 2;
 
-	substring = loadedLevel[lineNum].split(',');//		sledder start position
+	//		load sledder start position
+	substring = loadedLevel[lineNum].split(',');
 	defaultPosX = parseFloat(substring[0]);
 	defaultPosY = parseFloat(substring[1]);
 	apx = defaultPosX;
@@ -95,11 +98,14 @@ function loadBuiltInLevel(){
 	}
 
 	usePiecewise = false;
+	useDrag = false;
+	useFillBlanks = false;
 	
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 		case "SR":
+		//		"LV1: Using Time\nSR\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nuseTime\nuseZ\n44,4\nCave\nEnd"
 			defaultEqu = loadedLevel[lineNum];
 			mainInput.innerHTML = defaultEqu;
 			mainInput.style.display = "block";
@@ -110,6 +116,7 @@ function loadBuiltInLevel(){
 			break;
 		//		-----------------------------------------------------------------------		[   Piecewise Typed Input   ]		-----------------------------------------------------------------------
 		case "PW":
+		//		LV2: Piecwise\nPW\n0,0\n3\n-999,20,-x/2+t*1.5\n20,60,t*1.5-10\n60,200,x/10-16+t*1.5\n91,17\nTower\nEnd"
 			usePiecewise = true;
 
 			pieInitialize();//		see InputPiecewise.js
@@ -118,7 +125,7 @@ function loadBuiltInLevel(){
 			lineNum++;
 
 			for(k = 0 ; k < pieEquInputsUsed ; k++){//		for each input field excluding the main input [0]
-				console.log(loadedLevel[k+lineNum]);
+		//		console.log(loadedLevel[k+lineNum]);
 				pieEquInput[k].style.display = "block";
 				pieLeftInput[k].style.display = "block";
 				pieRightInput[k].style.display = "block";
@@ -147,31 +154,54 @@ function loadBuiltInLevel(){
 			break;
 			//		-----------------------------------------------------------------------		[   Drag Points   ]		-----------------------------------------------------------------------
 		case "DR":
+			useDrag = true;
+		//			"LV1: Drag Points\nRD\n0,0\n_*x+_\n2,v,1,1,1\n44,4\nCave\nEnd"
 			//		load like a standard typed input level
-			defaultEqu = loadedLevel[lineNum];
-			mainInput.innerHTML = defaultEqu;
-			mainInput.setAttribute("contentEditable" , "false");
-			mainInput.style.display = "block";
-			activeInput = mainInput;//		set the active input field to the only input field
+			equRaw = loadedLevel[lineNum];
+			dragEquGaps = equRaw.split("_");
 			lineNum++;
 
-			//		now load in the controlls for draging points
-			substring = loadedLevel[lineNum].split(',');//		data is stored as default value,v/h,x,y,scale
-
-
+			//		now load in the controlls for draging points for each _ in the equation
+			for(i = 0 ; i < dragEquGaps.length-1 ; i++){
+				substring = loadedLevel[lineNum].split(',');//		data is stored as default value,v/h,x,y,scale
+				dragVar.push(parseFloat(substring[0]));//		default value
+				dragDirection.push(substring[1]);
+				dragDefaultx.push(parseFloat(substring[2]));
+				dragx.push(parseFloat(substring[2]));
+				dragDefaulty.push(parseFloat(substring[3]));
+				dragy.push(parseFloat(substring[3]));
+				dragDependent0.push(parseInt(substring[4]));
+				dragDependent1.push(parseInt(substring[5]));
+				dragDependent2.push(parseInt(substring[6]));
+				lineNum++;
+			}
+			dragInitialize();
 			break;
-
-
+		//		-----------------------------------------------------------------------		[   Fill In The Blank   ]		-----------------------------------------------------------------------
+		case "BL":
+			useFillBlanks = true;
+			//		load like a standard typed input level
+			equRaw = loadedLevel[lineNum];
+			blankEquGaps = equRaw.split("_");
+			lineNum++;
+			blankVar = loadedLevel[lineNum].split(',');//		load all default values
+			lineNum++;
+			dragInitialize();
+			break;
 	}
+	
+	
+	
 
-
+	//		UseTime
 	if(loadedLevel[lineNum] == "useTime"){
 		useTime = true;
 		lineNum++;
 	}else{
 		useTime = false;
 	}
-
+	
+	//		UseZ
 	if(loadedLevel[lineNum] == "useZ"){
 		if(useZ === false){//		if it is being turned on instead of just kept on, display the render so the player notices the 3D is back.
 			show3D = true;
@@ -188,15 +218,27 @@ function loadBuiltInLevel(){
 		//		hide the canvases showing the 3D render
 		xyzc.style.display="none";
 		xyz2c.style.display="none";
+	}	
+	
+	//		useNone
+	if(loadedLevel[lineNum] == "useNone"){
+		useNone = true;
+		lineNum++;
+	}else{
+		useNone = false;
 	}
 	
 	substring = loadedLevel[lineNum].split(',');//		camera track point
 	trackPointx = parseFloat(substring[0]);
 	trackPointy = parseFloat(substring[1]);
 	lineNum++;
+	
 	//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
-	background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
-	loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
+	drawBackground = loadedLevel[lineNum] != "none";
+	if(drawBackground)
+		background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
+	if(!useNone)
+		loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
 	
 	/*var client = new XMLHttpRequest();
 	client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
@@ -212,23 +254,26 @@ function loadBuiltInLevel(){
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
 	if(usePiecewise){
-	}else
+	}else if(useDrag){
+		
+	}else if(useFillBlanks){
+		blankInitialize();
+	}else{
 		typeInitialize();//		see InputTyped.js
+	}
 
 	//		if a 3B1B animation is called for, set up the input for that
-	setUpNumberLines();//		see 3B1BAnimations.js
+//	setUpNumberLines();//		see 3B1BAnimations.js
+
+
+	//		Screen Position Reset
 	screenFollowSledder();//	move the screen to show the sledder and goal. See Sledder.js
+	
 		//		set default drag screen positioin so it doesn't jump when you start moving the screen
 	dragScreenX = screenx + screenWidth/2/screenScale;
 	dragScreenY = -screeny + screenHeight/2/screenScale;
 	dragScreenScale = screenScale;
-	//		initializing equation formatting here is unnessisary as it is doen when the sleder is reset
-	/*if (usePiecewise){
-		console.log("Made I");
-		pieCheckInput("all");
-	}else{
-		typeCheckInput();
-	}*/
+	
 	resetSledder();
 	simulating = false;//		resetSledder() always flips the simulating value so set it to false so the sled doesn't move.
 

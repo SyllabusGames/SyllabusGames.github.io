@@ -14,50 +14,50 @@ var pieLast = ["","","","",""];
 
 //		-----------------------------------------------------------------------		[   Set up Equation Input Box   ]		-----------------------------------------------------------------------
 function pieInitialize(){
-	k =  screenWidth-400;
-	mainInput.style.width = k + "px";
-	k += 80;
-	i = parseInt(mainInput.style.top);
+	tmpx =  screenWidth-400;
+	mainInput.style.width = tmpx + "px";
+	tmpx += 80;
+	tmpy = parseInt(mainInput.style.top);
 
 	//		create elements holding the "< x <" text on screen allong with the , between the input and piecewise range limits. Class is set to "unselectable". See "CoSineRider.html"
 	pieTmp = document.createElement("g");
 	pieTmp.innerHTML = '<pre class="unselectable" style="font-size: 35px; font-family: Arial;">,            < x < </pre>';
 	pieTmp.style.position = "absolute";
-	pieTmp.style.left = k + "px";
-	pieTmp.style.top = i + "px";
+	pieTmp.style.left = tmpx + "px";
+	pieTmp.style.top = tmpy + "px";
 	document.body.appendChild(pieTmp);
 	piecLimitsText.push(pieTmp);
 
-	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = i-45 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = i-90 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = i-135 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = i-180 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = tmpy-45 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = tmpy-90 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = tmpy-135 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = tmpy-180 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
 
 	//		create 4 more equation input fields for piecewise levels
 	var pieTmp = mainInput.cloneNode(true);
 	pieTmp.innerHTML = "2";
-	pieTmp.style.top = i-45+"px";
+	pieTmp.style.top = tmpy-45+"px";
 	pieEquInput.push(pieTmp);
 	document.body.appendChild(pieTmp);
 
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-90+"px";	document.body.appendChild(pieTmp);	pieEquInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-135+"px";	document.body.appendChild(pieTmp);	pieEquInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-180+"px";	document.body.appendChild(pieTmp);	pieEquInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-90+"px";	document.body.appendChild(pieTmp);	pieEquInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-135+"px";	document.body.appendChild(pieTmp);	pieEquInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-180+"px";	document.body.appendChild(pieTmp);	pieEquInput.push(pieTmp);
 	
 	//		create the 5 right limit input fields
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i+"px";	pieTmp.style.width = "100px";	pieTmp.style.left = k+210+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-45+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-90+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-135+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-180+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy+"px";	pieTmp.style.width = "100px";	pieTmp.style.left = tmpx+210+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-45+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-90+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-135+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-180+"px";	document.body.appendChild(pieTmp);	pieRightInput.push(pieTmp);
 
 	//		create the 5 left limit input fields
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i+"px";	pieTmp.style.left = k+20+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy+"px";	pieTmp.style.left = tmpx+20+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
 	pieTmp.style.textAlign = "right";//		left inputs have right justified text
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-45+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-90+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-135+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
-	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = i-180+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-45+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-90+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-135+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
+	pieTmp = pieTmp.cloneNode(true);	pieTmp.style.top = tmpy-180+"px";	document.body.appendChild(pieTmp);	pieLeftInput.push(pieTmp);
 
 	equInputField = mainInput.style;//		used to set the border color when the equation contains errors
 	pieRaw[0] = defaultEqu;
@@ -108,7 +108,7 @@ function pieScreenResize(){
 		pieRightInput[i].style.left = (k + 210) + "px";
 		pieRightInput[i].style.top = (screenHeight  - 85 - i * 45) + "px";
 		//		move text
-		console.log(piecLimitsText[i]);
+	//	console.log(piecLimitsText[i]);
 		piecLimitsText[i].style.left = k + "px";
 		piecLimitsText[i].style.top = (screenHeight  - 85 - i * 45) + "px";
 	}
@@ -156,9 +156,6 @@ function pieCheckInput(selectedElement){
 	}
 	
 	ftmp = getCaretLocation(activeInput);//		ftmp is current caret position
-	dtmp = -window.getSelection().toString().length;//		dtmp is current selection end position
-	rtmp = 0;//		rtmp is the number of characters over the caret is in the current node (current font style/color)
-	ryy = 0;//		right end of selection. lyy is left end of selection.
 	activeInput.innerHTML = formatTypedInput(pieRaw[inputNum].split(""));
 	restoreSelection();
 
@@ -178,7 +175,7 @@ function pieCheckInput(selectedElement){
 			equInputField.borderWidth = 2;			
 		}
 		if(!equInvalid){
-			console.log("Equation #" + inputNum + " is valid");
+		//	console.log("Equation #" + inputNum + " is valid");
 			pieLast[inputNum] = pieRaw[inputNum];
 			equInputField.borderColor = "#AAAAAA";
 			equInputField.borderWidth = 1;
