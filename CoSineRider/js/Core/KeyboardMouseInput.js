@@ -26,6 +26,9 @@ function setUpPlayerInputs(){
 			debugSkipFrame = true;
 		//	draggingScreen = true;
 		}
+		if(e.keyCode == 18){//		Alt. Skip level
+			levelCleared();
+		}
 		if(e.keyCode == 36){//		Home
 			draggingScreen = true;
 		}
@@ -54,7 +57,7 @@ function setUpPlayerInputs(){
 		if(e.keyCode == 13){//		Enter.		(this has to come after Shift)
 			e.preventDefault();//		don't type a newline character
 			animCanProceed = true;
-			if(useNone)//		do not render or check for level collisions
+			if(useNone || useCutscene)
 				return;
 			if(!simulating){//		if not simulating (and about to start) lock the camera if shift is not held down.
 				camLocked = !shiftHeld;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
@@ -65,8 +68,7 @@ function setUpPlayerInputs(){
 					return;
 				}
 			}
-			resetSledder();
-		//	console.log("Play");
+			resetSledder();//		This is what Plays & Pauses the game
 		}
 		if(e.keyCode == 34){//		Pare Down
 			zoomScreen(0.2114);
@@ -78,12 +80,12 @@ function setUpPlayerInputs(){
 		//		-----------------------------------------------------------------------		[   MAIN MENU   ]		-----------------------------------------------------------------------
 		if(e.keyCode == 192){//		`/~ key
 			if(menuOpen){//		hide main menu
-				showHideInputs(true);
+				showHideInputs("block");
 				menuOpen = false;
 				paused = false;
 			}else{//		show main menu
 				drawMainMenu();//		see Menu.js
-				showHideInputs(false);//		see InputManager.js
+				showHideInputs("none");//		see InputManager.js
 				menuOpen = true;
 				paused = true;
 			}
@@ -202,8 +204,6 @@ function setUpPlayerInputs(){
 	function exitHandler(){
 		if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)){
 			console.log("Exited fullscreen with Esc key");
-	//		screenWidth = 1600;
-	//		screenHeight = 800;
 			screenSizeChanged();
 		}else{
 			screenSizeChanged();
@@ -217,10 +217,18 @@ function setUpPlayerInputs(){
 		xyz2c.style.left = screenWidth-500 + "px";
 		canvas.width = screenWidth;
 		canvas.height = screenHeight;
+		//		move play/pause button to lower right corner of screen
+		playPauseButton.style.left = (screenWidth-65) + "px";
+		playPauseButton.style.top = (screenHeight-65) + "px";
+	//	console.log(usePiecewise + " - " + useDrag + " - " + useFillBlanks + " - " + useCutscene);
 		if(usePiecewise)
 			pieScreenResize();
 		else if(useDrag)
 			dragScreenResize();
+		else if(useFillBlanks)
+			blankScreenResize();
+		else if(useCutscene)
+			cutScreenResize();
 		else
 			typeScreenResize();
 	}
@@ -249,6 +257,8 @@ function setUpPlayerInputs(){
 
 			if( evt.which == 3 ){//		right click
 				shiftHeld = true;
+				if(document.body.style.cursor == "auto")
+					document.body.style.cursor = "crosshair";
 			}
 
 			if( evt.which == 1 ){//		left click
@@ -257,15 +267,22 @@ function setUpPlayerInputs(){
 					e.preventDefault();//		no dom element ever needs to be selected in drag mode so dissable regular click to minimize accidental graphic dragging
 				}
 				
+				if(useCutscene)//		if in a cutscene, go to the next panel
+					cutAdvance();
+				
 				if(selectedPoint != -1)
 					draggingPoint = true;
 			
 				if(shiftHeld){//		add a point to be perminently labled
 					graphingPoints = true;
-					if(ctrlHeld)//		round x input
-						graphPointXs.push(Math.round(evt.clientX/screenScale + screenx));
-					else
+					if(ctrlHeld){
+						if(minMax)//		snap to min or max
+							graphPointXs.push(minMaxX);
+						else//		round x input
+							graphPointXs.push(Math.round(evt.clientX/screenScale + screenx));
+					}else{
 						graphPointXs.push(evt.clientX/screenScale + screenx);
+					}
 				}
 			}
 		}
@@ -289,6 +306,8 @@ function mouseUp(e){
 		
 		if( evt.which == 3 ){//		right click
 			shiftHeld = false;
+			if(document.body.style.cursor == "crosshair")
+				document.body.style.cursor = "auto";
 		}
 	}
 

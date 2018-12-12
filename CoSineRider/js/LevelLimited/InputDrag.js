@@ -119,6 +119,8 @@ function dragMain(){
 	
 	//	----------------------------------		[   Draw Handle Points   ]		----------------------------------
 	if(!simulating){
+		ctx.lineWidth = 3;
+
 		for(i = dragVar.length-1 ; i > -1 ; i--){
 			if(dragPointIndex == -1 || dragPointIndex == i){//		current point is being dragged or no point is being dragged, color all handle points
 				ctx.strokeStyle = colors[i]; 

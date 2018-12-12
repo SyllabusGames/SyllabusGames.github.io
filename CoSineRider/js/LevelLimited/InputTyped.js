@@ -17,6 +17,7 @@ function typeInitialize(){
 	//		reset undo list
 	equUndo = [];
 	equCurrentUndo = 0;
+	typeScreenResize();//		move input field to the correct place on the screen
 }
 
 function typeScreenResize(){
@@ -24,6 +25,11 @@ function typeScreenResize(){
 	equInputField.left = Math.round(screenWidth * 0.0375) + "px";
 	equInputField.top = Math.round(screenHeight  - 85) + "px";
 	equInputField.width = Math.round(screenWidth * 0.925) + "px";
+}
+
+
+function typeShowHideInputs(showHide){
+	mainInput.style.display = showHide;
 }
 
 function equUndoRedo(undo){//		true = undo, false = redo
@@ -46,10 +52,11 @@ function equUndoRedo(undo){//		true = undo, false = redo
 
 //		called every time the input field changes
 function typeCheckInput(){
-	mainInput = pieEquInput[0];
+	//mainInput = pieEquInput[0];
 	equInputField = mainInput.style;
 
 	equRaw = mainInput.innerText.toLowerCase().replace("**" , "^");
+	equRaw = equRaw.replace(/π/g , "pi");
 	
 	//		Not using undo and equation has not changed (undo list is not empty and current input is the same as latest entry). Return.
 	if(!equExecutingUndo && equUndo.length != 0 && equRaw == equUndo[equCurrentUndo]){

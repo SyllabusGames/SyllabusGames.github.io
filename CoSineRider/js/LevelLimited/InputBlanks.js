@@ -1,6 +1,6 @@
 ﻿
 var blankEquGaps = [];//		stoed as [,*x+ , +t/,+2]. If it starts with a dragable value, the first value is blank.
-var blankVar = [];
+var blankDefaultVar = [];
 
 var blankEquInput = [];
 var blankEquText = [];
@@ -24,20 +24,21 @@ function blankInitialize(){
 	
 	//		Space out input blanks to fit between the fixed text of the input
 	ctx.font="35px Arial";
-	tmpx = 100;//		start at 100px right of left edge
+	tmpx = 72;//		start at 100px right of left edge
 	for(i = 0 ; i < blankEquInput.length ; i++){
-		if(i < blankVar.length){//		blank is used, show it and place at the correct location
+		if(i < blankDefaultVar.length){//		blank is used, show it and place at the correct location
 			blankEquInput[i].style.display = "block";
 			tmpx += ctx.measureText(blankEquGaps[i]).width;//		get length of text that is immediatly left of the current blank and add that to the blank's position
 			blankEquInput[i].style.left = (tmpx + 10) + "px";//		place next blank 5 pixels right of the right edge of the last input field
 			tmpx += 90;//		add width of textbox + a 5 pixel gap on each side of the previous text (80 + 5 + 5)
+			blankEquInput[i].innerHTML = blankDefaultVar[i];//		read in default values for input fields
 		}else{//	blank is not used, hide it
 			blankEquInput[i].style.display = "none";
 		}
 	}
 	
 	//		Space out fixed equation text based on the input positions so all text is evenly spaced
-	blankEquText[0].style.left = 100;
+	blankEquText[0].style.left = 72;
 	blankEquText[0].innerHTML = '<pre class="unselectable" style="font-size: 35px; font-family: Arial;">' + blankEquGaps[0] + '</pre>';
 	for(i = 1 ; i < blankEquText.length ; i++){
 		if(i < blankEquGaps.length-1){
@@ -89,6 +90,8 @@ function blankSetUpInputs(){
 	blankTmp.style.width = "80px";
 	blankTmp.style.top = tmpy + "px";
 	blankTmp.style.left = tmpx + 000 + "px";
+	blankTmp.style.whiteSpace = "nowrap";
+	blankTmp.style.overflow = "hidden";
 	blankTmp.style.color = colors[0];
 	document.body.appendChild(blankTmp);
 	blankEquInput.push(blankTmp);
@@ -103,7 +106,7 @@ function blankSetUpInputs(){
 	
 	blankEquText.push()
 	//		hide main input
-//	mainInput.style.display = "none";
+	mainInput.style.display = "none";
 	mainInput.style.top = "200px";
 }
 
@@ -114,17 +117,50 @@ function blankUpdateEqu(){//		concatenate string fragments of equation and varia
 	//		concatenate the variables stored in the blanks with the unchangeable equation text to read the full equation into equRaw
 	for(i = 0 ; i < blankEquGaps.length-1 ; i++){
 		equRaw += blankEquGaps[i];
-		equRaw += blankEquInput[i].innerText;
+		stmp = blankEquInput[i].innerText
+		ftmp = parseFloat(stmp);
 		
+		if(stmp == '' || stmp == '-' || stmp == '.'){//		input field is blank or contains only - or .   Record as 0 and do not change input contentse.
+			equRaw += 0;
+			continue;
+		}
+		
+		
+		if(blankEquInput[i].innerText != ftmp){//		input is not just a number
+			if(isNaN(ftmp)){//		if the player types junk with no numbers in it, clear the input field
+				blankEquInput[i].innerHTML = '';
+				equRaw += 0;
+				continue;
+			}else{
+				blankEquInput[i].innerHTML = ftmp;//		remove all but numbers from the input
+			}
+		}
+		
+		//		add input field's contents to the equation
+		equRaw += blankEquInput[i].innerText;
 	}
 	equRaw += blankEquGaps[blankEquGaps.length-1];
 }
 
 function blankScreenResize(){
-	equInputField = mainInput.style;
-	equInputField.left = Math.round(screenWidth * 0.0375) + "px";
-	equInputField.top = Math.round(screenHeight  - 85) + "px";
-	equInputField.width = Math.round(screenWidth * 0.925) + "px";
+	stmp = Math.round(screenHeight  - 85) + "px";
+	for(i = 0 ; i < blankDefaultVar.length ; i++){
+		blankEquInput[i].style.top = stmp;
+	}
+	
+	for(i = 1 ; i < blankEquGaps.length-1 ; i++){
+		blankEquText[i].style.top = stmp;
+	}
+}
+
+
+function pieShowHideInputs(showHide){
+	for(i = 0 ; i < blankDefaultVar.length ; i++){
+		blankEquInput[i].style.display = showHide;
+	}
+	for(i = 1 ; i < blankEquGaps.length-1 ; i++){
+		blankEquText[i].style.display = showHide;
+	}
 }
 /*
 function blankUndoRedo(undo){//		true = undo, false = redo

@@ -31,7 +31,6 @@ function setUpSledder(){
 
 //		called every time you win, lose, or reset
 function resetSledder(){
-	console.log(equRaw);
 	checkInputFields("all");//		update line. (useful if the player types something while the simulation is running)
 	dropTime = 0;//		delete
 	simulating = !simulating;
@@ -45,6 +44,11 @@ function resetSledder(){
 	vx = 0;
 	vy = 0;
 	rotation = 0;
+	if(simulating)
+		buttonPlay();
+	else
+		buttonPause();
+	
 	if(camLocked){
 		screenFollowSledder();//		reset screen position
 		dragScreenScale = screenScale;
@@ -64,8 +68,7 @@ function resetSledder(){
 
 	//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 function moveSledder(){
-	
-	if(useNone)//		do not render or check for level collisions
+	if(useNone || useCutscene)//		do not render or check for level collisions
 		return;
 	
 	if(simulating){

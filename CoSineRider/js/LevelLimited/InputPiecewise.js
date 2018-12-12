@@ -34,6 +34,8 @@ function pieInitialize(){
 	pieTmp = pieTmp.cloneNode(true);		pieTmp.style.top = tmpy-180 + "px";		document.body.appendChild(pieTmp);		piecLimitsText.push(pieTmp);
 
 	//		create 4 more equation input fields for piecewise levels
+	typeScreenResize();//		move input field to the correct place on the screen
+
 	var pieTmp = mainInput.cloneNode(true);
 	pieTmp.innerHTML = "2";
 	pieTmp.style.top = tmpy-45+"px";
@@ -114,6 +116,12 @@ function pieScreenResize(){
 	}
 }
 
+function pieShowHideInputs(showHide){
+	for(i = pieEquInput.length-1 ; i > -1 ; i--){
+		pieEquInput[i].style.display = showHide;
+	}
+}
+
 function pieCheckInput(selectedElement){
 
 	var inputNum = -1;
@@ -145,6 +153,7 @@ function pieCheckInput(selectedElement){
 	activeInput.setAttribute("z-index" , ++inputZ);
 
 	pieRaw[inputNum] = activeInput.innerText.toLowerCase().replace("**" , "^");
+	pieRaw[inputNum] = pieRaw[inputNum].replace("π" , "pi");
 	
 	if(useRender)//		clear this canvas so if it isn't used, it won't still be shown
 		renderCanvas.clearRect(0, 0, xyzWidth, xyzHeight);

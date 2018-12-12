@@ -17,6 +17,8 @@ var k = 0;//	int
 var stmp = "";//	string
 var tmpx;
 var tmpy;
+var ltmp = 0;//	float
+var rtmp = 0;//	float
 
 //		these temporary variables need to be phased out at some point or made local
 	var lyy = 0;//	float
@@ -24,8 +26,6 @@ var tmpy;
 	var itmp = 0;//	int
 	var ftmp = 0;//	float
 	var dtmp = 0;//	float
-	var ltmp = 0;//	float
-	var rtmp = 0;//	float
 	var tmspx;
 	var tmspy;
 	var tmspz;
@@ -99,6 +99,7 @@ window.onload = function(){
 	mainInput.style = "position:absolute;left:60px;top:720px;width:1480px;font-size:35px; font-family:'Arial'; background-color: #FFFFFFBB; border:1px solid #AAAAAA;";
 	mainInput.innerHTML = "-x";
 	mainInput.focus();//		not nessisary
+	typeScreenResize();
 	document.body.appendChild(mainInput);
 	
 //		Move ↓ to PiecwiseInput.js

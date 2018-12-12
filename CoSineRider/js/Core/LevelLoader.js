@@ -16,27 +16,39 @@ var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and cu
 var usePiecewise = false;
 var useDrag = false;
 var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
+var useCutscene = false;//	level is a cutscene
 
 //var usePolar = false;
 
 var lineNum = 0;
 
 
-function loadLevel(){
-	var filePath = '../Levels/SR001.txt'
-	var request = new XMLHttpRequest();
-	request.open('GET' , filePath , false);
-	request.onreadystatechange = function (){
-		if(request.readyState === 4){
-			if(request.status === 200 || request.status == 0){
-				var allText = request.responseText;
-				alert(allText);
+function preloadLevelAssets(loadThis){
+	//		From https://social.msdn.microsoft.com/Forums/en-US/64ea2d16-7594-400b-8b25-8b3b9a078eab/read-external-text-file-with-javascript?forum=sidebargadfetdevelopment
+	//		Read external file from web address
+	var txtFile = new XMLHttpRequest();
+	var levelLoadName = loadThis;
+	console.log("Loading " + levelLoadName);
+	txtFile.open("GET", "https://syllabusgames.github.io/CoSineRider/Levels/" + levelLoadName + ".txt", true);
+	txtFile.onreadystatechange = function() {
+		if (txtFile.readyState === 4){  // Makes sure the document is ready to parse.
+			if (txtFile.status === 200){  // Makes sure it's found the file.
+				localStorage.setItem(levelLoadName , txtFile.responseText);
+				
+				
+			/*	console.log(allText.substring(allText.length-3));
+				console.log(allText.substring(allText.length-20));
+				if(allText.substring(allText.length-3) == "End"){//		if you just loaded a level, load the .svg it uses
+					var findSvg = allText.split('\n');
+					if(localStorage.getItem(findSvg[findSvg.length-2]) != null){//		if this .svg is already loaded, quit
+						console.log(findSvg[findSvg.length-2] + " Exists");
+						preloadLevelAssets(findSvg[findSvg.length-2]);
+					}
+				}*/
 			}
 		}
-    }
-	request.send(null);
-	var fileArray = allText.split('\n');
-	alert(fileArray[1]);
+	}
+	txtFile.send(null);
 }
 
 function loadExternalLevel(){
@@ -67,13 +79,15 @@ function levelCleared(){
 
 function loadLevelMap(){//		load the list of levels which was created in LevelSaver.js
 	levelMap = localStorage.getItem("LevelMap").split(',');
+//	preloadLevelAssets(levelMap[mapIndex+1]);
 	loadBuiltInLevel();
 }
 
 function loadBuiltInLevel(){
 	simulating = false;
-	
 	levelCode = levelMap[mapIndex];
+	console.log(levelCode);
+	console.log(localStorage.getItem(levelCode));
 	loadedLevel = localStorage.getItem(levelCode).split('\n');
 	levelName = loadedLevel[0];
 	levelType = loadedLevel[1];
@@ -96,11 +110,23 @@ function loadBuiltInLevel(){
 			piecLimitsText[k].style.display = "none";
 		}
 	}
+	
+	console.log(useFillBlanks + " - " + levelType);
+	//		last level was fill in the blank but this one isn't so hide all inputs
+	if (useFillBlanks && levelType != "BL"){
+		console.log("No longer blank");
+		for(i = 0 ; i < blankDefaultVar.length ; i++){
+			blankEquInput[i].style.display = "none";
+		}
+		for(i = 1 ; i < blankEquGaps.length-1 ; i++){
+			blankEquText[i].style.display = "none";
+		}
+	}
 
 	usePiecewise = false;
 	useDrag = false;
 	useFillBlanks = false;
-	
+	useCutscene = false;
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
@@ -184,9 +210,16 @@ function loadBuiltInLevel(){
 			equRaw = loadedLevel[lineNum];
 			blankEquGaps = equRaw.split("_");
 			lineNum++;
-			blankVar = loadedLevel[lineNum].split(',');//		load all default values
+			blankDefaultVar = loadedLevel[lineNum].split(',');//		load all default values
 			lineNum++;
-			dragInitialize();
+			blankInitialize();
+			break;
+		//		-----------------------------------------------------------------------		[   Cutscene   ]		-----------------------------------------------------------------------
+		case "CU":
+			useCutscene = true;
+			//		load like a standard typed input level
+			cutInitialize(loadedLevel[lineNum]);
+			lineNum++;
 			break;
 	}
 	
@@ -200,7 +233,7 @@ function loadBuiltInLevel(){
 	}else{
 		useTime = false;
 	}
-	
+
 	//		UseZ
 	if(loadedLevel[lineNum] == "useZ"){
 		if(useZ === false){//		if it is being turned on instead of just kept on, display the render so the player notices the 3D is back.
@@ -219,13 +252,16 @@ function loadBuiltInLevel(){
 		xyzc.style.display="none";
 		xyz2c.style.display="none";
 	}	
-	
+
 	//		useNone
 	if(loadedLevel[lineNum] == "useNone"){
 		useNone = true;
+		buttonPause();
 		lineNum++;
+		playPauseButton.style.display = "none";
 	}else{
 		useNone = false;
+		playPauseButton.style.display = "block";
 	}
 	
 	substring = loadedLevel[lineNum].split(',');//		camera track point
@@ -235,22 +271,12 @@ function loadBuiltInLevel(){
 	
 	//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
 	drawBackground = loadedLevel[lineNum] != "none";
-	if(drawBackground)
+	if(drawBackground){
 		background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
-	if(!useNone)
-		loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
-	
-	/*var client = new XMLHttpRequest();
-	client.open('GET', "Levels/" + loadedLevel[i].substring(0 , loadedLevel[i].length-4) + "Colliders.tex");
-	client.onreadystatechange = function() {
-		if(client.responseText.length > 0){
-			loadCollidersFromTex(client.responseText);//		call loadCollidersFromTex() when the txt is loaded
-			console.log(client.responseText);
-		}
+		if(!useNone)//		if a .svg is loaded and this is an actual level (useNone means this is a blank page for graphing)
+			loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
 	}
-	client.send();
-	*/
-
+	
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
 	if(usePiecewise){

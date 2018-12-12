@@ -15,10 +15,6 @@
 	<!--	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">	-->
 </head>
 
-<!--		Dissable right click menu		-->
-<body oncontextmenu="return false;" style="background-color:#DDDDDD; margin: 0;">
-</body>
-
 <!--	Load External Libraries	-->
 <!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
 <script src="js/Core/Math.js"></script>
@@ -45,6 +41,7 @@
 <script type="text/javascript" src="js/LevelLimited/InputDrag.js"></script>
 <script type="text/javascript" src="js/LevelLimited/InputBlanks.js"></script>
 <script type="text/javascript" src="js/LevelLimited/XYZView.js"></script>
+<script type="text/javascript" src="js/LevelLimited/Cutscene.js"></script>
 
 <script type="text/javascript" src="js/Core/KeyboardMouseInput.js"></script>
 <script type="text/javascript" src="js/Core/TextInput.js"></script>
@@ -53,8 +50,8 @@
 <script type="text/javascript" src="js/Mods/DraggableText.js"></script>
 <script type="text/javascript" src="js/Mods/DebugView.js"></script>
 
-<!--		Remove white space around canvas (also makes cursor more accurate)		-->
-<body style="margin: 0;">
+<!--		Remove white space around canvas (also makes cursor more accurate) and Disable right click menu		-->
+<body oncontextmenu="return false;" style="background-color:#DDDDDD; margin: 0;">
 	<form method="post" enctype="multipart/form-data">
 		<input type="file" name="files[]" multiple>
 		<input type="submit" value="Upload File" name="submit">
@@ -106,6 +103,28 @@
 		touch-action: none;
 	}
 </style>
+
+<!--		width="50" height="50" style="z-index: 20; position:absolute; left:1300px; top:-50px;" 		-->
+<svg id="PlayPauseButton"; height="70" width="70" style="z-index: 10; position:absolute; left:-100px; top:-100px;">
+	<g transform="translate(10 10)">
+		<rect x="0" y="0" width="50" height="50" ry="12" fill="none" stroke="#000000" stroke-width="6"/>
+		<rect ry="11" height="46" width="46" y="2" x="2" class="button" onclick="top.keyPress('Play')" />
+		
+		<polygon fill="#000000" points="13,10 13,40 21,40 21,10" pointer-events="none" ; touch-action="none">
+			<animate id="animToPlay0" begin="indefinite" fill="freeze" attributeName="points" dur="400ms" to="13,10 13,40 26.5,31.844 26.5,18.25"/>
+			<animate id="animToPause0" begin="indefinite" fill="freeze" attributeName="points" dur="400ms" to="13,10 13,40 21,40 21,10"/>
+			<animate id="animToBlack0" begin="indefinite" fill="freeze" attributeName="fill" dur="400ms" to="#000000"></animate>
+			<animate id="AnimToRed0" begin="indefinite" fill="freeze" attributeName="fill" dur="400ms" to="#FF0000"></animate>
+		</polygon>
+
+		<polygon fill="#000000" points="29,10 29,40 37,40 37,10" pointer-events="none" ; touch-action="none">
+			<animate id="animToPlay1" begin="indefinite" fill="freeze" attributeName="points" dur="400ms" to="23.5,16.375 23.5,33.725 37,25 37,25"/>
+			<animate id="animToPause1" begin="indefinite" fill="freeze" attributeName="points" dur="400ms" to="29,10 29,40 37,40 37,10"/>
+			<animate id="animToBlack1" begin="indefinite" fill="freeze" attributeName="fill" dur="400ms" to="#000000"></animate>
+			<animate id="AnimToRed1" begin="indefinite" fill="freeze" attributeName="fill" dur="400ms" to="#FF0000"></animate>
+		</polygon>
+	</g>
+</svg>
 
 <!--		On Screen Keyboard		-->
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" height="240" width="420" style="z-index: 10; position:absolute; left:1185px; top:300px;">
@@ -321,6 +340,39 @@
 </svg>
 
 <script>
+	//		create functions for setting the play/pause button to Play, Pause, Invalid Equation, Valid Equation
+	var playPauseButton = document.getElementById("PlayPauseButton");
+	var animToPause0 = document.getElementById("animToPause0");
+	var animToPause1 = document.getElementById("animToPause1");
+	var animToPlay0 = document.getElementById("animToPlay0");
+	var animToPlay1 = document.getElementById("animToPlay1");
+		
+	var animToBlack0 = document.getElementById("animToBlack0");
+	var animToBlack1 = document.getElementById("animToBlack1");
+	var animToRed0 = document.getElementById("animToRed0");
+	var animToRed1 = document.getElementById("animToRed1");
+	
+	function buttonPlay(){
+		animToPlay0.beginElement();
+		animToPlay1.beginElement();
+		console.log("Play");
+	}
+	
+	function buttonPause(){
+		animToPause0.beginElement();
+		animToPause1.beginElement();
+		console.log("Pause");
+	}
+	
+	function buttonInvalid(){
+		animToRed0.beginElement();
+		animToRed1.beginElement();
+	}
+	
+	function buttonValid(){
+		animToBlack0.beginElement();
+		animToBlack1.beginElement();
+	}
 	//		get inputs from on screen keyboard
 	function keyPress(key) {
 		switch (key) {
@@ -337,6 +389,9 @@
 			case 'tan':
 				mainInput.innerText = mainInput.innerText + "tan(";
 				break;
+			case 'Play':
+				resetSledder();//	Play / Pause game
+				break;
 			default:
 				mainInput.innerText = mainInput.innerText + key;
 		}
@@ -345,3 +400,5 @@
 		mainInput.blur();
 	}
 </script>
+
+

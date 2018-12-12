@@ -1,5 +1,8 @@
 ﻿//		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
 function drawGrid(){//		draw a line at every 10 units
+	if(useCutscene)
+		return;
+	
 	ctx.strokeStyle="#C5C5C5";
 	ctx.font = "26px Arial";
 	ctx.fillStyle = "black";

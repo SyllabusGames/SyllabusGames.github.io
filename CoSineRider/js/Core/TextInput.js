@@ -54,34 +54,40 @@ function getCaretLocation(element){
 
 //		hides the input fields when a menu is opened
 function showHideInputs(show){
-	if(show)
-		stmp = "block";
-	else
-		stmp = "none";
-	for(i = pieEquInput.length-1 ; i > -1 ; i--){
-		pieEquInput[i].style.display = stmp;
+	console.log(show);
+	if(usePiecewise){
+		pieShowHideInputs(show);
+	}else if(useDrag){
+		//		no input to show/hide
+	}else if(useFillBlanks){
+		blankCheckInput();
+	}else if(useCutscene){
+		//		no input to show/hide
+	}else{
+		typeShowHideInputs();
 	}
 }
 
 	//	----------------------------------		[   Equation Changed   ]		----------------------------------
 var inputZ = 0;
 function checkInputFields(selectedElement){
-//	console.log("Input updated");
-//	console.trace();
-	if(selectedElement == "all")
+	if(selectedElement == "all"){
 		if(usePiecewise){
 			for(var num = pieEquInputsUsed-1 ; num > -1 ; num--){//		for each input field excluding the main input [0]
 				pieCheckInput(pieEquInput[num]);
 			}
 			return;
 		}
-
+	}
+	
 	if(usePiecewise){
 		pieCheckInput(selectedElement);
 	}else if(useDrag){
 		//		run nothing. Drag input is always updated within InputDrag.js
 	}else if(useFillBlanks){
 		blankCheckInput();
+	}else if(useCutscene){
+		//		no input to check
 	}else{
 		typeCheckInput();
 	}
@@ -134,7 +140,9 @@ function formatTypedInput(equChars){
 				break;//		remove spaces
 			case 'p':
 				if(i < equChars.length-1 && equChars[i+1] == 'i'){
-					equColored += '<a style="color:#F08030">p</a>';
+					equColored += '<a style="color:#F08030">π</a>';
+					//rtmp--;//		back the slelection up one character left since the i has been removed
+					i++;//		the character i is skipped
 				}else{//		run default
 					equColored += equChars[i];
 				}
