@@ -1,7 +1,7 @@
 <svg version="1.1" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
 	<g transform="translate(0 -152.36)">
 		<rect id="Outline" x="190" y="188.36" width="1230" height="824" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="8"/>
-		<g id="0a">
+		<g id="0Panel">
 			<rect x="200" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
 			<g transform="matrix(.33191 0 0 .33191 215.6 247.62)">
 				<g transform="matrix(1.9837 0 0 1.9837 165.26 308.68)" fill="none" stroke="#000">
@@ -35,8 +35,9 @@
 				</g>
 			</g>
 			<text x="387.14285" y="289.50488" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="387.14285" y="289.50488">0</tspan></text>
+			<text id="1text" x="227.14285" y="245.21916" fill="#000000" font-family="sans-serif" font-size="26.667px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="227.14285" y="245.21916" fill="#0000f0">words, words and other words</tspan></text>
 		</g>
-		<g id="0b">
+		<g id="1Panel">
 			<rect x="606" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
 			<g transform="matrix(.27457 .18648 -.18648 .27457 759.4 157.85)">
 				<g transform="matrix(1.9837 0 0 1.9837 165.26 308.68)" fill="none" stroke="#000">
@@ -69,9 +70,10 @@
 					<path d="m53.917 146.86c6.4435 5.7115 52.056 32.238 51.867 36.584 0.0738 4.351-64.689 18.668-64.689 18.668" stroke-width="5"/>
 				</g>
 			</g>
-			<text x="751.42859" y="262.36203" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="751.42859" y="262.36203">1</tspan></text>
+			<text id="2text" x="751.42859" y="262.36203" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="751.42859" y="262.36203">1</tspan></text>
+			<text id="3text" x="806.42859" y="284.50488" fill="#000000" font-family="sans-serif" font-size="26.667px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="806.42859" y="284.50488">cows</tspan></text>
 		</g>
-		<g id="0c">
+		<g id="2Panel">
 			<rect x="1012" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
 			<g transform="matrix(.094015 .31832 -.31832 .094015 1351.7 284.54)">
 				<g transform="matrix(1.9837 0 0 1.9837 165.26 308.68)" fill="none" stroke="#000">
@@ -104,9 +106,9 @@
 					<path d="m53.917 146.86c6.4435 5.7115 52.056 32.238 51.867 36.584 0.0738 4.351-64.689 18.668-64.689 18.668" stroke-width="5"/>
 				</g>
 			</g>
-			<text x="1168.5714" y="280.93344" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1168.5714" y="280.93344">2</tspan></text>
+			<text id="4text" x="1168.5714" y="280.93344" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1168.5714" y="280.93344">2</tspan></text>
 		</g>
-		<g id="0d">
+		<g id="3Panel">
 			<rect x="200" y="604.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
 			<g transform="matrix(.33191 0 0 .33191 357.03 540.47)">
 				<g transform="matrix(1.9837 0 0 1.9837 165.26 308.68)" fill="none" stroke="#000">
@@ -139,13 +141,13 @@
 					<path d="m53.917 146.86c6.4435 5.7115 52.056 32.238 51.867 36.584 0.0738 4.351-64.689 18.668-64.689 18.668" stroke-width="5"/>
 				</g>
 			</g>
-			<text x="290" y="676.64771" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="290" y="676.64771">3</tspan></text>
+			<text id="5text" x="290" y="676.64771" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="290" y="676.64771">3</tspan></text>
 		</g>
-		<g id="0e">
+		<g id="4Panel">
 			<rect x="606" y="604.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
-			<text x="718.57141" y="736.64771" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="718.57141" y="736.64771">4</tspan></text>
+			<text id="6text" x="718.57141" y="736.64771" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="718.57141" y="736.64771">4</tspan></text>
 		</g>
-		<g id="0f">
+		<g id="5Panel">
 			<rect x="1012" y="604.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
 			<g transform="matrix(.32292 -.076711 .076711 .32292 1021.1 747.99)">
 				<g transform="matrix(1.9837 0 0 1.9837 165.26 308.68)" fill="none" stroke="#000">
@@ -178,9 +180,9 @@
 					<path d="m53.917 146.86c6.4435 5.7115 52.056 32.238 51.867 36.584 0.0738 4.351-64.689 18.668-64.689 18.668" stroke-width="5"/>
 				</g>
 			</g>
-			<text x="1185.7144" y="682.362" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1185.7144" y="682.362">5</tspan></text>
+			<text id="7text" x="1185.7144" y="682.362" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1185.7144" y="682.362">5</tspan></text>
 		</g>
-		<g transform="translate(0,-340)">
+		<g id="6Panel" transform="translate(0,-340)">
 			<g id="1a" transform="translate(20,360)">
 				<rect x="200" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
 				<g transform="matrix(.33191 0 0 .33191 298.46 193.33)">
@@ -214,7 +216,7 @@
 						<path d="m53.917 146.86c6.4435 5.7115 52.056 32.238 51.867 36.584 0.0738 4.351-64.689 18.668-64.689 18.668" stroke-width="5"/>
 					</g>
 				</g>
-				<text x="387.14285" y="289.50488" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="387.14285" y="289.50488">b0</tspan></text>
+				<text id="8text" x="387.14285" y="289.50488" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="387.14285" y="289.50488">b0</tspan></text>
 			</g>
 		</g>
 	</g>
