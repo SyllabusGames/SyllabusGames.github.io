@@ -5,36 +5,38 @@
 </head>
 
 <script type="text/javascript" src="SmoothScrolling.js"></script>
+<script type="text/javascript" src="PageZoom.js"></script>
+
+<style>
+	@font-face {
+		font-family: OpenDyslexicAlta;
+		src: url("open_dyslexic/OpenDyslexicAlta-Bold.otf") format("opentype");
+	}
+
+	svg {
+		font-family: "OpenDyslexicAlta", "Arial";
+		background-color: #23d9b0;
+		padding: 0;
+	}
+
+	.button {
+		transition: 0.2s;
+		cursor: pointer;
+		fill-opacity: 0;
+	}
+
+		.button:hover {
+			fill-opacity: 0.2;
+		}
+
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>
 
 <body style="background-color:#23d9b0;" onresize="scaleImages()">
-	<style>
-		@font-face {
-			font-family: OpenDyslexicAlta;
-			src: url("open_dyslexic/OpenDyslexicAlta-Bold.otf") format("opentype");
-		}
-
-		svg {
-			font-family: "OpenDyslexicAlta", "Arial";
-			background-color: #23d9b0;
-			padding: 0;
-		}
-
-		.button {
-			transition: 0.2s;
-			cursor: pointer;
-			fill-opacity: 0;
-		}
-
-			.button:hover {
-				fill-opacity: 0.2;
-			}
-
-		body {
-			margin: 0;
-			width: 100%;
-			height: 100%;
-		}
-	</style>
 	<object id='sled' data="CoSineRider/SineRiderSledOptimized.svg" type="image/svg+xml" height="140" style="text-align: center; margin-top: 9.5%; margin-left: 25%; position: absolute;"></object>
 
 	<!--		CoSine Rider		-->

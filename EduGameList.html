@@ -6,6 +6,7 @@
 </head>
 
 <script type="text/javascript" src="SmoothScrolling.js"></script>
+<script type="text/javascript" src="PageZoom.js"></script>
 <script type="text/javascript" src="EduGameListJs/GameList.js"></script>
 <script type="text/javascript" src="EduGameListJs/ListSort.js"></script>
 
@@ -38,8 +39,9 @@
 		height: 100%;
 	}
 </style>
-<body>
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 10000" id="svgViewBox">
+
+<body bgcolor="#23d9b0">
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 10000" width="100%" id="svgViewBox">
 		<!--		Top Banner		-->
 		<g transform="translate(0 0)">
 			<rect x="-900" width="3e3" height="80" fill="#20a080" style="paint-order:normal" />
@@ -76,6 +78,7 @@
 			</a>
 		</g>
 
+		<!--		List Sort Buttons		-->
 		<g id="listHeader" class="txt" font-size="18" transform="translate(12 100)">
 			<path d="m1564 40v-22s0-12-12-12h-1542c-10 0-10 10-10 10v24h1565" stroke="#5cc0a8" stroke-width="3" fill="#00FFFF" />
 
@@ -155,51 +158,67 @@
 
 		</g>
 	</svg>
+</body>
 
-	<script>
+<script>
 
-		var xmlns = "http://www.w3.org/2000/svg";
-		var xlinkns = "http://www.w3.org/1999/xlink";
+	var xmlns = "http://www.w3.org/2000/svg";
+	var xlinkns = "http://www.w3.org/1999/xlink";
 
-		var pos = 140;
-		var t = performance.now();//		record to see total load time for this page
-		var k = 0;
-		var svg = document.getElementsByTagName('svg')[0];
-		var header;
-		var screenShot;
+	var pos = 140;
+	var t = performance.now();//		record to see total load time for this page
+	var k = 0;
+	var svg = document.getElementsByTagName('svg')[0];
+	var header;
+	var screenShot;
 
-		//	HVS V=0.781 S=0.914		H=0.45	H=0.48		H=0.51		H=0.42
-		var backgroundColors = ['#33E9B2', '#33E9D3', '#33DEE9'];
+	//	HVS V=0.781 S=0.914		H=0.45	H=0.48		H=0.51		H=0.42
+	var backgroundColors = ['#33E9B2', '#33E9D3', '#33DEE9'];
 
-		//	----------------------------------		[   ReSort List   ]		----------------------------------
-		function sortProperty(typ) {//		called from SVG buttons above
-			if (sortVar[0] == typ) {//		double clicked the sort button
-				list.reverse();
-				listUpdate();
-				return;
-			}
-			//		shift every sort property down one and assign the new one as the primary sort variable
-			sortVar[2] = sortVar[1];
-			sortVar[1] = sortVar[0];
-			sortVar[0] = typ;
-			list.sort(sortList);
+	//	set up the search input field
+	var mainInput = document.createElement("p");
+	mainInput.setAttribute("contentEditable" , "true");
+	mainInput.style = "position:absolute;left:60px;top:50px;width:1480px;font-size:35px; font-family:'Arial'; background-color: #FFFFFFBB; border:1px solid #AAAAAA;";
+	mainInput.innerHTML = "";
+	mainInput.style.display = "none";
+	mainInput.style.zIndex = "990";//		input field should always be above everything except Play/Pause button which is on 991 (and so will any input fields made by cloning it)
+	document.body.appendChild(mainInput);
+	mainInput.style.display = "none";
+	var searchString;
+	var useSearch = false;
+	
+	
+	//	----------------------------------		[   ReSort List   ]		----------------------------------
+	function sortProperty(typ) {//		called from SVG buttons above
+		if (sortVar[0] == typ) {//		double clicked the sort button
+			list.reverse();
 			listUpdate();
+			return;
 		}
+		//		shift every sort property down one and assign the new one as the primary sort variable
+		sortVar[2] = sortVar[1];
+		sortVar[1] = sortVar[0];
+		sortVar[0] = typ;
+		list.sort(sortList);
+		listUpdate();
+	}
 
-		var sortVar = [1, 2, 0];//	sort by subject, then rating, then type
+	var sortVar = [3, 1, 0];//	sort by subject [3], then rating[1], then type[0]
 
-		//	----------------------------------		[   Sort list called   ]		----------------------------------
-		list.sort(sortList);//		see GameList.js and ListSort.js
+	//	----------------------------------		[   Sort list called   ]		----------------------------------
+	list.sort(sortList);//		see GameList.js and ListSort.js
+	//	0		1		2		3					4							5	6	7		8		9			10									11	12	13
+	//["Edu","No","Run Marco!","Programming","Basic Programming (Drag 'n drop)","4+","1","0","Web","RunMarko","https://www.brainpop.com/games/runmarco/",,,true],
+	//		list element 11 is the property it is sorted by, 12 is the dom element holding it, and 13 is true/false for whether it is displayed or not
 
+	var gameList = document.getElementById("gameList");
 
-		var gameList = document.getElementById("gameList");
-
-		//	----------------------------------		[   Create SVG List Elements   ]		----------------------------------
-		for (i = 0; i < list.length; i++) {
-			var entry = document.createElementNS(xmlns, "g");
-			gameList.appendChild(entry);
-			//		create each entry in the game list as an SVG
-			entry.innerHTML = '<rect height = "40" width = "1564" stroke = "#5cc0a8" id=' + i.toString() + ' stroke-width="3" fill="' + backgroundColors[i % 3] + '"/>\
+	//	----------------------------------		[   Create SVG List Elements   ]		----------------------------------
+	for (i = 0; i < list.length; i++) {
+		var entry = document.createElementNS(xmlns, "g");
+		gameList.appendChild(entry);
+		//		create each entry in the game list as an SVG
+		entry.innerHTML = '<rect height = "40" width = "1564" stroke = "#5cc0a8" id=' + i.toString() + ' stroke-width="3" fill="' + backgroundColors[i % 3] + '"/>\
 					<path d="m1495 10v23m-60-23v23m-80-23v23m-60-23v23m-610-23v23m-150-23v23m-380-23v23m-90-23v23" stroke="#5cc0a8" stroke-width="3"/>\
 					<text y="28" x="6" font-size="18">' + list[i][0] + '</text>\
 					<text y="28" x="70" font-size="18">' + list[i][1] + '</text>\
@@ -213,9 +232,109 @@
 					<a xlink: href="' + list[i][10] + '" target="_parent">\
 						<rect height="25" width="374" y="9" x="158" fill-opacity="0" class="button" onmouseover="imageUpdate(\'' + list[i][9] + '\');" onmouseout="imageUpdate(\'\');"></rect>\
 					</a>';
-			entry.setAttribute("transform", 'translate(12 ' + pos.toString() + ')');
+		entry.setAttribute("transform", 'translate(12 ' + pos.toString() + ')');
 
-			list[i][12] = entry;//	store the visual element for each game in that game's list entry
+		list[i][12] = entry;//	store the visual element for each game in that game's list entry
+
+		if (i != list.length - 1 && list[i][11] != list[i + 1][11]) {//		this line is sorted into the same group as the last line
+			pos += 80;
+			//		add catigory header here
+		} else {
+			pos += 40;
+		}
+	}
+
+	//		check for broken links
+	//window.requestAnimationFrame(checkBrokenLinks);
+
+	document.getElementById("downloadLinks").setAttribute("transform", 'translate(760 ' + pos.toString() + ')');//		move download icons to bottom of page
+	document.getElementById("svgViewBox").setAttribute("viewBox", "0 0 1600 " + (pos + 150).toString());//		move end of screen to be just after download links
+//	console.log("Loaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
+
+	//	----------------------------------		[   Set Up Image   ]		----------------------------------
+	screenShot = document.createElement("img");
+	screenShot.setAttribute('style', 'opacity: 0.85;position: absolute;left: 50%; top: 100;margin-left: -300px;pointer-events: none; display: none');
+	screenShot.setAttribute("width", "600");
+	document.body.appendChild(screenShot);
+
+	console.log("Loaded page in\n" + Math.round(performance.now() - t).toString() + "ms");
+
+	function UrlExists(url) {//		FROM	https://forum.alphasoftware.com/showthread.php?94811-How-to-check-for-a-broken-link-bad-url
+		var http = new XMLHttpRequest();
+		http.open('HEAD', url[10], true);
+		http.send();
+		if (http.status != 200)
+			console.log("URL for " + url[2] + "broken");
+		return;
+	}
+	/*
+	function checkBrokenLinks() {
+		for (i = 0; i < 5; i++) {
+			var request;
+			if (window.XMLHttpRequest)
+				request = new XMLHttpRequest();
+			else
+				request = new ActiveXObject("Microsoft.XMLHTTP");
+			request.open('GET', 'http://www.mozilla.org', true);
+			// the object request will be actually modified
+			request.onload = function (e) {
+				if (request.status === 200) {
+					alert("The page you are trying to reach is not available.");
+				}else{
+					console.log("yay" + request.status);
+				}
+			}
+			request.send(); // there will be a 'pause' here until the response to come.
+		}
+	}*/
+	/*
+	function checkBrokenLinks() {
+		for (i = 0; i < 5; i++) {
+			var http = new XMLHttpRequest();
+			http.timeout = 4000;
+			http.open('GET', list[i][10], true);
+			http.onload = function(e){
+				if (http.readyState === 4) {
+					if (http.status === 200) {
+						console.log("URL for " + list[i][2] + " working");
+					} else {
+						console.log("URL for " + list[i][2] + " broken");
+					}
+				}
+			};
+
+			http.onerror = function (e) {
+				console.error(xhr.statusText);
+			};
+
+			http.send(null);
+		//	if (http.status != 200)
+		//		console.log(http.status + " URL for " + list[i][2] + " broken");
+		}
+	}*/
+
+	//	----------------------------------		[   Update list after re-sort   ]		----------------------------------
+	function listUpdate() {//		move all elements to their new positions in list
+		t = performance.now();
+
+		if(mainInput.style.display == "block")//		search is still active, leave room for search input field
+			pos = 200;
+		else
+			pos = 140;
+			
+		for (i = 0; i < list.length; i++){
+			//		check if a search is active and this element should be hidden
+			if(useSearch){
+				if(list[i][13]){
+					list[i][12].style.display = "block";
+				}else{
+					list[i][12].style.display = "none";
+					continue;
+				}
+			}
+			
+			list[i][12].setAttribute("transform", 'translate(12 ' + pos.toString() + ')');
+			list[i][12].children[0].setAttribute('fill', backgroundColors[i % 3]);
 
 			if (i != list.length - 1 && list[i][11] != list[i + 1][11]) {//		this line is sorted into the same group as the last line
 				pos += 80;
@@ -226,97 +345,151 @@
 		}
 		document.getElementById("downloadLinks").setAttribute("transform", 'translate(760 ' + pos.toString() + ')');//		move download icons to bottom of page
 		document.getElementById("svgViewBox").setAttribute("viewBox", "0 0 1600 " + (pos + 150).toString());//		move end of screen to be just after download links
-		console.log("Loaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
 
-		//	----------------------------------		[   Set Up Image   ]		----------------------------------
-		screenShot = document.createElement("img");
-		screenShot.setAttribute('style', 'opacity: 0.85;position: absolute;left: 50%; top: 100;margin-left: -300px;pointer-events: none; display: none');
-		screenShot.setAttribute("width", "600");
-		document.body.appendChild(screenShot);
-
-		console.log("Loaded page in\n" + Math.round(performance.now() - t).toString() + "ms");
+		//console.log("Reloaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
+	}
 
 
-		//	----------------------------------		[   Update list after re-sort   ]		----------------------------------
-		function listUpdate() {//		move all elements to their new positions in list
-			t = performance.now();
-
-			pos = 140;
-			for (i = 0; i < list.length; i++) {
-				list[i][12].setAttribute("transform", 'translate(12 ' + pos.toString() + ')');
-				list[i][12].children[0].setAttribute('fill', backgroundColors[i % 3]);
-
-				if (i != list.length - 1 && list[i][11] != list[i + 1][11]) {//		this line is sorted into the same group as the last line
-					pos += 80;
-					//		add catigory header here
-				} else {
-					pos += 40;
-				}
+	//	----------------------------------		[   Update Image   ]		----------------------------------
+	function imageUpdate(imageLink) {
+		if (imageLink == "") {
+			fadeIn = false;
+		} else if (window.innerWidth > 600) {//		screen is wide enough that images will not fill the whole page
+			fadeIn = true;
+			screenShot.style.display = "block";
+			screenShot.style.top = Math.max(window.pageYOffset + 10, 100);
+			screenShot.setAttribute("src", "GameListImages/" + imageLink + ".png");
+			//		wait for image to load
+			/*
+			function waitForImageToLoad(imageElement) {
+				return new Promise(resolve => { imageElement.onload = resolve })
 			}
-			document.getElementById("downloadLinks").setAttribute("transform", 'translate(760 ' + pos.toString() + ')');//		move download icons to bottom of page
-			document.getElementById("svgViewBox").setAttribute("viewBox" , "0 0 1600 " + (pos+150).toString());//		move end of screen to be just after download links
 
-			console.log("Reloaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
+			var myImage = document.getElementById('myImage');
+			var newImageSrc = "https://pmchollywoodlife.files.wordpress.com/2011/12/justin-bieber-bio-photo1.jpg?w=620"
+
+			myImage.src = newImageSrc;
+			waitForImageToLoad(myImage).then(() => {
+				// Image have loaded.
+				console.log('Loaded lol')
+			});*/
+
 		}
+		if (!fading) {//		if imageFade() is not already running
+			fading = true;
+			imageFade();
+		}
+	}
 
 
-		//	----------------------------------		[   Update Image   ]		----------------------------------
-		function imageUpdate(imageLink) {
-			if (imageLink == "") {
-				fadeIn = false;
-			} else if (window.innerWidth > 600) {//		screen is wide enough that images will not fill the whole page
-				fadeIn = true;
-				screenShot.style.display = "block";
-				screenShot.style.top = Math.max(window.pageYOffset + 10, 100);
-				screenShot.setAttribute("src", "GameListImages/" + imageLink + ".png");
-				//		wait for image to load
-				/*
-				function waitForImageToLoad(imageElement) {
-					return new Promise(resolve => { imageElement.onload = resolve })
-				}
+	//	----------------------------------		[   Image Transition Animation   ]		----------------------------------
+	var fadeIn = true;
+	var fading = false;
+	var fadeValue = 0.1;
 
-				var myImage = document.getElementById('myImage');
-				var newImageSrc = "https://pmchollywoodlife.files.wordpress.com/2011/12/justin-bieber-bio-photo1.jpg?w=620"
+	function imageFade() {
+		//		shift fade value in direction set in imageUpdate()
+		if (fadeIn) {
+			fadeValue += 0.07;
+		} else {
+			fadeValue -= 0.05;
+		}
+		//		if fade ends, stop this function from being called again and set the final value to exactly what it should be.
+		if (fadeValue > 0.93) {
+			fadeValue = 0.93;//		set to 1 so there are 2 frames where the cursor is off the selection but the image has not started fading yet
+			fading = false;
+		} else if (fadeValue < 0) {
+			fadeValue = 0;
+			screenShot.style.display = "none";//		hide image
+			fading = false;
+		}
+		screenShot.style.opacity = Math.min(fadeValue, 0.85);
+		if (fading)//		fade has not reached its final value so call this function again next frame
+			requestAnimationFrame(imageFade);
+	}
+	
+	
+	//	----------------------------------		[   Keyboard inputs for search bar   ]		----------------------------------
+	document.addEventListener("keydown", function(e){
+		if(!useSearch && e.keyCode >= 48 && e.keyCode <= 90){//		number or letter key was pressed and a search is not currently being run
+			useSearch = true;
+			mainInput.style.display = "block";
+			mainInput.focus();
+			mainInput.innerText = "";//String.fromCharCode(e.keyCode).toLowerCase();
+			//		move header to make room for the search bar
+			document.getElementById("listHeader").setAttribute("transform" , "translate(12 160)");
 
-				myImage.src = newImageSrc;
-				waitForImageToLoad(myImage).then(() => {
-					// Image have loaded.
-					console.log('Loaded lol')
-				});*/
-
-			}
-			if (!fading) {//		if imageFade() is not already running
-				fading = true;
-				imageFade();
+		}
+		
+		if(e.keyCode == 27){//		27		Escape key
+			hideSearch();
+		}
+		
+		//		update the search every time a key is pressed
+		if(useSearch){
+			window.requestAnimationFrame(nextFrameSearchUpdate);
+		}
+	});
+	
+	
+	//	----------------------------------		[   Search bar resize   ]		----------------------------------
+	window.addEventListener("resize", function(e){
+		var screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
+		mainInput.style.top = Math.round(screenWidth*0.05 - 25).toString() + "px";
+		mainInput.style.left = Math.round(screenWidth*0.1).toString() + "px";
+		mainInput.style.width = Math.round(screenWidth*0.8).toString() + "px";
+	});
+	
+	//		this function is used so functions are called after the key press has updated the input field
+	function nextFrameSearchUpdate(){
+		searchString = mainInput.innerText.toLowerCase();
+			
+		//		search field empty. Remove input field.
+		if(searchString == ''){
+			hideSearch();
+			return;
+		}
+		
+		//		set all games not including the search term to not render
+		for (i = 0; i < list.length; i++){
+			//		if title, subject, or subject (specific) contains the search term, show it
+			if((list[i][2].toLowerCase().indexOf(searchString) != -1) ||
+				(list[i][3].toLowerCase().indexOf(searchString) != -1) ||
+				(list[i][4].toLowerCase().indexOf(searchString) != -1)){
+					list[i][13] = true;
+			}else{
+					list[i][13] = false;
 			}
 		}
-
-
-		//	----------------------------------		[   Image Transition Animation   ]		----------------------------------
-		var fadeIn = true;
-		var fading = false;
-		var fadeValue = 0.1;
-
-		function imageFade() {
-			//		shift fade value in direction set in imageUpdate()
-			if (fadeIn) {
-				fadeValue += 0.07;
-			} else {
-				fadeValue -= 0.05;
-			}
-			//		if fade ends, stop this function from being called again and set the final value to exactly what it should be.
-			if (fadeValue > 0.93) {
-				fadeValue = 0.93;//		set to 1 so there are 2 frames where the cursor is off the selection but the image has not started fading yet
-				fading = false;
-			} else if (fadeValue < 0) {
-				fadeValue = 0;
-				screenShot.style.display = "none";//		hide image
-				fading = false;
-			}
-			screenShot.style.opacity = Math.min(fadeValue, 0.85);
-			if (fading)//		fade has not reached its final value so call this function again next frame
-				requestAnimationFrame(imageFade);
+		listUpdate();
+	}
+	
+	function hideSearch(){
+		mainInput.style.display = "none";
+		mainInput.blur();
+		//		set all games to show
+		for (i = 0; i < list.length; i++){
+			list[i][13] = true;
 		}
+		//		move header back
+		document.getElementById("listHeader").setAttribute("transform" , "translate(12 100)");
 
-	</script>
-</body>
+		
+		listUpdate();
+		useSearch = false;
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

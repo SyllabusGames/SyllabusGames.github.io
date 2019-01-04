@@ -1,6 +1,8 @@
-﻿//	0		1		2		3					4							5	6	7		8		9			10									11	12
-//["Edu","No","Run Marco!","Programming","Basic Programming (Drag 'n drop)","4+","1","0","Web","RunMarko","https://www.brainpop.com/games/runmarco/",,],
+﻿//	0		1		2		3					4							5	6	7		8		9			10									11	12	13
+//["Edu","No","Run Marco!","Programming","Basic Programming (Drag 'n drop)","4+","1","0","Web","RunMarko","https://www.brainpop.com/games/runmarco/",,,true],
 
+var atmp;
+var btmp;
 
 function sortList(a, b) {
 //		store the variable used to sort the list in slot 12 so the list can be grouped by that variable
@@ -26,14 +28,32 @@ function sortList(a, b) {
 			case 3://	subject
 				itmp = a[3].localeCompare(b[3]);
 				break;
-			case 5://	age
-				itmp = a[5].localeCompare(b[5]);
+			case 5://	grade
+				//itmp = a[5].localeCompare(b[5]);
+				itmp = parseInt(a[5]) < parseInt(b[5])? -1 : 1;
+				console.log(parseInt(a[5]));
+				if(a[5] == b[5])
+					itmp = 0;
 				break;
 			case 6://	length
-				itmp = a[6].localeCompare(b[6]);
+				//itmp = a[6].localeCompare(b[6]);
+				itmp = parseInt(a[6]) < parseInt(b[6])? -1 : 1;
+				console.log(parseInt(a[6]));
+				if(a[6] == b[6])
+					itmp = 0;
 				break;
 			case 7://	price
-				itmp = a[7].localeCompare(b[7]);
+				atmp = a[7].replace("$" , '');
+				btmp = b[7].replace("$" , '');
+				if(atmp.includes('/'))
+					atmp = atmp.substring(atmp.indexOf('/')+1);
+					
+				if(btmp.includes('/')){
+					btmp = btmp.substring(btmp.indexOf('/')+1);
+					console.log(btmp);
+				}
+
+				itmp = parseInt(atmp) < parseInt(btmp)? -1 : 1;
 				break;
 			case 8://	format
 				itmp = a[8].localeCompare(b[8]);
@@ -57,8 +77,18 @@ function sortByType(a, b) {
 		case "HW":
 			itmp = -1;
 			break;
+		//		Tool
+		case "Tool":
+			//itmp = 0;
+			break;
 		case "Issue":
 			itmp = 1;
+			break;
+		case "Video":
+			itmp = 2;
+			break;
+		case "WorkBook":
+			itmp = 3;
 			break;
 	}
 	switch (b[0]) {
@@ -71,8 +101,17 @@ function sortByType(a, b) {
 		case "HW":
 			itmp += 1;
 			break;
+		case "Tool":
+			//itmp += 0;
+			break;
 		case "Issue":
 			itmp += -1;
+			break;
+		case "Video":
+			itmp += -2;
+			break;
+		case "WorkBook":
+			itmp += -3;
 			break;
 	}
 	return itmp;
@@ -105,6 +144,9 @@ function sortByRating(a, b) {
 			break;
 		case "Maybe":
 			itmp += 1;
+			break;
+		case "No":
+			//	+= 0
 			break;
 		default:
 			itmp += -1;
