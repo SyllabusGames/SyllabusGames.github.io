@@ -97,7 +97,6 @@ document.getElementById('XYZ2').addEventListener('mousemove' , function(e){
 	xyzLastMouseX = xyzMouseX;
 	if(changeApz){
 		futureApz = Math.max( Math.min(futureApz + (xyzLastMouseY - xyzMouseY)*0.12 , 20) , -20);//		I want apz to be rounded but recording it directly causes problems
-		lastApz = apz;
 		apz = Math.round(futureApz);
 		xyzLastMouseY = xyzMouseY;//		reset xyzLastMouseY so Z doesn't jump 20px worth of movement
 	}else if(Math.abs(xyzMouseY - xyzLastMouseY) > 20){//		only change apz (sled Z position) after the mouse has moved more than 20px vertically. [reduces incidental movement while trying to rotate the view]
@@ -115,7 +114,7 @@ function setUpXYZ(){
 	passViewAngle = viewAngle;
 	passTime = frameTime;
 	//		"Z = #" should be the only text on this canvas
-	xyz2.fillStyle = "#0000FF";
+	xyz2.fillStyle = _inputZColor;
 	xyz2.font = "40px Arial";
 	renderFlipX = (passViewAngle > 3.14159 || passViewAngle < 0);//		if the 3D model is being viewed from the -Z side, flip the renderer so thigs are rendered from +Z to -Z.
 }
@@ -279,7 +278,7 @@ function drawXYZ(){
 	}
 
 	//	----------------------------------		[   Draw Z position indicator   ]		----------------------------------
-	xyz2.strokeStyle="#000000";
+	xyz2.strokeStyle = _lineColor;
 	xyz2.beginPath();
 	xyz2.moveTo(495 , 20);
 	xyz2.lineTo(475 , 20);
@@ -293,9 +292,9 @@ function drawXYZ(){
 	xyz2.lineTo(475 , 380);
 	xyz2.stroke();
 	//		Z position dot
-	xyz2.strokeStyle="#0000FF";
+	xyz2.strokeStyle = _inputZColor;
 	xyz2.beginPath();
-	xyz2.arc(485 , 200 - apz*9 , 5 , 0 , endAngle);
+	xyz2.arc(485 , 200 - apz*9 , 5 , 0 , _endAngle);
 	xyz2.closePath();
 	xyz2.fill();
 	xyz2.stroke();
@@ -309,17 +308,17 @@ function drawXYZ(){
 	}
 		
 	//		draw the "hide 3D view" rectangle
-	xyz2.strokeStyle = "#00A0A030";
+	xyz2.strokeStyle = _xyzButtonColor;
 	xyz2.beginPath();
 	xyz2.moveTo(470 , 5);
 	xyz2.lineTo(470 , 45);
 	xyz2.lineTo(330 , 45);
 	xyz2.lineTo(330 , 5);
 	xyz2.closePath();
-	xyz2.fillStyle = "#00A0A030";
+	xyz2.fillStyle = _xyzButtonColor;
 	xyz2.fill();
 	xyz2.stroke();
 
-	xyz2.fillStyle="#0000FF";
+	xyz2.fillStyle = _inputZColor;
 	xyz2.fillText( "Z = " + apz.toString() , 340 , 40);
 }

@@ -80,11 +80,11 @@ function render2d(){//		called from checkInputFields() of TextInput.js
 	
 	//		initilalize equations for both sides of the = < or >
 	scope = {x: 0 , y: 0};
-	eqinput = math.parse(renderEquation[0] , scope);
-	leftEqu = eqinput.compile();
+	equInput = math.parse(renderEquation[0] , scope);
+	leftEqu = equInput.compile();
 	
-	eqinput = math.parse(renderEquation[1] , scope);
-	rightEqu = eqinput.compile();
+	equInput = math.parse(renderEquation[1] , scope);
+	rightEqu = equInput.compile();
 
 	//	----------------------------------		[   Full Screen Render   ]		----------------------------------
 	renderx = screenWidth;

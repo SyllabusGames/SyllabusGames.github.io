@@ -194,9 +194,9 @@ function animCore(){
 				animLy[i] = parseFloat(ctmp[0]);
 				if(ctmp.length > 0){//		add equation if one is declared
 					scope = {x: k};
-					eqinput = math.parse(ctmp[1] , scope);
+					equInput = math.parse(ctmp[1] , scope);
 	//				console.log("Equation "+ ctmp[1] + " / " + i)
-					animLequ[i] = eqinput.compile();
+					animLequ[i] = equInput.compile();
 					if(ctmp.length > 1){//		add equation if one is declared
 						animLText[i] = ctmp[2];
 					}
@@ -232,7 +232,7 @@ function animCore(){
 	//		set font height for current screen scale
 	animTxtHight = Math.round(Math.sqrt(screenScale)*3);
 	ctx.font = animTxtHight.toString() + "px Arial";
-	ctx.strokeStyle="#000000";
+	ctx.strokeStyle = _lineColor;
 
 	//		-----------------------------------------------------------------------		[   Draw Everything   ]		-----------------------------------------------------------------------
 	if(animLineDraw != -1){//		only one graphed line can be drawn at a time
@@ -326,7 +326,7 @@ function animDrawPointMove(xxa , yya , xxb , yyb , lerp){
 	
 	//		-----------------------------------------------------------------------		[   Point at xxa on yya   ]		-----------------------------------------------------------------------
 	ctx.beginPath();
-	ctx.arc(xxa , yya , animTxtHight/8 , 0 , endAngle);
+	ctx.arc(xxa , yya , animTxtHight/8 , 0 , _endAngle);
 	ctx.stroke();
 	ctx.closePath();
 	ctx.fill();
@@ -335,7 +335,7 @@ function animDrawPointMove(xxa , yya , xxb , yyb , lerp){
 	//		-----------------------------------------------------------------------		[   Point at xxb on yyb   ]		-----------------------------------------------------------------------
 	if(lerp > 0.8){
 		ctx.beginPath();
-		ctx.arc(xxb , yyb , animTxtHight/8 , 0 , endAngle);
+		ctx.arc(xxb , yyb , animTxtHight/8 , 0 , _endAngle);
 		ctx.stroke();
 		ctx.closePath();
 		ctx.fill();
@@ -375,7 +375,7 @@ function drawNumberLine(yyy){
 	ctx.font = animTxtHight.toString() + "px Arial";
 	ctx.lineWidth = animTxtHight/10;
 	yyy = (-yyy + screeny) * screenScale;
-	ctx.strokeStyle="#000000";
+	ctx.strokeStyle = _lineColor;
 
 	//		-----------------------------------------------------------------------		[   Tic-Marks   ]		-----------------------------------------------------------------------
 	ctx.beginPath();

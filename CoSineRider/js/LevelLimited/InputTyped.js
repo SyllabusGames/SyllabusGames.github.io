@@ -1,10 +1,4 @@
 ﻿
-var equRaw = "0";
-var equLast = "0";
-var equUndo = [];
-var equExecutingUndo = false;
-var equCurrentUndo = 0;
-
 function typeInitialize(){
 	equInputField = mainInput.style;//		used to set the border color when the equation contains errors
 	equRaw = defaultEqu;
@@ -12,8 +6,8 @@ function typeInitialize(){
 	//mainInput.innerHTML = defaultEqu;//		set the input field to have the default equation. Then update it and set it active (focus).
 	mainInput.focus();
 	scope = {x: 0 , t: 0};
-	eqinput = math.parse(equRaw , scope);
-	equ = eqinput.compile();
+	equInput = math.parse(equRaw , scope);
+	equCompiled = equInput.compile();
 	//		reset undo list
 	equUndo = [];
 	equCurrentUndo = 0;
@@ -22,9 +16,18 @@ function typeInitialize(){
 
 function typeScreenResize(){
 	equInputField = mainInput.style;
-	equInputField.left = Math.round(screenWidth * 0.0375) + "px";
+	console.log('typeScreenResize');
+	equInputField.left = "55px";
 	equInputField.top = Math.round(screenHeight  - 85) + "px";
-	equInputField.width = Math.round(screenWidth * 0.925) + "px";
+	equInputField.width = Math.round(screenWidth - 120) + "px";
+	if(equInvalid || !containsVariables)
+		yEqualsText.style.top = (screenHeight-95) + "px";
+	else
+		yEqualsText.style.top = (screenHeight-50) + "px";
+	
+	if(useDerivative || useIntegral){
+		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 50) + "px";
+	}
 }
 
 
@@ -38,6 +41,15 @@ function equUndoRedo(undo){//		true = undo, false = redo
 			equExecutingUndo = false;
 			return;
 		}
+		if(equCurrentUndo == equUndo.length){//		this is currently the last entry in the undo list, so add the input field's current contents to the list's end
+			if(mainInput.innerText != equUndo[equUndo.length-1]){//		current input not on undo list
+				equUndo.push(mainInput.innerText);
+			}
+		}
+		if(equUndo[equCurrentUndo-1] == equUndo[equCurrentUndo-2]){//		the previous if statement can cause duplicate entries if undo then full redo are executed
+			equUndo.splice(equCurrentUndo-1 , 1);//		remove the duplicated element
+			equCurrentUndo--;//		shift to compensate for the list being 1 element shorter
+		}
 		equCurrentUndo--;
 	}else{
 		if(equCurrentUndo > equUndo.length-2){//		nothing available to redo
@@ -50,32 +62,49 @@ function equUndoRedo(undo){//		true = undo, false = redo
 	typeCheckInput();// is called from OnKeyUp, so this call is unnessisary except for when someone holds Ctrl+Z
 }
 
+
 //		called every time the input field changes
 function typeCheckInput(){
-	//mainInput = pieEquInput[0];
-	equInputField = mainInput.style;
-
-	equRaw = mainInput.innerText.toLowerCase().replace("**" , "^");
-	equRaw = equRaw.replace(/π/g , "pi");
 	
-	//		Not using undo and equation has not changed (undo list is not empty and current input is the same as latest entry). Return.
-	if(!equExecutingUndo && equUndo.length != 0 && equRaw == equUndo[equCurrentUndo]){
-	//	console.log("Input has not changed");
-		//		Input has not changed
-		return;
-	}
-	mainInput.setAttribute("z-index" , ++inputZ);
-
-	
-	//		Undo
+	//		Update Undo/Redo list
 	if(!equExecutingUndo){//		if not currently executing an undo/redo function, add current input to the undo list.
+	
+		//		Not using undo and equation has not changed (undo list is not empty and current input is the same as latest entry). Return.
+		if(equUndo.length != 0 && equRaw == mainInput.innerText){
+			//		Input has not changed
+			return;
+		}
+	
 		if(equCurrentUndo < equUndo.length-1){//		undo has been used. Delete all undo list items after the one currently active
 			equUndo.length = equCurrentUndo;
 		}
 		equUndo.push(equRaw);//		add current equation to undo list
-		equCurrentUndo = equUndo.length-1;
+		equCurrentUndo = equUndo.length;
 	}
 	equExecutingUndo = false;
+	
+	
+	equInputField = mainInput.style;
+
+	//		only run on typed inputs
+	
+	equRaw = mainInput.innerText.toLowerCase().replace("π" , "pi");//		this is done for the parser and is undone by formatTypedInput() for display to the player
+
+	//		Test Equation		1+3-4*2^1%3+abs(4)+log(10)-sqrt(4)+ceil(3)+floor(1)+round(5)+tan(1)+sin(6)+cos(4)+acos(0.2)+asin(1)+atan(5)+atan2(1,2)+max(3,1)+min(5,2,-3)+pi+e+(2)+3.1+x+z+t
+	//		check if any characters in the string are not listed
+/*	if (/^[0-9|\+|\-|\*|\^|/|%|abs|log|sqrt|ceil|floor|round|tan|sin|cos|acos|asin|atan|atan2|max|min|pi|π|e|\(|\)|,|\.|x|z|t|y|<|>|=]+$/.test(equRaw)){
+	   console.log("no invalid characters" + "  -  " + equRaw);
+	}else{
+	   console.log("INVALID CHARS!" + "  -  " + equRaw);
+	}*/
+	
+	//		only run on typed inputs
+
+	
+
+	// mainInput.setAttribute("z-index" , ++inputZ);
+
+	
 	
 
 	if(useRender)//		clear this canvas so if it isn't used, it won't still be shown
@@ -89,27 +118,52 @@ function typeCheckInput(){
 	}
 
 	ftmp = getCaretLocation(mainInput);//		ftmp is current caret position
-	console.log("called from InputTyped");
-	mainInput.innerHTML = formatTypedInput(equRaw.split(""));
+	mainInput.innerHTML = formatTypedInput(equRaw);
 	restoreSelection();
+	
+	//		the following change is made for the parser, not for the player to see
+	if((equRaw.match(/\|/g) || []).length > 0){//		equation contains |-x| (absolute value bars)
+		i = 0;
+		equRaw = equRaw.replace(/\|/g, (match, $1) => {
+			if(i++ % 2 == 0)
+				return "abs(";
+			else
+				return ")";
+		});
+	}
 
 	//	----------------------------------		[   /Recolor Input Text   ]		----------------------------------
 	if(!simulating){//		Only update the equation if the simulation is not running
 		try{//		parse the input text to check if it is a valid equation, if not, reenter the last valid equation
-			eqinput = math.parse(equRaw , scope);
-			equ = eqinput.compile();
-			equInvalid = false;
+			equInput = math.parse(equRaw , scope);
+			equCompiled = equInput.compile();
+			
+			if(equation(0).toString()[0] == "f")//		if it is returning javascript (function ...(...){...})	 instead of an actual answer, consider it invalid
+				equInvalid = true;
+			else
+				equInvalid = false;
 		}catch(err){
-			eqinput = math.parse(equLast , scope);
-			equ = eqinput.compile();
+			equInput = math.parse(equLast , scope);
+			equCompiled = equInput.compile();
 			equInvalid = true;
-			equInputField.borderColor = "#FF0000";
-			equInputField.borderWidth = 2;			
+			equInputField.borderColor = _inputBorderBadColor;
+			equInputField.borderWidth = "3px";			
 		}
 		if(!equInvalid){
 			equLast = equRaw;
-			equInputField.borderColor = "#AAAAAA";
-			equInputField.borderWidth = 1;
+			equInputField.borderColor = _inputBorderGoodColor;
+			equInputField.borderWidth = "1px";
 		}
+	}
+	
+	if(!containsVariables){//		if equation does not contain x, z, or t, (output is constant) show the answer above the input line.
+		yEqualsText.innerHTML = '<text alignment-baseline="baseline" style="font-size: 35px; font-family: Arial; color: blue;"> y=' + equation(0).toString() + '</text>';
+		yEqualsText.style.top = (screenHeight-95) + "px";
+	}else if(equInvalid){
+		yEqualsText.innerHTML = '<text alignment-baseline="baseline" style="font-size: 35px; font-family: Arial; color: grey;"> y=' + equLast + '</text>';
+		yEqualsText.style.top = (screenHeight-95) + "px";
+	}else{
+		yEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y=</text>';//		class"unselectable" declared in CoSineRider.html"
+		yEqualsText.style.top = (screenHeight-50) + "px";
 	}
 }

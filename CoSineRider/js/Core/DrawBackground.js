@@ -3,16 +3,14 @@ function drawGrid(){//		draw a line at every 10 units
 	if(useCutscene)
 		return;
 	
-	ctx.strokeStyle="#C5C5C5";
+	//		set the color for the small lines on the left side of the grid
+	ctx.strokeStyle = _gridSecondaryColor;
 	ctx.font = "26px Arial";
-	ctx.fillStyle = "black";
+	ctx.fillStyle = _gridTextColor;
 	
-	if(!simulating){//		lable axis
-		ctx.fillText("X axis" , screenWidth - 90 , screeny * screenScale - 2);
-		ctx.fillText("Y axis" , -screenx * screenScale + 2 , 25);
-	}
 	
-	//		change what grid incraments are visible based on screen scale
+		
+	//		change what grid increments are visible based on screen scale
 	if(screenScale < 1.5){
 		gridScale = 100;
 		if(!simulating){
@@ -41,44 +39,86 @@ function drawGrid(){//		draw a line at every 10 units
 			}
 		}
 	}
-	for(i = Math.round(screenx/gridScale) ; i < (screenx+screenWidth/screenScale)/gridScale ; i++){//		vertical lines
-		if(i%10 == 0){
-			ctx.lineWidth = 3;
-			if(i == 0){//		Origin line
-				ctx.strokeStyle="#505050";
-				ctx.beginPath();
-				ctx.moveTo(-screenx * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
-				ctx.lineTo(-screenx * screenScale , screenHeight);
-				ctx.stroke();
-				ctx.strokeStyle="#C5C5C5";
-				continue;
-			}
-		}else{
-			ctx.lineWidth = 1;
-		}
-		ctx.beginPath();
-		ctx.moveTo((-screenx + i*gridScale) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
-		ctx.lineTo((-screenx + i*gridScale) * screenScale , screenHeight);
-		ctx.stroke();
-	}
-	for(i = Math.round(-screeny/gridScale) ; i < (-screeny+screenHeight/screenScale)/gridScale ; i++){//		horizontal lines
-		if(i%10 == 0){
+	
+	if(usePolar){
+		for(i = 1 ; i < 500 ; i++){//		circles
+			if(i%10 == 0){//		Every 10 lines
 				ctx.lineWidth = 3;
-			if(i == 0){//		Origin line
-				ctx.strokeStyle="#505050";
-				ctx.beginPath();
-				ctx.moveTo(0 , screeny * screenScale);
-				ctx.lineTo(screenWidth , screeny * screenScale);
-				ctx.stroke();
-				ctx.strokeStyle="#C5C5C5";
-				continue;
+			}else{
+				ctx.lineWidth = 1;
 			}
-		}else{
-			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.arc( -screenx*screenScale , screeny*screenScale , i*gridScale*screenScale , 0 , _endAngle);
+			ctx.stroke();
 		}
+		
+		for(i = Math.PI ; i > 0 ; i -= Math.PI/12){//	Radial lines
+			if(i%45 == 0){//		Every 45 degrees = pi/12 radians
+				ctx.lineWidth = 3;
+			}else{
+				ctx.lineWidth = 1;
+			}
+			ctx.beginPath();
+			ctx.moveTo( (math.cos(i)*10000 - screenx) * screenScale ,  (math.sin(i)*10000 + screeny) * screenScale);//		(graph left edge + line number*line spacing(10))*scale
+			ctx.lineTo((-math.cos(i)*10000 - screenx) * screenScale , (-math.sin(i)*10000 + screeny) * screenScale);
+			ctx.stroke();
+		}
+		
+	}else{
+		if(!simulating){//		lable axis
+			ctx.fillText("X axis" , screenWidth - 90 , screeny * screenScale - 2);
+			ctx.fillText("Y axis" , -screenx * screenScale + 2 , 25);
+		}
+		for(i = Math.round(screenx/gridScale) ; i < (screenx+screenWidth/screenScale)/gridScale ; i++){//		vertical lines
+			if(i%10 == 0){
+				ctx.lineWidth = 3;
+				if(i == 0){//		Origin line
+					ctx.strokeStyle = _gridMainColor;;
+					ctx.beginPath();
+					ctx.moveTo(-screenx * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
+					ctx.lineTo(-screenx * screenScale , screenHeight);
+					ctx.stroke();
+					ctx.strokeStyle = _gridSecondaryColor;
+					continue;
+				}
+			}else{
+				ctx.lineWidth = 1;
+			}
+			ctx.beginPath();
+			ctx.moveTo((-screenx + i*gridScale) * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
+			ctx.lineTo((-screenx + i*gridScale) * screenScale , screenHeight);
+			ctx.stroke();
+		}
+		for(i = Math.round(-screeny/gridScale) ; i < (-screeny+screenHeight/screenScale)/gridScale ; i++){//		horizontal lines
+			if(i%10 == 0){
+					ctx.lineWidth = 3;
+				if(i == 0){//		Origin line
+					ctx.strokeStyle = _gridMainColor;
+					ctx.beginPath();
+					ctx.moveTo(0 , screeny * screenScale);
+					ctx.lineTo(screenWidth , screeny * screenScale);
+					ctx.stroke();
+					ctx.strokeStyle = _gridSecondaryColor;
+					continue;
+				}
+			}else{
+				ctx.lineWidth = 1;
+			}
+			ctx.beginPath();
+			ctx.moveTo(0 , (screeny + i*gridScale) * screenScale);
+			ctx.lineTo(screenWidth , (screeny + i*gridScale) * screenScale);
+			ctx.stroke();
+		}
+	}
+}
+
+//		-----------------------------------------------------------------------		[   Draw Goals   ]		-----------------------------------------------------------------------
+function drawGoals(){
+	for(i = gCircleX.length-1 ; i > -1 ; i--){
+		//		draw circle
+		ctx.strokeStyle = _goalColor;
 		ctx.beginPath();
-		ctx.moveTo(0 , (screeny + i*gridScale) * screenScale);
-		ctx.lineTo(screenWidth , (screeny + i*gridScale) * screenScale);
+		ctx.arc((gCircleX[i]-screenx)*screenScale , -(gCircleY[i]-screeny)*screenScale , gCircleR[i]*screenScale , 0 , _endAngle);
 		ctx.stroke();
 	}
 }

@@ -7,6 +7,7 @@ var draggingScreen = false;
 var dragScreenX = 0;//		dragScreenX and Y are the coordinates at the center of the screen, making the zooming math simpler
 var dragScreenY = 0;
 var dragScreenScale = 15;
+var showSVGPoints = false;
 
 function drawSVGColliders(){//		called from the end of Collisiions.js
 
@@ -27,17 +28,19 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 	if(selectedPoint != -1){//		highlight selected point and move with cursor
 		if(draggingPoint){//		Point being dragged has a light blue dot over it
 			ctx.strokeStyle="#00FFFF";
-			ctx.beginPath();
-			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , endAngle);
-			ctx.stroke();
 			ctx.fillStyle = "#00FFFF";
+
+			/*ctx.beginPath();
+			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , _endAngle);
+			ctx.stroke();
 			ctx.closePath();
 			ctx.fill();
-			ctx.stroke();
+			ctx.stroke();*/
+			drawCircle(allGroundPointsX[selectedPoint] , -allGroundPointsY[selectedPoint] , 3+0.2*screenScale);
 		}else{//		Point hovered over is circled in blue
 			ctx.strokeStyle="#0080FF";
 			ctx.beginPath();
-			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , endAngle);
+			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , _endAngle);
 			ctx.stroke();
 		}
 	}

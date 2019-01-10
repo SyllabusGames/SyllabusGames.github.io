@@ -14,7 +14,7 @@ function drawMainMenu(){
 function MMDrawLine(){
 
 	ctx.clearRect(0 , 0 , screenWidth , screenHeight);
-	ctx.fillStyle = "#000000";
+	ctx.fillStyle = _gridTextColor;
 	ctx.font = "100px Arial";
 	ctx.fillText( "Co" , screenWidth/2-290 , screenHeight/4);
 	ctx.font = "120px Arial";
@@ -26,7 +26,7 @@ function MMDrawLine(){
 
 	MMTime += 0.2;
 	ctx.lineWidth = 8;
-	ctx.strokeStyle="#000000";
+	ctx.strokeStyle = _lineColor;
 	ctx.beginPath();
 	ctx.moveTo(20*MMTime , Math.max(-5 , -20*(-MMTime/(MMTime/8+0.3)-MMTime/12+Math.sin(MMTime/15)*2-screenHeight/40)));//		-x/(x/8+0.5)-x/8+sin(x/15)	//		20=screen scale
 	for(dtmp = 0 ; dtmp < 25 ; dtmp += 0.5){//	25/0.5 verticies in line	//		25=line length

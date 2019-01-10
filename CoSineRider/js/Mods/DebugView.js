@@ -14,7 +14,7 @@ function drawPoint(xxxx , yyyy,colorrr = "#000000"){
 	ctx.strokeStyle = colorrr;
 	ctx.fillStyle = colorrr;
 	ctx.beginPath();
-	ctx.arc((xxxx - screenx)*screenScale , (-yyyy + screeny)*screenScale , 3 , 0 , endAngle);
+	ctx.arc((xxxx - screenx)*screenScale , (-yyyy + screeny)*screenScale , 3 , 0 , _endAngle);
 	ctx.stroke();
 	ctx.closePath();
 	ctx.fill();

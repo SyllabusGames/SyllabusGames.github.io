@@ -98,7 +98,7 @@ document.addEventListener('wheel', function(e){
 			ctx.strokeStyle = "#00FF00";
 			ctx.fillStyle = "#00FF00";
 			ctx.beginPath();
-			ctx.arc(drStringXScreen , drStringYScreen , drStringLength/2 + 5 , 0 , endAngle);
+			ctx.arc(drStringXScreen , drStringYScreen , drStringLength/2 + 5 , 0 , _endAngle);
 			ctx.stroke();
 			ctx.closePath();
 			ctx.fill();

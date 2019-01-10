@@ -9,6 +9,9 @@
 var mouseX = 0.0;
 var mouseY = 0.0;
 
+var shiftHeld = false;
+var rmbHeld = false;//		right mouse button held
+
 //		this is a function call called in Main.js so it doesn't load immediatly and let the user input keypresses before the game loads (it was causing error messages)
 function setUpPlayerInputs(){
 	document.addEventListener('mousemove', updateMousePosition);
@@ -23,10 +26,11 @@ function setUpPlayerInputs(){
 		}
 		if(e.keyCode == 20){//		CapsLock
 			e.preventDefault();
-			debugSkipFrame = true;
+			slowMotion = true;
 		//	draggingScreen = true;
 		}
 		if(e.keyCode == 18){//		Alt. Skip level
+			e.preventDefault();
 			levelCleared();
 		}
 		if(e.keyCode == 36){//		Home
@@ -38,26 +42,33 @@ function setUpPlayerInputs(){
 			if(document.body.style.cursor == "auto")
 				document.body.style.cursor = "crosshair";
 		}
-		if(e.keyCode == 90 && ctrlHeld){//		Ctrl Z
+		if(e.keyCode == 90 && ctrlHeld){//		Ctrl Z (Equation undo)
 			e.preventDefault();
 			equExecutingUndo = true;//		set this so the equation you pull from the undo list is not then added to the undo list
 			if(shiftHeld){//		Redo
-				equUndoRedo(false);
+				if(usePiecewise || useProxyVar || useProxyFunction)
+					pieUndoRedo(false);
+				else
+					equUndoRedo(false);
 			}else{//		Undo
-				equUndoRedo(true);
+				if(usePiecewise || useProxyVar || useProxyFunction)
+					pieUndoRedo(true);
+				else
+					equUndoRedo(true);
 			}
 		}
-		if(e.keyCode == 220){//		\ key		Toggle background color
-			e.preventDefault();//		don't type \
-			if(canvas.style.background === "rgb(255, 255, 255)")
-				canvas.style.background = "#606060";
-			else
-				canvas.style.background = "#FFFFFF";
+		if(e.keyCode == 90 && shiftHeld){//		Shift Z (Point graph undo)
+			e.preventDefault();
+			undoGraphedPoints();
 		}
 		if(e.keyCode == 13){//		Enter.		(this has to come after Shift)
 			e.preventDefault();//		don't type a newline character
 			animCanProceed = true;
-			if(useNone || useCutscene)
+			if(useCutscene){
+				cutAdvance();
+				return;
+			}
+			if(useNone)
 				return;
 			if(!simulating){//		if not simulating (and about to start) lock the camera if shift is not held down.
 				camLocked = !shiftHeld;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
@@ -79,6 +90,7 @@ function setUpPlayerInputs(){
 
 		//		-----------------------------------------------------------------------		[   MAIN MENU   ]		-----------------------------------------------------------------------
 		if(e.keyCode == 192){//		`/~ key
+			e.preventDefault();//		don't type a `
 			if(menuOpen){//		hide main menu
 				showHideInputs("block");
 				menuOpen = false;
@@ -98,7 +110,7 @@ function setUpPlayerInputs(){
 			if((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
 				console.log("Enter fullscreen");
 				//		switch to fullscreen
-				screenWidth = window.screen.width * window.devicePixelRatio;
+				screenWidth = window.screen.width * window.devicePixelRatio;//		set screenWidth and screenHeight to fullScreen size
 				screenHeight = window.screen.height * window.devicePixelRatio;
 				if(document.documentElement.requestFullScreen) {
 					document.documentElement.requestFullScreen();
@@ -125,16 +137,7 @@ function setUpPlayerInputs(){
 				}else if(document.webkitCancelFullScreen){
 					document.webkitCancelFullScreen();
 				}
-			}//		this is now handled in the exitHandler()
-			//		keep 3D view in right corner of view
-			/*xyzc.style.left = screenWidth-500 + "px";
-			xyz2c.style.left = screenWidth-500 + "px";
-			canvas.height = screenHeight;
-			canvas.width = screenWidth;
-			equInputField = pieEquInput[0].style;
-			equInputField.left = Math.round(screenWidth * 0.0375) + "px";
-			equInputField.top = Math.round(screenHeight * 0.9) + "px";
-			equInputField.width = Math.round(screenWidth * 0.925) + "px";*/
+			}
 		}
 	});
 
@@ -150,6 +153,7 @@ function setUpPlayerInputs(){
 			e.preventDefault();
 			ctrlHeld = false;
 		}
+		
 		if(e.keyCode == 16){//		Shift
 			e.preventDefault();
 			shiftHeld = false;
@@ -158,7 +162,7 @@ function setUpPlayerInputs(){
 		}
 		if(e.keyCode == 20){//		CapsLock
 			e.preventDefault();
-			debugSkipFrame = false;
+			slowMotion = false;
 		//	draggingScreen = false;
 		}
 		if(e.keyCode == 36){//		Home
@@ -201,92 +205,94 @@ function setUpPlayerInputs(){
 }
 
 //		this is here to move the screen elements back when Escape is used to exit fullscreen
-	function exitHandler(){
-		if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)){
-			console.log("Exited fullscreen with Esc key");
-			screenSizeChanged();
-		}else{
-			screenSizeChanged();
-		}
+function exitHandler(){
+	if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)){
+		console.log("Exited fullscreen with Esc key");
+		screenSizeChanged();
+	}else{
+		screenSizeChanged();
 	}
-	function screenSizeChanged(){
-		screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
-		screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
-		window.scrollTo(0, 0);
-		xyzc.style.left = screenWidth-500 + "px";
-		xyz2c.style.left = screenWidth-500 + "px";
-		canvas.width = screenWidth;
-		canvas.height = screenHeight;
-		//		move play/pause button to lower right corner of screen
-		playPauseButton.style.left = (screenWidth-65) + "px";
-		playPauseButton.style.top = (screenHeight-65) + "px";
-	//	console.log(usePiecewise + " - " + useDrag + " - " + useFillBlanks + " - " + useCutscene);
-		if(usePiecewise)
-			pieScreenResize();
-		else if(useDrag)
-			dragScreenResize();
-		else if(useFillBlanks)
-			blankScreenResize();
-		else if(useCutscene)
-			cutScreenResize();
-		else
-			typeScreenResize();
-	}
+}
+function screenSizeChanged(){
+	screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
+	screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
+	window.scrollTo(0, 0);
+	xyzc.style.left = screenWidth-500 + "px";
+	xyz2c.style.left = screenWidth-500 + "px";
+	canvas.width = screenWidth;
+	canvas.height = screenHeight;
+	//		move play/pause button to lower right corner of screen
+	playPauseButton.style.left = (screenWidth-65) + "px";
+	playPauseButton.style.top = (screenHeight-65) + "px";
+//	console.log(usePiecewise + " - " + useDrag + " - " + useFillBlanks + " - " + useCutscene);
+	if(usePiecewise)
+		pieScreenResize();
+	else if(useProxyVar)
+		pVarScreenResize();
+	else if(useProxyFunction)
+		pFunScreenResize();
+	else if(useDrag)
+		dragScreenResize();
+	else if(useFillBlanks)
+		blankScreenResize();
+	else if(useCutscene)
+		cutScreenResize();
+	else
+		typeScreenResize();
+	
+	paused = false;//		resizing the screen will not pause the game
+}
 
 //		----------------------------------------------------		[   Mouse Down   ]		----------------------------------------------------
-	function mouseDown(e){
-		var evt = e==null ? event : e;//		firefox compatibility	
-		
-		if( evt.which == 1 ){//		left click
-			animCanProceed = true;
-			/*if(useZ){
-				xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
-			}*/
+function mouseDown(e){
+	var evt = e==null ? event : e;//		firefox compatibility	
+	
+	if( evt.which == 1 ){//		left click Preliminary
+		animCanProceed = true;
+		/*if(useZ){
+			xyzMouseDown(evt.clientX , evt.clientY);//		see XYZView.js
+		}*/
+	}
+//	console.log("Cam Locked = " + camLocked);
+
+	if(!simulating || !camLocked){//		run when camera is not locked
+		if( evt.which == 2 ){//		middle click
+			evt.preventDefault();//		turn off page scrolling
+			draggingScreen = true;
+			mouseX = evt.clientX;
+			mouseY = evt.clientY;
+			dragScreenX = screenx + screenWidth/2/screenScale;
+			dragScreenY = -screeny + screenHeight/2/screenScale;
+			dragScreenScale = screenScale;
 		}
-	//	console.log("Cam Locked = " + camLocked);
-		if(!simulating || !camLocked){//		run when camera is not locked
-			if( evt.which == 2 ){//		middle click
-				evt.preventDefault();//		turn off page scrolling
-				draggingScreen = true;
-				mouseX = evt.clientX;
-				mouseY = evt.clientY;
-				dragScreenX = screenx + screenWidth/2/screenScale;
-				dragScreenY = -screeny + screenHeight/2/screenScale;
-				dragScreenScale = screenScale;
-			}
 
-			if( evt.which == 3 ){//		right click
-				shiftHeld = true;
-				if(document.body.style.cursor == "auto")
-					document.body.style.cursor = "crosshair";
+		if( evt.which == 3 ){//		right click
+			rmbHeld = true;
+			if(shiftHeld){//		delete marked points near the cursor
+				removeGraphedPoint(evt.clientX);
 			}
+		}
 
-			if( evt.which == 1 ){//		left click
-				if(useDrag && !simulating){
-					dragMouseDown(evt.clientX , evt.clientY);
-					e.preventDefault();//		no dom element ever needs to be selected in drag mode so dissable regular click to minimize accidental graphic dragging
-				}
-				
-				if(useCutscene)//		if in a cutscene, go to the next panel
-					cutAdvance();
-				
-				if(selectedPoint != -1)
-					draggingPoint = true;
+		if( evt.which == 1 ){//		left click
+			if(useDrag && !simulating){
+				dragMouseDown(evt.clientX , evt.clientY);
+				e.preventDefault();//		no dom element ever needs to be selected in drag mode so dissable regular click to minimize accidental graphic dragging
+			}
 			
-				if(shiftHeld){//		add a point to be perminently labled
-					graphingPoints = true;
-					if(ctrlHeld){
-						if(minMax)//		snap to min or max
-							graphPointXs.push(minMaxX);
-						else//		round x input
-							graphPointXs.push(Math.round(evt.clientX/screenScale + screenx));
-					}else{
-						graphPointXs.push(evt.clientX/screenScale + screenx);
-					}
-				}
+			if(useCutscene)//		if in a cutscene, go to the next panel
+				cutAdvance();
+			
+			if(selectedPoint != -1)
+				draggingPoint = true;
+		
+			if(rmbHeld){//		left click while holding right click to clear points
+				clearGraphedPoints();
+			}else if(shiftHeld){//		add a point to be permanently labeled
+				addGraphedPoint(evt.clientX);
 			}
 		}
 	}
+}
 
 //		----------------------------------------------------		[   Mouse Up   ]		----------------------------------------------------
 function mouseUp(e){
@@ -305,9 +311,7 @@ function mouseUp(e){
 		}
 		
 		if( evt.which == 3 ){//		right click
-			shiftHeld = false;
-			if(document.body.style.cursor == "crosshair")
-				document.body.style.cursor = "auto";
+			rmbHeld = false;
 		}
 	}
 

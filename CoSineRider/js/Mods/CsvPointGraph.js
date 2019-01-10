@@ -107,11 +107,6 @@ function csvDraw(){
 	//	ctx.fillText( '(' + (Math.round(dx*100)/100).toString() + ',' + (Math.round(dy*100)/100).toString() + ')', (dx - screenx)*screenScale + 5 , -(dy-screeny)*screenScale);
 	
 		//		draw dot on graph at coordinates above
-		ctx.beginPath();
-		ctx.arc( (csvPointList[i-1] - screenx)*screenScale , -(csvPointList[i]-screeny)*screenScale , 2.5 , 0 , endAngle);
-		ctx.stroke();
-		ctx.closePath();
-		ctx.fill();
-		ctx.stroke();
+		drawCircle(csvPointList[i-1] , csvPointList[i] , 4);
 	}
 }

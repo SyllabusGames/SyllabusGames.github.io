@@ -1,24 +1,31 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 var loadedLevel;
+var levelName = "No level loaded";
 var levelType = "";
 var levelCode = "";//		Used by Goal (in Collidions.js) to save the current level as complete
 var substring = "";
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
+var useGuide = false;//		show guide line.	Guide variables declared in EquationLine.js
 var useTime = false;//		time is not just set to zero
 //var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
 var useNone = false;//		This is not a game level so the sledder, background, and colliders will not be loaded
 var useRender = false;
+var useDerivative = false;
+var useIntegral = false;
+var usePolar = false;
 var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
 
 var usePiecewise = false;
+var useProxyVar = false;
+var useProxyFunction = false;
 var useDrag = false;
 var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
 var useCutscene = false;//	level is a cutscene
 
-//var usePolar = false;
+//var equationHistory[];//		a list of all equations that have beaten a level
 
 var lineNum = 0;
 
@@ -85,33 +92,43 @@ function loadLevelMap(){//		load the list of levels which was created in LevelSa
 
 function loadBuiltInLevel(){
 	simulating = false;
+	clearGraphedPoints();
+	graphPointUndoXs = [[]];
 	levelCode = levelMap[mapIndex];
-	console.log(levelCode);
-	console.log(localStorage.getItem(levelCode));
+//	console.log(levelCode);
+//	console.log(localStorage.getItem(levelCode));
 	loadedLevel = localStorage.getItem(levelCode).split('\n');
 	levelName = loadedLevel[0];
 	levelType = loadedLevel[1];
 	lineNum = 2;
 
 	//		load sledder start position
+	//console.log(loadedLevel[lineNum]);
 	substring = loadedLevel[lineNum].split(',');
 	defaultPosX = parseFloat(substring[0]);
 	defaultPosY = parseFloat(substring[1]);
 	apx = defaultPosX;
+	pxapx = defaultPosX;
+	pxLastx = defaultPosX;
 	apy = defaultPosY;
+	pxapy = defaultPosY;
+	pxLasty = defaultPosY;
 	lineNum++;
 
-	//		last level was piecwise but this one isn't so hide all inputs
-	if (usePiecewise && levelType != "PW"){
+	//		last level used multiple input fields but this one doesn't so hide all inputs
+	if((usePiecewise || useProxyVar || useProxyFunction) && (levelType != "PW" || levelType != "PV" || levelType != "PF")){
 		for(k = 0 ; k < 5 ; k++){
 			pieEquInput[k].style.display = "none";
 			pieLeftInput[k].style.display = "none";
 			pieRightInput[k].style.display = "none";
-			piecLimitsText[k].style.display = "none";
+			pieLimitsText[k].style.display = "none";
 		}
 	}
+	//		some levels may change the background color of the main input, fix it here
+	mainInput.style.backgroundColor = _inputColor;
+
 	
-	console.log(useFillBlanks + " - " + levelType);
+	//console.log(useFillBlanks + " - " + levelType);
 	//		last level was fill in the blank but this one isn't so hide all inputs
 	if (useFillBlanks && levelType != "BL"){
 		console.log("No longer blank");
@@ -124,9 +141,19 @@ function loadBuiltInLevel(){
 	}
 
 	usePiecewise = false;
+	useProxyVar = false;
+	useProxyFunction = false;
 	useDrag = false;
 	useFillBlanks = false;
 	useCutscene = false;
+	
+	useGuide = false;
+	useTime = false;
+	useZ = false;
+	useNone = false;
+	useDerivative = false;
+	// useIntegral = false;
+
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
@@ -137,17 +164,15 @@ function loadBuiltInLevel(){
 			mainInput.style.display = "block";
 			activeInput = mainInput;//		set the active input field to the only input field
 			lineNum++;
-
-
+			typeInitialize();
 			break;
 		//		-----------------------------------------------------------------------		[   Piecewise Typed Input   ]		-----------------------------------------------------------------------
 		case "PW":
 		//		LV2: Piecwise\nPW\n0,0\n3\n-999,20,-x/2+t*1.5\n20,60,t*1.5-10\n60,200,x/10-16+t*1.5\n91,17\nTower\nEnd"
 			usePiecewise = true;
 
-			pieInitialize();//		see InputPiecewise.js
 			pieEquInputsUsed = parseInt(loadedLevel[lineNum]);//		get total number of input fields used
-			console.log("equ# = " + pieEquInputsUsed);
+			pieInitialize();//		see InputPiecewise.js
 			lineNum++;
 
 			for(k = 0 ; k < pieEquInputsUsed ; k++){//		for each input field excluding the main input [0]
@@ -155,16 +180,24 @@ function loadBuiltInLevel(){
 				pieEquInput[k].style.display = "block";
 				pieLeftInput[k].style.display = "block";
 				pieRightInput[k].style.display = "block";
-				piecLimitsText[k].style.display = "block";
+				pieLimitsText[k].style.display = "block";
 
 
 				substring = loadedLevel[k+lineNum].split(',');//		equations are stored as LeftLimit,RightLimit,Equation
 
 				pieLeftLimit[k] = parseInt(substring[0]);
 				pieLeftInput[k].innerHTML = substring[0];
+				if(substring[0].indexOf("t") != -1){//		if limit contains t, store it as an equation
+					equInput = math.parse(substring[0] , {t: 0});
+					pieLeftInputCompiled[k] = equInput.compile();
+				}
 
 				pieRightLimit[k] = parseInt(substring[1]);
 				pieRightInput[k].innerHTML = substring[1];
+				if(substring[1].indexOf("t") != -1){//		if limit contains t, store it as an equation
+					equInput = math.parse(substring[1] , {t: 0});
+					pieRightInputCompiled[k] = equInput.compile();
+				}
 
 				pieEquInput[k].innerHTML = substring[2];
 			}
@@ -172,12 +205,172 @@ function loadBuiltInLevel(){
 				pieEquInput[k].style.display = "none";
 				pieLeftInput[k].style.display = "none";
 				pieRightInput[k].style.display = "none";
-				piecLimitsText[k].style.display = "none";
+				pieLimitsText[k].style.display = "none";
 				k++;
 			}
 			lineNum += pieEquInputsUsed;
 
 			break;
+			//		-----------------------------------------------------------------------		[   Proxy Variable Input   ]		-----------------------------------------------------------------------
+		case "PV":
+			useProxyVar = true;
+
+			pieEquInput[0].innerHTML = loadedLevel[lineNum].substring(2);
+			pieEquInput[0].style.display = "block";
+			if(loadedLevel[lineNum][1] == "="){
+				console.log("editable");
+				pieEquInput[0].setAttribute("contentEditable" , "true");
+				pieEquInput[0].style.backgroundColor = _inputColor;
+			}else{
+				pieEquInput[0].setAttribute("contentEditable" , "false");
+				pieEquInput[0].style.backgroundColor = _inputLockedColor;
+			}
+			
+			//	load a
+			if(loadedLevel[++lineNum][1] == "="){//	check if it is fixed or editable
+				pieEquInput[1].setAttribute("contentEditable" , "true");
+				pieEquInput[1].style.backgroundColor = _inputColor;
+			}else{
+				pieEquInput[1].setAttribute("contentEditable" , "false");
+				pieEquInput[1].style.backgroundColor = _inputLockedColor;
+			}
+			pieEquInput[1].style.display = "block";
+
+			pieEquInput[1].innerHTML = loadedLevel[lineNum].substring(2);//	load default for a
+			pieEquInputsUsed = 1;//		set pieEquInputsUsed to the index of the last (greatest) input field useDrag
+			
+			//		the equation may not use b, c, or d so activate and deactivate inputs based on whether they are used and only advance lineNum if each is used
+			lineNum++;
+			if(loadedLevel[lineNum][0] == "B"){//		load b
+				pieEquInputsUsed = 2;
+				pieEquInput[2].style.display = "block";
+				pieEquInput[2].innerHTML = loadedLevel[lineNum].substring(2);
+				if(loadedLevel[lineNum][1] == "="){
+					pieEquInput[2].setAttribute("contentEditable" , "true");
+					pieEquInput[2].style.backgroundColor = _inputColor;
+				}else{
+					pieEquInput[2].setAttribute("contentEditable" , "false");
+					pieEquInput[2].style.backgroundColor = _inputLockedColor;
+				}
+				lineNum++;
+				if(loadedLevel[lineNum][0] == "C"){//		load c
+				pieEquInputsUsed = 3;
+					pieEquInput[3].style.display = "block";
+					pieEquInput[3].innerHTML = loadedLevel[lineNum].substring(2);
+					if(loadedLevel[lineNum][1] == "="){
+						pieEquInput[3].setAttribute("contentEditable" , "true");
+						pieEquInput[3].style.backgroundColor = _inputColor;
+					}else{
+						pieEquInput[3].setAttribute("contentEditable" , "false");
+						pieEquInput[3].style.backgroundColor = _inputLockedColor;
+					}
+					lineNum++;
+					if(loadedLevel[lineNum][0] == "D"){//		load d
+						pieEquInputsUsed = 4;
+						pieEquInput[4].style.display = "block";
+						pieEquInput[4].innerHTML = loadedLevel[lineNum].substring(2);
+						if(loadedLevel[lineNum][1] == "="){
+							pieEquInput[4].setAttribute("contentEditable" , "true");
+							pieEquInput[4].style.backgroundColor = _inputColor;
+						}else{
+							pieEquInput[4].setAttribute("contentEditable" , "false");
+							pieEquInput[4].style.backgroundColor = _inputLockedColor;
+						}
+						lineNum++;//		move off input d. the other inputs are moved allong by the ++lineNum in the if statement 
+					}else{//						unload d
+						pieEquInput[4].style.display = "none";
+					}
+					
+				}else{//						unload c
+					pieEquInput[3].style.display = "none";
+				}
+				
+			}else{//						unload b
+				pieEquInput[2].style.display = "none";
+			}
+			pVarInitialize();//		update the the y= text to be a= \n b=...
+			break;
+			
+				//		-----------------------------------------------------------------------		[   Proxy Function Input   ]		-----------------------------------------------------------------------
+		case "PF":
+			useProxyFunction = true;
+
+			pieEquInput[0].innerHTML = loadedLevel[lineNum].substring(2);
+			pieEquInput[0].style.display = "block";
+			if(loadedLevel[lineNum][1] == "="){
+				console.log("editable");
+				pieEquInput[0].setAttribute("contentEditable" , "true");
+				pieEquInput[0].style.backgroundColor = _inputColor;
+			}else{
+				pieEquInput[0].setAttribute("contentEditable" , "false");
+				pieEquInput[0].style.backgroundColor = _inputLockedColor;
+			}
+			
+			//	load f()
+			if(loadedLevel[++lineNum][1] == "="){//	check if it is fixed or editable
+				pieEquInput[1].setAttribute("contentEditable" , "true");
+				pieEquInput[1].style.backgroundColor = _inputColor;
+			}else{
+				pieEquInput[1].setAttribute("contentEditable" , "false");
+				pieEquInput[1].style.backgroundColor = _inputLockedColor;
+			}
+			pieEquInput[1].style.display = "block";
+
+			pieEquInput[1].innerHTML = loadedLevel[lineNum].substring(2);//	load default for a
+			pieEquInputsUsed = 1;//		set pieEquInputsUsed to the index of the last (greatest) input field useDrag
+			
+			//		the equation may not use b, c, or d so activate and deactivate inputs based on whether they are used and only advance lineNum if each is used
+			lineNum++;
+			if(loadedLevel[lineNum][0] == "g"){//		load b
+				pieEquInputsUsed = 2;
+				pieEquInput[2].style.display = "block";
+				pieEquInput[2].innerHTML = loadedLevel[lineNum].substring(2);
+				if(loadedLevel[lineNum][1] == "="){
+					pieEquInput[2].setAttribute("contentEditable" , "true");
+					pieEquInput[2].style.backgroundColor = _inputColor;
+				}else{
+					pieEquInput[2].setAttribute("contentEditable" , "false");
+					pieEquInput[2].style.backgroundColor = _inputLockedColor;
+				}
+				lineNum++;
+				if(loadedLevel[lineNum][0] == "h"){//		load c
+				pieEquInputsUsed = 3;
+					pieEquInput[3].style.display = "block";
+					pieEquInput[3].innerHTML = loadedLevel[lineNum].substring(2);
+					if(loadedLevel[lineNum][1] == "="){
+						pieEquInput[3].setAttribute("contentEditable" , "true");
+						pieEquInput[3].style.backgroundColor = _inputColor;
+					}else{
+						pieEquInput[3].setAttribute("contentEditable" , "false");
+						pieEquInput[3].style.backgroundColor = _inputLockedColor;
+					}
+					lineNum++;
+					if(loadedLevel[lineNum][0] == "k"){//		load d
+						pieEquInputsUsed = 4;
+						pieEquInput[4].style.display = "block";
+						pieEquInput[4].innerHTML = loadedLevel[lineNum].substring(2);
+						if(loadedLevel[lineNum][1] == "="){
+							pieEquInput[4].setAttribute("contentEditable" , "true");
+							pieEquInput[4].style.backgroundColor = _inputColor;
+						}else{
+							pieEquInput[4].setAttribute("contentEditable" , "false");
+							pieEquInput[4].style.backgroundColor = _inputLockedColor;
+						}
+						lineNum++;//		move off input d. the other inputs are moved allong by the ++lineNum in the if statement 
+					}else{//						unload d
+						pieEquInput[4].style.display = "none";
+					}
+					
+				}else{//						unload c
+					pieEquInput[3].style.display = "none";
+				}
+				
+			}else{//						unload b
+				pieEquInput[2].style.display = "none";
+			}
+			pFunInitialize();//		update the the y= text to be a= \n b=...		must be preformed after pieEquInputsUsed has been set
+			break;
+			
 			//		-----------------------------------------------------------------------		[   Drag Points   ]		-----------------------------------------------------------------------
 		case "DR":
 			useDrag = true;
@@ -224,14 +417,21 @@ function loadBuiltInLevel(){
 	}
 	
 	
-	
+	//		-----------------------------------------------------------------------		[   Optional Modes   ]		-----------------------------------------------------------------------
+
+	//		Guide Equation
+	if(loadedLevel[lineNum].substring(0,2) == "y="){
+		useGuide = true;
+		scope = {x: 0 , t: 0};
+		guideInput = math.parse(loadedLevel[lineNum].substring(2) , scope);
+		guideCompiled = guideInput.compile();
+		lineNum++;
+	}
 
 	//		UseTime
 	if(loadedLevel[lineNum] == "useTime"){
 		useTime = true;
 		lineNum++;
-	}else{
-		useTime = false;
 	}
 
 	//		UseZ
@@ -247,46 +447,72 @@ function loadBuiltInLevel(){
 		}
 		lineNum++;
 	}else{
-		useZ = false;
 		//		hide the canvases showing the 3D render
 		xyzc.style.display="none";
 		xyz2c.style.display="none";
 	}	
 
-	//		useNone
+	//		useNone (This is not a game level so the sledder, background, and colliders will not be loaded)
 	if(loadedLevel[lineNum] == "useNone"){
 		useNone = true;
 		buttonPause();
 		lineNum++;
 		playPauseButton.style.display = "none";
 	}else{
-		useNone = false;
 		playPauseButton.style.display = "block";
 	}
 	
+	//		UseDerivative (graph the derivative of the equation entered instead of the equation itself)
+	if(loadedLevel[lineNum] == "useDerivative"){
+		useDerivative = true;
+		lineNum++;
+		yPrimeEqualsText.style.display = "block";
+		screenSizeChanged();//		update the screen size again to move yPrimeEqualsText to the right position
+	}else{
+		yPrimeEqualsText.style.display = "none";
+	}
+	
+	//		UseIntegral (graph the integral of the equation entered instead of the equation itself)
+	if(loadedLevel[lineNum] == "useIntegral"){
+		useIntegral = true;
+		lineNum++;
+	}
+	
+	//	----------------------------------		[   camera track point   ]		----------------------------------
 	substring = loadedLevel[lineNum].split(',');//		camera track point
 	trackPointx = parseFloat(substring[0]);
 	trackPointy = parseFloat(substring[1]);
 	lineNum++;
-	
+
 	//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
+	drawParallax = false;
 	drawBackground = loadedLevel[lineNum] != "none";
 	if(drawBackground){
 		background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
+		background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
 		if(!useNone)//		if a .svg is loaded and this is an actual level (useNone means this is a blank page for graphing)
 			loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
+		
+		//		load parallax background .svg image
+		if(loadedLevel[lineNum + 1].substring(0,9) == "parallax="){
+			parallaxBackground.src = "Levels/" + loadedLevel[lineNum+1].substring(9)+ ".svg";//		load background SVG
+			drawParallax = true;
+			lineNum++;
+		}
 	}
 	
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
-	if(usePiecewise){
+	/*if(usePiecewise){
+	}else if(useProxyVar){
+		
 	}else if(useDrag){
 		
 	}else if(useFillBlanks){
 		blankInitialize();
 	}else{
 		typeInitialize();//		see InputTyped.js
-	}
+	}*/
 
 	//		if a 3B1B animation is called for, set up the input for that
 //	setUpNumberLines();//		see 3B1BAnimations.js
@@ -302,7 +528,10 @@ function loadBuiltInLevel(){
 	
 	resetSledder();
 	simulating = false;//		resetSledder() always flips the simulating value so set it to false so the sled doesn't move.
-
+	
+	//		reset undo list (This must be done last so the player cannot undo the level setup and pull in last level's equations)
+	equUndo = [];
+	equCurrentUndo = 0;
 }
 
 	
@@ -320,14 +549,13 @@ function loadCollidersFromSvg(sss){
 	substring = sss.substring(sss.indexOf("translate(") + 10);
 //	console.log(substring)
 	substring = substring.substring(0 , substring.indexOf(")") );
-	ministring = substring.split(" ");
+	var ministring = substring.split(" ");//		each ministring contains one string of points
 	dx = 200 + parseFloat(ministring[0])/5;
 	dy = 200 - parseFloat(ministring[1])/5;
 	
 //	console.log(substring + "  dx = " + ministring[0] + " dy= " + ministring[1]);
 	
 	substring = sss.split('<path');//		each substring contains one path
-	var ministring = "";//		each ministring contains one string of points
 	//		loop through each line, through each set of points, then split X and Y on the ,
 	for(i = 1 ; i < substring.length  ; i++){//		i=1 because the 0ith entry is just the file header information
 //		console.log(substring[i]);
