@@ -16,24 +16,24 @@ var csvInputString = `0,0
 	//	accelerate 
 	//	decelerate 
 var csvPointList = [];//		points are stored [x1,y1,x2,y2]
-var csvSubstring;
+var csvpartstring;
 var csvReader = new FileReader();
 
 const csvurl = 'process.php';
 const csvform = document.querySelector('form');
 
 //		create load file button and hide
-var fileSelector = document.createElement('input');
-fileSelector.setAttribute('type' , 'file');
-fileSelector.setAttribute('accept' , ".csv");
-fileSelector.setAttribute('onchange' , "handleFiles(this.files)");
-fileSelector.setAttribute('display' , "none");
+var csvFileSelector = document.createElement('input');
+csvFileSelector.setAttribute('type' , 'file');
+csvFileSelector.setAttribute('accept' , ".csv");
+csvFileSelector.setAttribute('onchange' , "handleFiles(this.files)");
+csvFileSelector.setAttribute('display' , "none");
 
 //		activate load file button when Insert is pressed
 document.addEventListener("keydown", function(e){
 	if(e.keyCode == 45){//		Insert
 		e.preventDefault();//		don't type a space
-		fileSelector.click();//		open file selector
+		csvFileSelector.click();//		open file selector
 	}
 	if(e.keyCode == 13){//		Enter//		everage points' y values with neighbors
 	//		average by moveing points to the average of it and its neightbor and deleting the final point that has noting to average with
@@ -78,7 +78,7 @@ function loadHandler(event) {
 }
 
 function error(){
-	alert("Canno't read file !")
+	alert("Can't read file !")
 }
 //		add csv loader
 
@@ -87,10 +87,10 @@ function csvLoad(){
 	csvPointList = [];
 	csvInputString = csvInputString.replace(/\n/g , ',');
 	console.log(csvInputString);
-	csvSubstring = csvInputString.split(',');
-	for(i = 0 ; i < csvSubstring.length-1 ; i++){//		convert string array into point array
-		csvPointList.push(parseFloat(csvSubstring[i]));
-	//	console.log(csvSubstring[i] + " && " + csvPointList[i]);
+	csvpartstring = csvInputString.split(',');
+	for(i = 0 ; i < csvpartstring.length-1 ; i++){//		convert string array into point array
+		csvPointList.push(parseFloat(csvpartstring[i]));
+	//	console.log(csvpartstring[i] + " && " + csvPointList[i]);
 	}
 	//console.log(csvPointList);
 	window.requestAnimationFrame(csvDraw);

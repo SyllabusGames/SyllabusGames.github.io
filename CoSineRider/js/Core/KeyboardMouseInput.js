@@ -1,6 +1,6 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 /*		File contains:
- *		ALL keyboard and mouse input listeners
+ *		ALL keyboard and mouse input listeners (excluding XYZ view, mods, and menus)
  *		Player controlled screen movement and zoom
  *		
  *	get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
@@ -14,6 +14,9 @@ var rmbHeld = false;//		right mouse button held
 
 //		this is a function call called in Main.js so it doesn't load immediatly and let the user input keypresses before the game loads (it was causing error messages)
 function setUpPlayerInputs(){
+	if(paused)
+		return;
+
 	document.addEventListener('mousemove', updateMousePosition);
 	document.addEventListener('touchmove', updateMousePosition);
 
@@ -46,12 +49,12 @@ function setUpPlayerInputs(){
 			e.preventDefault();
 			equExecutingUndo = true;//		set this so the equation you pull from the undo list is not then added to the undo list
 			if(shiftHeld){//		Redo
-				if(usePiecewise || useProxyVar || useProxyFunction)
+				if(isPiecewise || isProxyVar || isProxyFunction)
 					pieUndoRedo(false);
 				else
 					equUndoRedo(false);
 			}else{//		Undo
-				if(usePiecewise || useProxyVar || useProxyFunction)
+				if(isPiecewise || isProxyVar || isProxyFunction)
 					pieUndoRedo(true);
 				else
 					equUndoRedo(true);
@@ -64,7 +67,7 @@ function setUpPlayerInputs(){
 		if(e.keyCode == 13){//		Enter.		(this has to come after Shift)
 			e.preventDefault();//		don't type a newline character
 			animCanProceed = true;
-			if(useCutscene){
+			if(isCutscene){
 				cutAdvance();
 				return;
 			}
@@ -92,11 +95,9 @@ function setUpPlayerInputs(){
 		if(e.keyCode == 192){//		`/~ key
 			e.preventDefault();//		don't type a `
 			if(menuOpen){//		hide main menu
-				showHideInputs("block");
-				menuOpen = false;
-				paused = false;
+				menuClose();
 			}else{//		show main menu
-				drawMainMenu();//		see Menu.js
+				menuInitialize();//		see Menu.js
 				showHideInputs("none");//		see InputManager.js
 				menuOpen = true;
 				paused = true;
@@ -191,6 +192,8 @@ function setUpPlayerInputs(){
 	//		----------------------------------------------------		[   Scroll Wheel (Screen Zoom)   ]		----------------------------------------------------
 	document.addEventListener('wheel', function(e){
 		e.preventDefault();//		holding ctrl will not zoom the screen
+		if(paused)
+			return;
 		if(!simulating || !camLocked){//		run when camera is not locked
 		var evt = e==null ? event : e;//		firefox compatibility	
 			if(Math.abs(evt.clientY - (parseInt(mainInput.style.top) + 57)) > 32){//		do not scroll if the cursor is over (on the Y axis) an input field
@@ -224,27 +227,31 @@ function screenSizeChanged(){
 	//		move play/pause button to lower right corner of screen
 	playPauseButton.style.left = (screenWidth-65) + "px";
 	playPauseButton.style.top = (screenHeight-65) + "px";
-//	console.log(usePiecewise + " - " + useDrag + " - " + useFillBlanks + " - " + useCutscene);
-	if(usePiecewise)
+//	console.log(isPiecewise + " - " + isDrag + " - " + isFillBlanks + " - " + isCutscene);
+	if(isPiecewise)
 		pieScreenResize();
-	else if(useProxyVar)
+	else if(isProxyVar)
 		pVarScreenResize();
-	else if(useProxyFunction)
+	else if(isProxyFunction)
 		pFunScreenResize();
-	else if(useDrag)
+	else if(isDrag)
 		dragScreenResize();
-	else if(useFillBlanks)
+	else if(isFillBlanks)
 		blankScreenResize();
-	else if(useCutscene)
+	else if(isCutscene)
 		cutScreenResize();
 	else
 		typeScreenResize();
 	
-	paused = false;//		resizing the screen will not pause the game
+	if(!menuOpen){
+		paused = false;//		resizing the screen will not pause the game but won't unpause if the menu is open
+	}
 }
 
 //		----------------------------------------------------		[   Mouse Down   ]		----------------------------------------------------
 function mouseDown(e){
+	if(paused)
+		return;
 	var evt = e==null ? event : e;//		firefox compatibility	
 	
 	if( evt.which == 1 ){//		left click Preliminary
@@ -274,12 +281,12 @@ function mouseDown(e){
 		}
 
 		if( evt.which == 1 ){//		left click
-			if(useDrag && !simulating){
+			if(isDrag && !simulating){
 				dragMouseDown(evt.clientX , evt.clientY);
 				e.preventDefault();//		no dom element ever needs to be selected in drag mode so dissable regular click to minimize accidental graphic dragging
 			}
 			
-			if(useCutscene)//		if in a cutscene, go to the next panel
+			if(isCutscene)//		if in a cutscene, go to the next panel
 				cutAdvance();
 			
 			if(selectedPoint != -1)
@@ -296,37 +303,24 @@ function mouseDown(e){
 
 //		----------------------------------------------------		[   Mouse Up   ]		----------------------------------------------------
 function mouseUp(e){
-		var evt = e==null ? event : e;//		firefox compatibility
+	if(paused)
+		return;
 
-		if( evt.which == 2 ) {//		middle click
-			draggingScreen = false;
-		}
-		
-		if( evt.which == 1 ){//		left click
-			draggingPoint = false;
-			if(useDrag){
-				dragPointIndex = -1;
-				dragUpdateEqu();//		update equation to reset coloring
-			}
-		}
-		
-		if( evt.which == 3 ){//		right click
-			rmbHeld = false;
+	var evt = e==null ? event : e;//		firefox compatibility
+
+	if( evt.which == 2 ) {//		middle click
+		draggingScreen = false;
+	}
+	
+	if( evt.which == 1 ){//		left click
+		draggingPoint = false;
+		if(isDrag){
+			dragPointIndex = -1;
+			dragUpdateEqu();//		update equation to reset coloring
 		}
 	}
-
-function zoomScreen(change){
-	dragScreenScale = Math.min(Math.max(dragScreenScale - change*dragScreenScale , 0.15) , 17000);//		scale is non-linear so multiplying by dragScreenScale makes changes close to linear
-	if(screenScale != dragScreenScale){//		if you are at max or min zoom, do not move the screen
-		screenScale = dragScreenScale;
-		screenx = dragScreenX - screenWidth/2/screenScale;
-		screeny = -dragScreenY + screenHeight/2/screenScale;
-		//				Zoom twards mouse so mouse does not move on screen (Comment out following 4 lines to zoom on screen center)
-		dragScreenX -= change*(mouseX - screenWidth/2)/screenScale;
-		dragScreenY -= change*(mouseY - screenHeight/2)/screenScale;
-		screenx = dragScreenX - screenWidth/2/screenScale;
-		screeny = -dragScreenY + screenHeight/2/screenScale;
-	}else{
-		screenScale = dragScreenScale;
+	
+	if( evt.which == 3 ){//		right click
+		rmbHeld = false;
 	}
 }

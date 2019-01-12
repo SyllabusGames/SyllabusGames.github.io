@@ -31,10 +31,10 @@ function cutInitialize(){//		called from LevelLoader.js
 			//		replace the default text with text from a language file
 			while(textElement != null){
 				rtmp = languageFileString.indexOf('[' + (('0' + textElementNum).slice(-2)) + ']') - 1;//		find the current text's [##] in the language file
-				substring = languageFileString.substring(ltmp+1 , rtmp).split("\n");//		get all lines of text for this text box in an array
+				partstring = languageFileString.substring(ltmp+1 , rtmp).split("\n");//		get all lines of text for this text box in an array
 				
 				
-	//			console.log(textElementNum + "\nrtmp-ltmp = " + (rtmp) + "\nltmp = " + ltmp + "\n" + '[' + (('0' + textElementNum).slice(-2)) + ']' + "\n" + substring);
+	//			console.log(textElementNum + "\nrtmp-ltmp = " + (rtmp) + "\nltmp = " + ltmp + "\n" + '[' + (('0' + textElementNum).slice(-2)) + ']' + "\n" + partstring);
 
 				//		This version assumes textElement.innerHTML grabbs the text element, not tspan
 				/*
@@ -53,7 +53,7 @@ function cutInitialize(){//		called from LevelLoader.js
 
 				//		add a new copy of the text element for every line of text
 				lString += mString.replace(">w<" , ">ANDDDDD Yay<");
-	//			lString += mString.replace(">w<" , ">" + substring + "<");
+	//			lString += mString.replace(">w<" , ">" + partstring + "<");
 				
 				textElement.innerHTML = lString + rString;
 				*/
@@ -62,13 +62,13 @@ function cutInitialize(){//		called from LevelLoader.js
 				var stringProto = textElement.innerHTML;
 				
 				//		import the text for the first line
-				var finalString = stringProto.replace(">w<" , ">" + substring[0] + "<");
+				var finalString = stringProto.replace(">w<" , ">" + partstring[0] + "<");
 				var spacing = textElement.getAttribute('font-size');//		get the font size for this piece of text
 				spacing = parseFloat( spacing.substring(0 , spacing.length-2) ) + 5;//		cut of the "px" from the end of the string, convert into a float, and add a 5 pixel gap
 				
 				//		add a new copy of the text element for every line of text
-				for(k = 1 ; k < substring.length ; k++){
-					stmp = stringProto.replace(">w<" , ">" + substring[k] + "<");//		import text for each extra line
+				for(k = 1 ; k < partstring.length ; k++){
+					stmp = stringProto.replace(">w<" , ">" + partstring[k] + "<");//		import text for each extra line
 					dy = parseInt(stmp.match(/y="\d+/)[0].substring(3));//		get character position of y coordinate
 					stmp = stmp.replace(/y="\d+.?\d+?"/ , 'y="' + (dy + spacing * k) + '"');//		shift y coordinate down the font height + 5 pixels to make the next line
 					finalString += stmp;//		add this line to the text element
@@ -76,7 +76,7 @@ function cutInitialize(){//		called from LevelLoader.js
 				
 				textElement.innerHTML = finalString;
 		
-				//textElement.innerHTML = textElement.innerHTML.replace(">w<" , ">" + substring + '<tspan dx="2em" dy="2em">Line 2, too!</tspan>' + "<");
+				//textElement.innerHTML = textElement.innerHTML.replace(">w<" , ">" + partstring + '<tspan dx="2em" dy="2em">Line 2, too!</tspan>' + "<");
 				textElement = document.getElementById(textElementNum + "text");
 				ltmp = rtmp + 5;//		left end is _ characters right of ltmp to skip the [##]
 				textElementNum++;

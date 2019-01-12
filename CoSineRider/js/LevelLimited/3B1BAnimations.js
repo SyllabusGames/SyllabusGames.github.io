@@ -47,69 +47,69 @@ function setUpNumberLines(){//		reset variables for a new animation
 	animTime = -0.25;
 	animIndex = -1;
 	for(i = 0 ; i < animSteps.length ; i++){
-		substring = animSteps[i].split('a');
-		displayEqu.push(substring[0]);
-		displayEqu.push(substring[1]);
+		partstring = animSteps[i].split('a');
+		displayEqu.push(partstring[0]);
+		displayEqu.push(partstring[1]);
 	}*/
 }
 
 function pullNextStage(){
 	return;
-	substring = animStages[animIndex].split(',');
+	partstring = animStages[animIndex].split(',');
 
-	switch(substring[0]){
+	switch(partstring[0]){
 		case "a":
-			if(substring[2] == 's'){//		set last to the current equation
-				animALast = substring[1];
+			if(partstring[2] == 's'){//		set last to the current equation
+				animALast = partstring[1];
 				animTime = 0.5;//		Shorten time since nothing will be moving when the equation is first graphed
 			}else{
 				animALast = animA;
 			}
-			if(substring[2] == 'r'){//		remove (hide) this equation
+			if(partstring[2] == 'r'){//		remove (hide) this equation
 				animAShow = false;
 			}else{//		fade equations that are not currently being animated
-				animA = substring[1];
+				animA = partstring[1];
 				animAShow = true;
 				animAFade = false;
 				animBFade = true;
 				animCFade = true;
-				displayEqu = substring[1].split('k');
+				displayEqu = partstring[1].split('k');
 			}
 			break;
 			
 		case "b":
-			if(substring[2] == 's'){
-				animBLast = substring[1];
+			if(partstring[2] == 's'){
+				animBLast = partstring[1];
 			}else{
 				animBLast = animA;
 			}
-			if(substring[2] == 'r'){
+			if(partstring[2] == 'r'){
 				animBShow = false;
 			}else{
 				animAFade = true;
-				animB = substring[1];
+				animB = partstring[1];
 				animBShow = true;
 				animBFade = false;
 				animCFade = true;
-				displayEqu = substring[1].split('k');
+				displayEqu = partstring[1].split('k');
 			}
 			break;
 
 		case "c":
-			if(substring[2] == 's'){
-				animCLast = substring[1];
+			if(partstring[2] == 's'){
+				animCLast = partstring[1];
 			}else{
 				animCLast = animA;
 			}
-			if(substring[2] == 'r'){
+			if(partstring[2] == 'r'){
 				animCShow = false;
 			}else{
 				animAFade = true;
 				animBFade = true;
-				animC = substring[1];
+				animC = partstring[1];
 				animCShow = true;
 				animCFade = false;
-				displayEqu = substring[1].split('k');
+				displayEqu = partstring[1].split('k');
 			}
 			break;
 	}

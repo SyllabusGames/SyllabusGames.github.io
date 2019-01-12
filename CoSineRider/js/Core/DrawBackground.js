@@ -1,6 +1,6 @@
 ﻿//		-----------------------------------------------------------------------		[   Draw Grid   ]		-----------------------------------------------------------------------
 function drawGrid(){//		draw a line at every 10 units
-	if(useCutscene)
+	if(isCutscene)
 		return;
 	
 	//		set the color for the small lines on the left side of the grid
@@ -41,29 +41,7 @@ function drawGrid(){//		draw a line at every 10 units
 	}
 	
 	if(usePolar){
-		for(i = 1 ; i < 500 ; i++){//		circles
-			if(i%10 == 0){//		Every 10 lines
-				ctx.lineWidth = 3;
-			}else{
-				ctx.lineWidth = 1;
-			}
-			ctx.beginPath();
-			ctx.arc( -screenx*screenScale , screeny*screenScale , i*gridScale*screenScale , 0 , _endAngle);
-			ctx.stroke();
-		}
-		
-		for(i = Math.PI ; i > 0 ; i -= Math.PI/12){//	Radial lines
-			if(i%45 == 0){//		Every 45 degrees = pi/12 radians
-				ctx.lineWidth = 3;
-			}else{
-				ctx.lineWidth = 1;
-			}
-			ctx.beginPath();
-			ctx.moveTo( (math.cos(i)*10000 - screenx) * screenScale ,  (math.sin(i)*10000 + screeny) * screenScale);//		(graph left edge + line number*line spacing(10))*scale
-			ctx.lineTo((-math.cos(i)*10000 - screenx) * screenScale , (-math.sin(i)*10000 + screeny) * screenScale);
-			ctx.stroke();
-		}
-		
+		drawPolarGrid();
 	}else{
 		if(!simulating){//		lable axis
 			ctx.fillText("X axis" , screenWidth - 90 , screeny * screenScale - 2);
@@ -112,13 +90,46 @@ function drawGrid(){//		draw a line at every 10 units
 	}
 }
 
+function drawPolarGrid(){
+	for(i = 1 ; i < 100 ; i++){//		circles
+		if(i%10 == 0){//		Every 10 lines
+			ctx.lineWidth = 3;
+		}else{
+			ctx.lineWidth = 1;
+		}
+		ctx.beginPath();
+		ctx.arc( -screenx*screenScale , screeny*screenScale , i*gridScale*screenScale , 0 , _endAngle);
+		ctx.stroke();
+	}
+
+	for(i = Math.PI ; i > 0 ; i -= Math.PI/12){//	Radial lines
+		if(i%45 == 0){//		Every 45 degrees = pi/12 radians
+			ctx.lineWidth = 3;
+		}else{
+			ctx.lineWidth = 1;
+		}
+		ctx.beginPath();
+		ctx.moveTo( (math.cos(i)*10000 - screenx) * screenScale ,  (math.sin(i)*10000 + screeny) * screenScale);//		(graph left edge + line number*line spacing(10))*scale
+		ctx.lineTo((-math.cos(i)*10000 - screenx) * screenScale , (-math.sin(i)*10000 + screeny) * screenScale);
+		ctx.stroke();
+	}
+}
+
 //		-----------------------------------------------------------------------		[   Draw Goals   ]		-----------------------------------------------------------------------
 function drawGoals(){
-	for(i = gCircleX.length-1 ; i > -1 ; i--){
-		//		draw circle
-		ctx.strokeStyle = _goalColor;
-		ctx.beginPath();
-		ctx.arc((gCircleX[i]-screenx)*screenScale , -(gCircleY[i]-screeny)*screenScale , gCircleR[i]*screenScale , 0 , _endAngle);
-		ctx.stroke();
+	ctx.strokeStyle = _goalColor;
+	//		draw goal
+	ctx.beginPath();
+	ctx.arc((goalx-screenx)*screenScale , -(goaly-screeny)*screenScale , goalr*screenScale , 0 , _endAngle);
+	ctx.stroke();
+	
+	if(useCheckpoints){
+		ctx.strokeStyle = _checkpointColor;
+		for(i = checkx.length-1 ; i > -1 ; i--){
+			//		draw circle
+			ctx.beginPath();
+			ctx.arc((checkx[i]-screenx)*screenScale , -(checky[i]-screeny)*screenScale , checkr[i]*screenScale , 0 , _endAngle);
+			ctx.stroke();
+		}
 	}
 }

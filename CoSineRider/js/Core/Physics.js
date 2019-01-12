@@ -1,8 +1,18 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 //		Goal points' position and radius
-var gCircleX = [];//new Array();
-var gCircleY = [];//new Array();
-var gCircleR = [];//new Array();
+var goalx = 0;
+var goaly = 0;
+var goalr = 0;
+
+//		Checkpoint variables
+var checkx = [];
+var checky = [];
+var checkr = [];
+
+var checkCurrent = -1;//		index of current starting checkpoint
+//		view limits. [0]=left limit [1]=right limit. Both are in absolute coordinates
+var checkScreenx = [];
+var checkScreeny = [];
 
 var groundPointsX;
 var groundPointsY;
@@ -72,7 +82,7 @@ var lastApz = 0;
 //		Physics calculations are run every 1/60 of an in game second, no matter the game speed. This system ensures physics are framerate independent and completely consistent.
 	//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
 function runPhysics(){
-	if(useNone || useCutscene)//		do not render or check for level collisions
+	if(useNone || isCutscene)//		do not render or check for level collisions
 		return;
 	
 	if(simulating){
@@ -170,12 +180,35 @@ function runPhysics(){
 			checkSvgColliders();
 			
 			//		----------------		[   Check Collision with Goals   ]		----------------
-			for(i = gCircleX.length-1 ; i > -1 ; i--){
-				//		check for collision with the sledder. (sled.x-circle.x)^2 + (sled.y-circle.y)^2 < circle.radius^2
-				if( (Math.pow(pxapx-gCircleX[i] , 2) + Math.pow(pxapy-gCircleY[i] , 2)) < gCircleR[i]*gCircleR[i] ){
-					levelCleared();
+			//		check for collision with the sledder. (sled.x-circle.x)^2 + (sled.y-circle.y)^2 < circle.radius^2
+			if( (Math.pow(pxapx-goalx , 2) + Math.pow(pxapy-goaly , 2)) < goalr*goalr ){
+				levelCleared();
+			}
+			
+			//		----------------		[   Check Collision with Checkpoints   ]		----------------
+			if(useCheckpoints){
+				for(i = checkx.length-1 ; i > -1 ; i--){
+					//		not currently used checkpoint and sled is touching the checkpoint
+					if(i != checkCurrent && (Math.pow(pxapx-checkx[i] , 2) + Math.pow(pxapy-checky[i] , 2)) < checkr[i]*checkr[i] ){
+						//		set sled to start at the current checkpoint
+						defaultSledx = checkx[i];
+						defaultSledy = checky[i];
+						//		don't collider with the checkpoint you start in
+						checkCurrent = i;
+						//		update screen pan/zoom limits to new checkpoints
+						if(useScreenLimit)
+							updateScreenLockPoints();
+						
+						//		go back to equation edit mode
+						resetSledder();
+						
+						showMessage = true;//		see CoSineRider.html
+						messageTime = 0;
+						messageText = "CHECKPOINT!";
+					}
 				}
 			}
+			
 			//		apply gravity
 			vy += ay*pxdt;
 			frameTime = pxFrameTimeStore;//		restore correct frame time
@@ -232,7 +265,7 @@ function runPhysics(){
 
 
 function checkSvgColliders(){
-	if(useNone || useCutscene)//		do not check for level collisions in levels with no svg colliders
+	if(useNone || isCutscene)//		do not check for level collisions in levels with no svg colliders
 		return;
 	//		-----------------------------------------------------------------------		[   Collision with SVG   ]		-----------------------------------------------------------------------
 	for(i = allGroundPointsX.length - 1 ; i > 0 ; i--){//		read all x points in .svg

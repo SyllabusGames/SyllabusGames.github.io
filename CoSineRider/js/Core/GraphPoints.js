@@ -83,7 +83,7 @@ function undoGraphedPoints(){
 
 //		----------------------------------------------------		[   Graphed Points   ]		----------------------------------------------------
 function drawGraphedPoints(){
-	if(useRender || useCutscene)
+	if(useRender || isCutscene)
 		return;
 	ctx.font = "25px Arial";
 	ctx.fillStyle = _graphedPointColor;
@@ -114,7 +114,7 @@ function drawGraphedPoints(){
 
 //	----------------------------------		[   Display coordinates on line near cursor   ]		----------------------------------
 function cursorPosition(){
-	if(useRender || useCutscene)
+	if(useRender || isCutscene)
 		return;
 	
 	tmpx = mouseX/screenScale + screenx;//		mouse position in world space
@@ -149,7 +149,7 @@ function cursorPosition(){
 		}
 	}else{
 		if(Math.abs(mouseY - (screeny - tmpy)*screenScale) > 50){//		if the cursor is more than 50 pixels vertically from the line's point, display the cursor's coordinates
-			ctx.fillText( "X = " + (Math.round((mouseX/screenScale + screenx)*100)/100).toString() + " Y = " + (Math.round((mouseY/screenScale - screeny)*100)/100).toString(),
+			ctx.fillText( "X = " + (Math.round((mouseX/screenScale + screenx)*100)/100).toString() + " Y = " + (-Math.round((mouseY/screenScale - screeny)*100)/100).toString(),
 			Math.max(Math.min(mouseX , Math.round(screenWidth - 300)) , 10) ,
 			Math.max(Math.min(mouseY , Math.round(screenHeight - 100)) , 110));
 		}

@@ -59,7 +59,7 @@ function update(){
 	window.requestAnimationFrame(update);
 	if(paused){
 		if(menuOpen){
-			MMDrawLine();
+			menuUpdate();
 		}
 		return;
 	}
@@ -161,7 +161,7 @@ function update(){
 	if(graphingPoints)
 		drawGraphedPoints();//		see SvgEditor.js
 	
-	if(!useNone && ! useCutscene)
+	if(!useNone && ! isCutscene)
 		drawGoals();//		see DrawBackground.js
 	
 	if(showSVGPoints)
@@ -172,7 +172,7 @@ function update(){
 
 //			animCore();
 
-	if(useDrag)//		render drag points
+	if(isDrag)//		render drag points
 		dragMain();
 
 //		-----------------------------------------------------------------------		[   Display messages in Big Red Text   ]		-----------------------------------------------------------------------

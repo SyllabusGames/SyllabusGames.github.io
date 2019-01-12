@@ -24,7 +24,7 @@ var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenSc
 
 //		-----------------------------------------------------------------------		[   Draw Line   ]		-----------------------------------------------------------------------
 function graphAllLines(){
-	if(useRender || useCutscene)//		do not try to draw the line if the equation is an inequality or contans an =. It will almost always cause problems. Also cancle on cutscenes.
+	if(useRender || isCutscene)//		do not try to draw the line if the equation is an inequality or contans an =. It will almost always cause problems. Also cancle on cutscenes.
 		return;
 	
 	tempZ = apz;//		read in the sled's z position so equation() uses the right value
@@ -56,7 +56,7 @@ function graphAllLines(){
 	//	----------------------------------		[   Graph Proxy Function inputs as separate functions   ]		----------------------------------
 	
 	//		if using InputProxyFunction, draw a line for every function with x substituted for a
-	if(useProxyFunction && !simulating){
+	if(isProxyFunction && !simulating){
 		ctx.lineWidth = 2.5;
 		for(k = pieEquInputsUsed ; k > 0 ; k--){
 			ctx.strokeStyle = _pFunLineColor[k-1] + "A0";//		set alpha to make the composite line stand out. There are 4 colors and 5 inputs so -1

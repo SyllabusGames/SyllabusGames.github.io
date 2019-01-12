@@ -133,7 +133,7 @@ function equation(input){
 	}
 	
 	
-	if(usePiecewise){
+	if(isPiecewise){
 		for(q = 0 ; q < pieEquInputsUsed ; q++){
 			//		check that the x position (input) is between the limits. If pieLeftInputCompiled[q] equals false, a constant value is used. Otherwise
 			//			the limit is time dependent and must be evaluated.
@@ -205,17 +205,17 @@ function getCaretLocation(element){
 
 //		hides the input fields when a menu is opened
 function showHideInputs(show){//		"none" / "block"
-	if(usePiecewise){
+	if(isPiecewise){
 		pieShowHideInputs(show);
-	}else if(useProxyVar){
+	}else if(isProxyVar){
 		pVarShowHideInputs(show);
-	}else if(useProxyFunction){
+	}else if(isProxyFunction){
 		pFunShowHideInputs(show);
-	}else if(useDrag){
+	}else if(isDrag){
 		dragShowHideInputs(show);
-	}else if(useFillBlanks){
+	}else if(isFillBlanks){
 		blankShowHideInputs(show);
-	}else if(useCutscene){
+	}else if(isCutscene){
 		//		no input to show/hide
 	}else{
 		typeShowHideInputs(show);
@@ -231,17 +231,17 @@ function showHideInputs(show){//		"none" / "block"
 var inputZ = 0;
 function checkInputFields(selectedElement){
 	if(selectedElement == "all"){
-		if(usePiecewise){
+		if(isPiecewise){
 			for(var num = pieEquInputsUsed-1 ; num > -1 ; num--){//		for each input field excluding the main input [0]
 				pieCheckInput(pieEquInput[num]);
 			}
 			return;
-		}else if(useProxyVar){
+		}else if(isProxyVar){
 			for(var num = pieEquInputsUsed ; num > 0 ; num--){//		for each input field excluding the main input [0]
 				pVarCheckInput(pieEquInput[num]);
 			}
 			return;
-		}else if(useProxyFunction){
+		}else if(isProxyFunction){
 			for(var num = pieEquInputsUsed ; num > 0 ; num--){//		for each input field excluding the main input [0]
 				pFunCheckInput(pieEquInput[num]);
 			}
@@ -249,17 +249,17 @@ function checkInputFields(selectedElement){
 		}
 	}
 	
-	if(usePiecewise){
+	if(isPiecewise){
 		pieCheckInput(selectedElement);
-	}else if(useProxyVar){
+	}else if(isProxyVar){
 		pVarCheckInput(selectedElement);
-	}else if(useProxyFunction){
+	}else if(isProxyFunction){
 		pFunCheckInput(selectedElement);
-	}else if(useDrag){
+	}else if(isDrag){
 		//		run nothing. Drag input is always updated within InputDrag.js
-	}else if(useFillBlanks){
+	}else if(isFillBlanks){
 		blankCheckInput();
-	}else if(useCutscene){
+	}else if(isCutscene){
 		//		no input to check
 	}else{
 		typeCheckInput();

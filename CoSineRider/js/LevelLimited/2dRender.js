@@ -49,7 +49,7 @@ function render2d(){//		called from checkInputFields() of TextInput.js
 	renderData = new Uint32Array(renderBuf);
 
 	//		record what type of equation / inequality this is
-	if(usePiecewise){
+	if(isPiecewise){
 		if(equRaw.indexOf('=') > -1){
 			renderType = 0;
 			renderEquation = equRaw.split('=');

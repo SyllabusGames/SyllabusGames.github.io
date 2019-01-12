@@ -36,6 +36,7 @@ var _gridTextColor = "#000000"
 var _pFunLineColor = ["#0095d1" , "#7600d1" , "#d16f00" , "#00d118"];//		alpha value set in code so this color value must be 6 characters not 8 (RGB not RGBA)
 
 var _goalColor = "#00B0FF";
+var _checkpointColor = "#00FF50";
 
 var _dragFadeColor = "#555555";
 
@@ -45,6 +46,11 @@ var _displayErrorColor = "#A00000";//		alpha value set in code so this color val
 
 var _endAngle = 2*Math.PI;
 var _piOver2 = Math.PI/2;
+
+var _menuButtonColor = "#000000";
+var _menuButtonFillColor = "#C5C5C5";//		same as grid secondary color
+var _menuButtonHighlightColor = "#505050";
+var _menuText = "#000000";
 
 
 //		All colors have different Hues but the same Saturation and Value 
@@ -102,9 +108,10 @@ var messageText = "";
 //		camera position and scale. These coordinates are the position of the upper left corner of the screen.
 var screenWidth = 1600;
 var screenHeight = 800;
+//		screenx and screeny are in absolute (grid) coordinates
 var screenx = 0;
 var screeny = 0;
-var screenScale = 20;//		measured in pixels per meter
+var screenScale = 20;//		measured in pixels per meter. Used to convert between screen and absolute coordinates
 var trackPointx = 0;//		point the camera will try to keep on screen
 var trackPointy = 0;
 

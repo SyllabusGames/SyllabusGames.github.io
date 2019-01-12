@@ -3,7 +3,7 @@ var loadedLevel;
 var levelName = "No level loaded";
 var levelType = "";
 var levelCode = "";//		Used by Goal (in Collidions.js) to save the current level as complete
-var substring = "";
+var partstring = "";
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
@@ -18,12 +18,14 @@ var useIntegral = false;
 var usePolar = false;
 var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
 
-var usePiecewise = false;
-var useProxyVar = false;
-var useProxyFunction = false;
-var useDrag = false;
-var useFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
-var useCutscene = false;//	level is a cutscene
+var useScreenLimit = true;//		in checkpoint levels, lock the screen to show only the last and next checkpoints
+
+var isPiecewise = false;
+var isProxyVar = false;
+var isProxyFunction = false;
+var isDrag = false;
+var isFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
+var isCutscene = false;//	level is a cutscene
 
 //var equationHistory[];//		a list of all equations that have beaten a level
 
@@ -104,19 +106,19 @@ function loadBuiltInLevel(){
 
 	//		load sledder start position
 	//console.log(loadedLevel[lineNum]);
-	substring = loadedLevel[lineNum].split(',');
-	defaultPosX = parseFloat(substring[0]);
-	defaultPosY = parseFloat(substring[1]);
-	apx = defaultPosX;
-	pxapx = defaultPosX;
-	pxLastx = defaultPosX;
-	apy = defaultPosY;
-	pxapy = defaultPosY;
-	pxLasty = defaultPosY;
+	partstring = loadedLevel[lineNum].split(',');
+	defaultSledx = parseFloat(partstring[0]);
+	defaultSledy = parseFloat(partstring[1]);
+	apx = defaultSledx;
+	pxapx = defaultSledx;
+	pxLastx = defaultSledx;
+	apy = defaultSledy;
+	pxapy = defaultSledy;
+	pxLasty = defaultSledy;
 	lineNum++;
 
 	//		last level used multiple input fields but this one doesn't so hide all inputs
-	if((usePiecewise || useProxyVar || useProxyFunction) && (levelType != "PW" || levelType != "PV" || levelType != "PF")){
+	if((isPiecewise || isProxyVar || isProxyFunction) && (levelType != "PW" || levelType != "PV" || levelType != "PF")){
 		for(k = 0 ; k < 5 ; k++){
 			pieEquInput[k].style.display = "none";
 			pieLeftInput[k].style.display = "none";
@@ -128,9 +130,9 @@ function loadBuiltInLevel(){
 	mainInput.style.backgroundColor = _inputColor;
 
 	
-	//console.log(useFillBlanks + " - " + levelType);
+	//console.log(isFillBlanks + " - " + levelType);
 	//		last level was fill in the blank but this one isn't so hide all inputs
-	if (useFillBlanks && levelType != "BL"){
+	if (isFillBlanks && levelType != "BL"){
 		console.log("No longer blank");
 		for(i = 0 ; i < blankDefaultVar.length ; i++){
 			blankEquInput[i].style.display = "none";
@@ -140,12 +142,12 @@ function loadBuiltInLevel(){
 		}
 	}
 
-	usePiecewise = false;
-	useProxyVar = false;
-	useProxyFunction = false;
-	useDrag = false;
-	useFillBlanks = false;
-	useCutscene = false;
+	isPiecewise = false;
+	isProxyVar = false;
+	isProxyFunction = false;
+	isDrag = false;
+	isFillBlanks = false;
+	isCutscene = false;
 	
 	useGuide = false;
 	useTime = false;
@@ -153,7 +155,8 @@ function loadBuiltInLevel(){
 	useNone = false;
 	useDerivative = false;
 	// useIntegral = false;
-
+	usePolar = false;
+	
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
@@ -169,7 +172,7 @@ function loadBuiltInLevel(){
 		//		-----------------------------------------------------------------------		[   Piecewise Typed Input   ]		-----------------------------------------------------------------------
 		case "PW":
 		//		LV2: Piecwise\nPW\n0,0\n3\n-999,20,-x/2+t*1.5\n20,60,t*1.5-10\n60,200,x/10-16+t*1.5\n91,17\nTower\nEnd"
-			usePiecewise = true;
+			isPiecewise = true;
 
 			pieEquInputsUsed = parseInt(loadedLevel[lineNum]);//		get total number of input fields used
 			pieInitialize();//		see InputPiecewise.js
@@ -183,23 +186,23 @@ function loadBuiltInLevel(){
 				pieLimitsText[k].style.display = "block";
 
 
-				substring = loadedLevel[k+lineNum].split(',');//		equations are stored as LeftLimit,RightLimit,Equation
+				partstring = loadedLevel[k+lineNum].split(',');//		equations are stored as LeftLimit,RightLimit,Equation
 
-				pieLeftLimit[k] = parseInt(substring[0]);
-				pieLeftInput[k].innerHTML = substring[0];
-				if(substring[0].indexOf("t") != -1){//		if limit contains t, store it as an equation
-					equInput = math.parse(substring[0] , {t: 0});
+				pieLeftLimit[k] = parseInt(partstring[0]);
+				pieLeftInput[k].innerHTML = partstring[0];
+				if(partstring[0].indexOf("t") != -1){//		if limit contains t, store it as an equation
+					equInput = math.parse(partstring[0] , {t: 0});
 					pieLeftInputCompiled[k] = equInput.compile();
 				}
 
-				pieRightLimit[k] = parseInt(substring[1]);
-				pieRightInput[k].innerHTML = substring[1];
-				if(substring[1].indexOf("t") != -1){//		if limit contains t, store it as an equation
-					equInput = math.parse(substring[1] , {t: 0});
+				pieRightLimit[k] = parseInt(partstring[1]);
+				pieRightInput[k].innerHTML = partstring[1];
+				if(partstring[1].indexOf("t") != -1){//		if limit contains t, store it as an equation
+					equInput = math.parse(partstring[1] , {t: 0});
 					pieRightInputCompiled[k] = equInput.compile();
 				}
 
-				pieEquInput[k].innerHTML = substring[2];
+				pieEquInput[k].innerHTML = partstring[2];
 			}
 			while(k < 5){//		hide each input field not used
 				pieEquInput[k].style.display = "none";
@@ -213,7 +216,7 @@ function loadBuiltInLevel(){
 			break;
 			//		-----------------------------------------------------------------------		[   Proxy Variable Input   ]		-----------------------------------------------------------------------
 		case "PV":
-			useProxyVar = true;
+			isProxyVar = true;
 
 			pieEquInput[0].innerHTML = loadedLevel[lineNum].substring(2);
 			pieEquInput[0].style.display = "block";
@@ -237,7 +240,7 @@ function loadBuiltInLevel(){
 			pieEquInput[1].style.display = "block";
 
 			pieEquInput[1].innerHTML = loadedLevel[lineNum].substring(2);//	load default for a
-			pieEquInputsUsed = 1;//		set pieEquInputsUsed to the index of the last (greatest) input field useDrag
+			pieEquInputsUsed = 1;//		set pieEquInputsUsed to the index of the last (greatest) input field isDrag
 			
 			//		the equation may not use b, c, or d so activate and deactivate inputs based on whether they are used and only advance lineNum if each is used
 			lineNum++;
@@ -293,7 +296,7 @@ function loadBuiltInLevel(){
 			
 				//		-----------------------------------------------------------------------		[   Proxy Function Input   ]		-----------------------------------------------------------------------
 		case "PF":
-			useProxyFunction = true;
+			isProxyFunction = true;
 
 			pieEquInput[0].innerHTML = loadedLevel[lineNum].substring(2);
 			pieEquInput[0].style.display = "block";
@@ -317,7 +320,7 @@ function loadBuiltInLevel(){
 			pieEquInput[1].style.display = "block";
 
 			pieEquInput[1].innerHTML = loadedLevel[lineNum].substring(2);//	load default for a
-			pieEquInputsUsed = 1;//		set pieEquInputsUsed to the index of the last (greatest) input field useDrag
+			pieEquInputsUsed = 1;//		set pieEquInputsUsed to the index of the last (greatest) input field isDrag
 			
 			//		the equation may not use b, c, or d so activate and deactivate inputs based on whether they are used and only advance lineNum if each is used
 			lineNum++;
@@ -373,7 +376,7 @@ function loadBuiltInLevel(){
 			
 			//		-----------------------------------------------------------------------		[   Drag Points   ]		-----------------------------------------------------------------------
 		case "DR":
-			useDrag = true;
+			isDrag = true;
 		//			"LV1: Drag Points\nRD\n0,0\n_*x+_\n2,v,1,1,1\n44,4\nCave\nEnd"
 			//		load like a standard typed input level
 			equRaw = loadedLevel[lineNum];
@@ -382,23 +385,23 @@ function loadBuiltInLevel(){
 
 			//		now load in the controlls for draging points for each _ in the equation
 			for(i = 0 ; i < dragEquGaps.length-1 ; i++){
-				substring = loadedLevel[lineNum].split(',');//		data is stored as default value,v/h,x,y,scale
-				dragVar.push(parseFloat(substring[0]));//		default value
-				dragDirection.push(substring[1]);
-				dragDefaultx.push(parseFloat(substring[2]));
-				dragx.push(parseFloat(substring[2]));
-				dragDefaulty.push(parseFloat(substring[3]));
-				dragy.push(parseFloat(substring[3]));
-				dragDependent0.push(parseInt(substring[4]));
-				dragDependent1.push(parseInt(substring[5]));
-				dragDependent2.push(parseInt(substring[6]));
+				partstring = loadedLevel[lineNum].split(',');//		data is stored as default value,v/h,x,y,scale
+				dragVar.push(parseFloat(partstring[0]));//		default value
+				dragDirection.push(partstring[1]);
+				dragDefaultx.push(parseFloat(partstring[2]));
+				dragx.push(parseFloat(partstring[2]));
+				dragDefaulty.push(parseFloat(partstring[3]));
+				dragy.push(parseFloat(partstring[3]));
+				dragDependent0.push(parseInt(partstring[4]));
+				dragDependent1.push(parseInt(partstring[5]));
+				dragDependent2.push(parseInt(partstring[6]));
 				lineNum++;
 			}
 			dragInitialize();
 			break;
 		//		-----------------------------------------------------------------------		[   Fill In The Blank   ]		-----------------------------------------------------------------------
 		case "BL":
-			useFillBlanks = true;
+			isFillBlanks = true;
 			//		load like a standard typed input level
 			equRaw = loadedLevel[lineNum];
 			blankEquGaps = equRaw.split("_");
@@ -409,7 +412,7 @@ function loadBuiltInLevel(){
 			break;
 		//		-----------------------------------------------------------------------		[   Cutscene   ]		-----------------------------------------------------------------------
 		case "CU":
-			useCutscene = true;
+			isCutscene = true;
 			//		load like a standard typed input level
 			cutInitialize(loadedLevel[lineNum]);
 			lineNum++;
@@ -478,10 +481,17 @@ function loadBuiltInLevel(){
 		lineNum++;
 	}
 	
+	//		UsePolar (graph in polar coordinates)
+	if(loadedLevel[lineNum] == "usePolar"){
+		usePolar = true;
+		lineNum++;
+	}
+		
+	
 	//	----------------------------------		[   camera track point   ]		----------------------------------
-	substring = loadedLevel[lineNum].split(',');//		camera track point
-	trackPointx = parseFloat(substring[0]);
-	trackPointy = parseFloat(substring[1]);
+	partstring = loadedLevel[lineNum].split(',');//		camera track point
+	trackPointx = parseFloat(partstring[0]);
+	trackPointy = parseFloat(partstring[1]);
 	lineNum++;
 
 	//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
@@ -503,12 +513,12 @@ function loadBuiltInLevel(){
 	
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
 		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
-	/*if(usePiecewise){
-	}else if(useProxyVar){
+	/*if(isPiecewise){
+	}else if(isProxyVar){
 		
-	}else if(useDrag){
+	}else if(isDrag){
 		
-	}else if(useFillBlanks){
+	}else if(isFillBlanks){
 		blankInitialize();
 	}else{
 		typeInitialize();//		see InputTyped.js
@@ -536,89 +546,153 @@ function loadBuiltInLevel(){
 
 	
 
-function loadCollidersFromSvg(sss){
 	//		-----------------------------------------------------------------------		[   Import .svg to single array   ]		-----------------------------------------------------------------------
-	allGroundPointsX = [];//new Array();
-	allGroundPointsY = [];//new Array();
-	allGroundBreaks = [];//new Array();
-	gCircleX = [];//new Array();
-	gCircleY = [];//new Array();
-	gCircleR = [];//new Array();
+function loadCollidersFromSvg(sss){
+	/*		this function reads in the translation of the entire file (if there is one),
+				splits the input file into strings at "<path" (thus cutting off any junk at the file's start) and stores the parts in the array partstring,
+				iterates through each section of the file
+				checks for circles indicating goals or checkpoints
+				cuts down the string to be just a point list and reformats it to make parsing easier
+				reads in all points into allGroundPointsX,Y
+				records false in allGroundBreaks every time a path ends so lines will not be drawn to
+					connect the end of one path to the start of the next
+	*/
+	//		reset collider storing variables
+	allGroundPointsX = [];
+	allGroundPointsY = [];
+	allGroundBreaks = [];
+	checkx = [];
+	checky = [];
+	checkr = [];
 	var absolute = false;
-//		get the translation of the eniter image
-	substring = sss.substring(sss.indexOf("translate(") + 10);
-//	console.log(substring)
-	substring = substring.substring(0 , substring.indexOf(")") );
-	var ministring = substring.split(" ");//		each ministring contains one string of points
-	dx = 200 + parseFloat(ministring[0])/5;
-	dy = 200 - parseFloat(ministring[1])/5;
+	useCheckpoints = false;
 	
-//	console.log(substring + "  dx = " + ministring[0] + " dy= " + ministring[1]);
-	
-	substring = sss.split('<path');//		each substring contains one path
-	//		loop through each line, through each set of points, then split X and Y on the ,
-	for(i = 1 ; i < substring.length  ; i++){//		i=1 because the 0ith entry is just the file header information
-//		console.log(substring[i]);
+	//		get the translation of the entire image
+	if(sss.indexOf("translate(") != -1){
+		partstring = sss.substring(sss.indexOf("translate(") + 10);
+		partstring = partstring.substring(0 , partstring.indexOf(")") );
+		var ministring = partstring.split(" ");//		each ministring contains one string of points
+		//		Shift and scale the translation (dx,dy) so that 1000,1000 is the center and 1 meter in game is 5 units in svg
+		dx = (1000 - parseFloat(ministring[0]))/5;
+		dy = (1000 - parseFloat(ministring[1]))/5;
+		console.log("svg translation = " + partstring);
+	}else{
+		dx = 200;//		1000/5
+		dy = 200;
+	}
+	console.log("dx = " + dx + " dy = " + dy);
 
-		substring[i] = substring[i].substring(3+substring[i].search(/d="m/i));//		cut fluff off the start of substring[i]
-		absolute = (substring[i][0] == 'M');
+	partstring = sss.split('<path');//		each partstring contains one path
+	//		loop through each path, through each set of points, then split X and Y on the ,
+	for(i = 1 ; i < partstring.length  ; i++){//		i=1 because the 0ith entry is just the file header information
+		// console.log(partstring[i]);
+
+		partstring[i] = partstring[i].substring(3+partstring[i].search(/d="m/i));//		cut fluff off the start of partstring[i]
+		absolute = (partstring[i][0] == 'M');//		capital m indicates absolute coordinates. Lowercase m indicates relative.
 		
-		//		check for goal (circle) in this path's substring
-		k = substring[i].indexOf("<circle");
-		if(k != -1){//		if a circle is in this substring
-			ministring = substring[i].substring(k);
+		//		check for circles in this part of the string
+	//	----------------------------------		[   Goals and Checkpoints   ]		----------------------------------
+		var circleDeclare = /<circle/g;
+		while ((match = circleDeclare.exec(partstring[i])) != null) {
+			ministring = partstring[i].substring(match.index);//		start ministring at the next <circle declaration so it can only pull data for that circle
 			
-			k = ministring.indexOf('cx="') + 4;
-			ministring = ministring.substring(k);//		cut ministring to start with circle center.x
-			gCircleX.push(parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5 - dx);
+			k = ministring.indexOf("Goal");
+			var isGoal = (k != -1) && (k < ministring.indexOf(">"));//		the word goal is in this circle object (id="goal")
 
-//			console.log("Circle added " + ministring + " - " + gCircleX[gCircleX.length-1]);
-			
-			k = ministring.indexOf('cy="') + 4;
-			ministring = ministring.substring(k);//		cut ministring to start with circle center.x
-			gCircleY.push(dy - parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5);
+			ministring = ministring.substring(ministring.indexOf('cx="') + 4);//		cut ministring to start with circle center.x
+			tmpx = parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5 - dx;
 
-//			console.log("Circle added " + ministring + " - " + gCircleY[gCircleY.length-1]);
 			
-			k = ministring.indexOf('r="') + 3;
-			ministring = ministring.substring(k);//		cut ministring to start with circle center.x
-			gCircleR.push(parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5);
+			ministring = ministring.substring(ministring.indexOf('cy="') + 4);//		cut ministring to start with circle center.x
+			tmpy = dy - parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5;
+
 			
-//			console.log("Circle added " + ministring + " - " + gCircleR[gCircleR.length-1]);
+			ministring = ministring.substring(ministring.indexOf('r="') + 3);//		cut ministring to start with circle center.x
+			ftmp = parseFloat(ministring.substring(0 , ministring.indexOf('"')))/5;
+			
+			//		if this is the goal, set goal. If not, add it as a checkpoint.
+			if(isGoal){
+				goalx = tmpx;
+				goaly = tmpy;
+				goalr = ftmp;
+			}else{
+				useCheckpoints = true;
+				checkx.push(tmpx);
+				checky.push(tmpy);
+				checkr.push(ftmp);
+			}
+			
+			// console.log("Circle added at " + tmpx + " , " + tmpy + " - r= " + ftmp + " checkpoints=" + useCheckpoints);
 		}
 		
-		//		remove unwanted markers and make all points in this line coma seperated
-		substring[i] = substring[i].substring(0 , substring[i].indexOf('"'));//		cut fluff off the end of substring[i]
-		substring[i] = substring[i].replace(/-/g , ' -');//		replace - with _- so if points are listed 15-35 they will go to 15 -35 and can be split on the space
-		substring[i] = substring[i].replace(/[MmLCcSsQqTtAaZz]/g , '');//		remove all path types. Everything will be treated as 'lineto'
-		substring[i] = substring[i].replace(/h/g , ',h,');//		replace h with ,h, so h is read in as a point
-		substring[i] = substring[i].replace(/l/g , ',');//		replace l with , so when l is erased, the points it was between do not become one number
-		substring[i] = substring[i].replace(/  /g , ',');//		if it was formatted 15 -35 already, the last opperation will take it to 15  -35 so this will remove the redundant space
-		substring[i] = substring[i].replace(/ /g , ',');//		replace all single spaces with , so substring[i] is csv
-		substring[i] = substring[i].replace(/,,/g , ',');//		#,-# will be turned into #,,-#		This fixes that*/
-		if(substring[i][0] == ',')
-			substring[i] = substring[i].substring(1);//		if the first character is , remove it
-		//		all points should now be sepperated by a , or a space
-		ministring = substring[i].split(',');//		make ministring a list of X and Y coordinates
 
+		partstring[i] = partstring[i].replace(/-?[0-9]e-?[0-9]/g , (match, $1) => {//			replace exponents with their numeric equivalent 5e3 → 5000
+			console.log("match");
+			console.log(match);
+			console.log(parseInt(match[0]));
+			console.log(parseInt(match.substring(2)));
+			console.log(math.round(parseInt(match[0]) * math.pow(10 , parseInt(match.substring(2))) * 1000) / 1000);
+			
+			//		take the string aeb (5e-4), calculate it's equivalent a*10^b (0.0005), and round the answer to the 1000s place (0.000)
+			return math.round(parseInt(match[0]) * math.pow(10 , parseInt(match.substring(2))) * 1000) / 1000;
+		});
+		
+		console.log(partstring[i]);
+		
+		//		remove unwanted markers and make all points in this line coma separated
+		partstring[i] = partstring[i].substring(0 , partstring[i].indexOf('"'));//		cut fluff off the end of partstring[i]
+		partstring[i] = partstring[i].replace(/-/g , ' -');//		replace - with _- so if points are listed 15-35 they will go to 15 -35 and can be split on the space
+		partstring[i] = partstring[i].replace(/[MmLCcSsQqTtAaZz]/g , '');//		remove all path types. Everything will be treated as 'lineto'
+		partstring[i] = partstring[i].replace(/h/g , ',h,');//		replace h with ,h, so h is read in as a point
+		partstring[i] = partstring[i].replace(/l/g , ',');//		replace l with , so when l is erased, the points it was between do not become one number
+		partstring[i] = partstring[i].replace(/  /g , ',');//		if it was formatted 15 -35 already, the last operation will take it to 15  -35 so this will remove the redundant space
+		partstring[i] = partstring[i].replace(/ /g , ',');//		replace all single spaces with , so partstring[i] is csv
+		partstring[i] = partstring[i].replace(/,,/g , ',');//		#,-# will be turned into #,,-#		This fixes that
+			
+		//		if the first character is , remove it
+		if(partstring[i][0] == ',')
+			partstring[i] = partstring[i].substring(1);
+		
+		//		all points should now be separated by a , or a space
+		
+		//		make ministring a list of X and Y coordinates
+		ministring = partstring[i].split(',');
+
+		//		the first point cannot be added in relative coordinates so add it here
 		allGroundPointsX.push( parseFloat(ministring[0])/5 - dx);
 		allGroundPointsY.push( parseFloat(ministring[1])/5 - dy);
-//		console.log("Input " + substring[i]);
+		// console.log("Input " + partstring[i]);
+		
 		if(allGroundBreaks.length > 0)
 			allGroundBreaks[allGroundBreaks.length] = false;
+		
 		for(k = 2 ; k < ministring.length ; k += 2){
 //			console.log(ministring[k] + " _ " + ministring[k+1]);
 			if(ministring[k][0] == 'h'){//		h means this is a horizontal line and this point's x is the same as the last
-				allGroundPointsX.push( parseFloat(ministring[k+1])/5 + (absolute? - dx : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
+				allGroundPointsX.push( parseFloat(ministring[k+1])/5 + (absolute? -dx : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
 				allGroundPointsY.push( allGroundPointsY[allGroundPointsY.length-1]);
 			}else{
 				allGroundPointsX.push( parseFloat(ministring[k])/5 + (absolute? -dx : allGroundPointsX[allGroundPointsX.length-1]));//		if coordinates are relative to the last point, add the last point's x to this one
-				allGroundPointsY.push( parseFloat(ministring[k+1])/5 + (absolute? - dy : allGroundPointsY[allGroundPointsY.length-1]));
+				allGroundPointsY.push( (absolute? dy : allGroundPointsY[allGroundPointsY.length-1]) + parseFloat(ministring[k+1])/5);
 			}			//console.log('x = '+allGroundPointsX[allGroundPointsX.length-2]);
+			
+			//		there should be no vertical lines. The physics engine can't handle them.
 		
 			allGroundBreaks.push(true);
 			//console.log('y = '+allGroundPointsY[allGroundPointsY.length-2]);
 		}
 		//		change the last entry in this array to false so a line is not drawn between the end of one line and start of the next
 	}
+	if(useScreenLimit){
+		updateScreenLockPoints();
+	}
+	
+	// console.log(checkScreenx);
+	// console.log(checkScreeny);
 }
+
+
+
+
+
+

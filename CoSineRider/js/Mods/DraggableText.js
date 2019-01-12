@@ -27,7 +27,7 @@ var drInputField;
 
 //		----------------------------------------------------		[   Scroll Wheel (Incrament Variable)   ]		----------------------------------------------------
 document.addEventListener('wheel', function(e){
-	if(drHold || useDrag)//		scrolling the mouse wheel does nothing while dragging a variable
+	if(drHold || isDrag)//		scrolling the mouse wheel does nothing while dragging a variable
 		return;
 	var evt = e==null ? event : e;//		firefox compatibility	
 
@@ -128,7 +128,7 @@ document.addEventListener('wheel', function(e){
 document.addEventListener('mousedown', function(e){
 	var evt = e==null ? event : e;//		firefox compatibility	
 	
-	if(useDrag)//		cannot drag text input while using drag based input
+	if(isDrag)//		cannot drag text input while using drag based input
 		return;
 	if( evt.which == 1 ){//		left click
 		
@@ -185,7 +185,7 @@ document.addEventListener('mousedown', function(e){
 document.addEventListener('touchstart', function(e){
 	var evt = e==null ? event : e;//		firefox compatibility	
 		
-	if(useDrag)//		cannot drag text input while using drag based input
+	if(isDrag)//		cannot drag text input while using drag based input
 		return;
 		
 	//		check if the player is trying to edit an actual input field
@@ -259,7 +259,7 @@ function dragMouseMove(e){
 		var evt = e==null ? event : e;//		firefox compatibility	
 		//		require the cursor to move 45 before changing the variable initially so you don't accidentally change variables while highlighting.
 		if(Math.abs(evt.clientY - drY) > (drFirst?25:5)){//		cursor has moved enough for at least a change of 1 incrament (> 10 pixels)
-			xtmp = drVar1;
+			var ytmp = drVar1;
 			if(shiftHeld){//		holding shift, incrament by 0.01
 				drVar1 = Math.round(drVar1*100 + Math.round((drY - evt.clientY)*0.05) )/100;
 			}else if(ctrlHeld){//		holding ctrl, incrament by 1
@@ -267,7 +267,7 @@ function dragMouseMove(e){
 			}else{//		holding only the mouse button, incrament by 0.1
 				drVar1 = Math.round(drVar1*100 + Math.round((drY - evt.clientY)*0.05)*10 )/100;
 			}
-			if(drVar1 != xtmp){//		only update if variables changed
+			if(drVar1 != ytmp){//		only update if variables changed
 				drY = evt.clientY;
 				//mainInput.innerText = drString0 + drVar1 + drString2;
 				drInputField.innerText = drString0 + ((drAddPlus && drVar1 >= 0) ?"+":"") + drVar1 + drString2;

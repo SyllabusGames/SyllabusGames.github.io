@@ -1,7 +1,7 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 //		set sledder rotation by this:	http://jsfiddle.net/johndavies91/xwMYY/		if possible
-var defaultPosX = 0;
-var defaultPosY = 0;
+var defaultSledx = 0;
+var defaultSledy = 0;
 
 //		sled transform
 var tempZ = 0;
@@ -21,12 +21,12 @@ function resetSledder(){
 	}
 	simulating = !simulating;
 	//		reset sled's position everywhere it is recorded
-	apx = defaultPosX;
-	pxapx = defaultPosX;
-	pxLastx = defaultPosX;
-	apy = defaultPosY;
-	pxapy = defaultPosY;
-	pxLasty = defaultPosY;
+	apx = defaultSledx;
+	pxapx = defaultSledx;
+	pxLastx = defaultSledx;
+	apy = defaultSledy;
+	pxapy = defaultSledy;
+	pxLasty = defaultSledy;
 	pxRot = 0;
 	pxLastRot = 0;
 	
@@ -42,6 +42,10 @@ function resetSledder(){
 		buttonPause();
 	else
 		buttonPlay();
+	
+	//		checkpoint levels never animate the camera
+	if(useScreenLimit)
+		camLocked = false;
 	
 	if(camLocked){
 		screenFollowSledder();//		reset screen position
