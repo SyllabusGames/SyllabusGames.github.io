@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 [00]
 The words are
 0
@@ -24,31 +23,4 @@ fajdfhsdgla
 [09]
 END
 [10]
-=======
-[00]
-The words are
-0
-are they?
-[01]
-Text1
-Text Yay!
-[02]
-Text3
-txtttttttttttttttttttttttttttttttt
-[03]
-Cows
-[04]
-fdjiaglg
-[05]
-fdnsaj;ghsdgl
-[06]
-fajdfhsdgla
-[07]
-7777
-[08]
-8888
-[09]
-END
-[10]
->>>>>>> a3503f6d8084bec8645c5c94b584ec9e6b4120a9
 Very End
