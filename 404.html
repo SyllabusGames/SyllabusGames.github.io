@@ -70,11 +70,11 @@ permalink: /404.html
 		
 		ctx.fillStyle = "#800000";
 		ctx.textAlign = "center";
-		ctx.font = "80px Arial";
-		ctx.fillText("404: Something went wrong" , 960 , 80);
+		ctx.font = (scale*24)+"px Arial";
+		ctx.fillText("404: Something went wrong" , document.documentElement.clientWidth/2 , document.documentElement.clientHeight/13.5);
 		
-		ctx.font = "30px Arial";
-		ctx.fillText("You probably mistyped the url" , 960 , 120);
+		ctx.font = (scale*9)+"px Arial";
+		ctx.fillText("You probably mistyped the url" , document.documentElement.clientWidth/2 , document.documentElement.clientHeight/9);
 
 		function paintWindow(x, y) {
 			drawRect(x, y, 45, 65, "#464546", true);
