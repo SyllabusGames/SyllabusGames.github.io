@@ -25,7 +25,7 @@ function pVarScreenResize(){
 //	pieEquInput[0].style.top = "100px"
 	
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 0) + "px";
 	}
 }

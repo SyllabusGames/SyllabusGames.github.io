@@ -16,7 +16,7 @@ function addGraphedPoint(xx){//		input is mouse x position in screen coordinates
 		if(tmpx < 0){
 			theta = Math.PI + theta;
 		}else if(-(mouseY/screenScale - screeny) < 0){
-			theta = _endAngle + theta;
+			theta = _piTimes2 + theta;
 		}
 		
 		if(ctrlHeld){
@@ -119,7 +119,6 @@ function cursorPosition(){
 	
 	tmpx = mouseX/screenScale + screenx;//		mouse position in world space
 	
-	
 	if(usePolar){
 		theta = math.atan(-(mouseY/screenScale - screeny)/(tmpx));//		theta = θ
 		
@@ -127,7 +126,7 @@ function cursorPosition(){
 		if(tmpx < 0){//		left of Y axis.
 			theta = Math.PI + theta;
 		}else if(-(mouseY/screenScale - screeny) < 0){//		below X axis
-			theta = _endAngle + theta;
+			theta = _piTimes2 + theta;
 		}
 		
 		tmpy = equation(theta);
@@ -402,7 +401,7 @@ function cursorPosition(){
 //		takes an x and y position in world space and a radius in pixels and draws a circle
 function drawCircle(xx , yy , rr){
 	ctx.beginPath();
-	ctx.arc( (xx-screenx)*screenScale , -(yy-screeny)*screenScale , rr , 0 , _endAngle);
+	ctx.arc( (xx-screenx)*screenScale , -(yy-screeny)*screenScale , rr , 0 , _piTimes2);
 	ctx.stroke();
 	ctx.closePath();
 	ctx.fill();

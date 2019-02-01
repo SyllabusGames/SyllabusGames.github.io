@@ -1,16 +1,15 @@
 ﻿
-var blankEquGaps = [];//		stoed as [,*x+ , +t/,+2]. If it starts with a dragable value, the first value is blank.
+var blankEquGaps = [];//		stored as [,*x+ , +t/,+2]. If it starts with a dragable value, the first value is blank.
 var blankDefaultVar = [];
 
-var blankEquInput = [];
-var blankEquText = [];
+var blankEquInput = [];//		Small input fields. These are used whenever multiple input fields are needed and their width or y position needs to be changed.
+var blankEquText = [];//		Text between input fields.
 
 var blankTmp;
 
 function blankInitialize(){
 	mainInput.style.display = "none";
-	equRaw = defaultEqu;
-	equLast = defaultEqu;
+	equLast = equRaw;
 	//mainInput.innerHTML = defaultEqu;//		set the input field to have the default equation. Then update it and set it active (focus).
 	// scope = {x: 0 , t: 0};
 	// equInput = math.parse("5" , scope);
@@ -27,9 +26,9 @@ function blankInitialize(){
 	for(i = 0 ; i < blankEquInput.length ; i++){
 		if(i < blankDefaultVar.length){//		blank is used, show it and place at the correct location
 			blankEquInput[i].style.display = "block";
-			tmpx += ctx.measureText(blankEquGaps[i]).width;//		get length of text that is immediatly left of the current blank and add that to the blank's position
+			tmpx += ctx.measureText(blankEquGaps[i]).width;//		get length of text that is immediately left of the current blank and add that to the blank's position
 			blankEquInput[i].style.left = (tmpx + 10) + "px";//		place next blank 5 pixels right of the right edge of the last input field
-			tmpx += 90;//		add width of textbox + a 5 pixel gap on each side of the previous text (80 + 5 + 5)
+			tmpx += parseInt(blankEquInput[i].style.width) + 10;//		add width of textbox plus a 5 pixel gap on each side of the previous text
 			blankEquInput[i].innerHTML = blankDefaultVar[i];//		read in default values for input fields
 		}else{//	blank is not used, hide it
 			blankEquInput[i].style.display = "none";
@@ -41,7 +40,7 @@ function blankInitialize(){
 	blankEquText[0].innerHTML = '<pre class="unselectable" style="font-size: 35px; font-family: Arial;">' + blankEquGaps[0] + '</pre>';
 	for(i = 1 ; i < blankEquText.length ; i++){
 		if(i < blankEquGaps.length-1){
-			blankEquText[i].style.left = (parseInt(blankEquInput[i-1].style.left) + 90) + "px";//		place text 5px right of last input field's right edge
+			blankEquText[i].style.left = (parseInt(blankEquInput[i-1].style.left) + parseInt(blankEquInput[i-1].style.width) + 10) + "px";//		place text 5px right of last input field's right edge
 			blankEquText[i].innerHTML = '<pre class="unselectable" style="font-size: 35px; font-family: Arial;">' + blankEquGaps[i] + '</pre>';
 			blankEquText[i].style.display = "block";
 		}else{
@@ -53,8 +52,7 @@ function blankInitialize(){
 	blankEquInput[0].focus();
 	activeInput = blankEquInput[0];
 
-	scope = {x: 0 , t: 0};
-	equInput = math.parse(pieRaw[0] , scope);
+	equInput = math.parse(pieRaw[0] , {x: 0 , t: 0});
 	equCompiled = equInput.compile();
 	
 	blankUpdateEqu();
@@ -105,7 +103,7 @@ function blankScreenResize(){
 	else
 		yEqualsText.style.top = (screenHeight-50) + "px";
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 50) + "px";
 	}
 }

@@ -238,6 +238,8 @@ function screenSizeChanged(){
 		dragScreenResize();
 	else if(isFillBlanks)
 		blankScreenResize();
+	else if(isProgramming)
+		proScreenResize();
 	else if(isCutscene)
 		cutScreenResize();
 	else

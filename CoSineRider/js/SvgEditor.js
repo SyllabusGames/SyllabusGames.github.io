@@ -60,7 +60,7 @@ function svgError(){
 function drawSVGColliders(){//		called from the end of Collisiions.js
 	if(useScreenLimit){
 		ctx.beginPath();
-		ctx.arc( screenWidth/2 , screenHeight/2, 5 , 0 , _endAngle);
+		ctx.arc( screenWidth/2 , screenHeight/2, 5 , 0 , _piTimes2);
 		ctx.stroke();
 		ctx.closePath();
 		ctx.fill();
@@ -92,10 +92,18 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 
 	ctx.beginPath();
 	for(i = allGroundPointsX.length-1 ; i > -1 ; i--){
-		if(allGroundBreaks[i]){//		line continues
-			ctx.lineTo((allGroundPointsX[i]-screenx)*screenScale , (allGroundPointsY[i]+screeny)*screenScale);
-		}else if(i == 0 || allGroundBreaks[i-1]){//	first point of new line
-			ctx.moveTo((allGroundPointsX[i]-screenx)*screenScale , (allGroundPointsY[i]+screeny)*screenScale);
+		if(usePolar){
+			if(allGroundBreaks[i]){//		line continues
+				ctx.lineTo((math.cos(allGroundPointsX[i])*allGroundPointsY[i]-screenx)*screenScale , (math.sin(allGroundPointsX[i])*allGroundPointsY[i]+screeny)*screenScale);
+			}else if(i == 0 || allGroundBreaks[i-1]){//	first point of new line
+				ctx.moveTo((math.cos(allGroundPointsX[i])*allGroundPointsY[i]-screenx)*screenScale , (math.sin(allGroundPointsX[i])*allGroundPointsY[i]+screeny)*screenScale);
+			}
+		}else{
+			if(allGroundBreaks[i]){//		line continues
+				ctx.lineTo((allGroundPointsX[i]-screenx)*screenScale , (allGroundPointsY[i]+screeny)*screenScale);
+			}else if(i == 0 || allGroundBreaks[i-1]){//	first point of new line
+				ctx.moveTo((allGroundPointsX[i]-screenx)*screenScale , (allGroundPointsY[i]+screeny)*screenScale);
+			}
 		}
 	}
 	ctx.stroke();
@@ -107,7 +115,7 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 			ctx.fillStyle = "#00FFFF";
 
 			/*ctx.beginPath();
-			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , _endAngle);
+			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , _piTimes2);
 			ctx.stroke();
 			ctx.closePath();
 			ctx.fill();
@@ -116,7 +124,7 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 		}else{//		Point hovered over is circled in blue
 			ctx.strokeStyle="#0080FF";
 			ctx.beginPath();
-			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , _endAngle);
+			ctx.arc((allGroundPointsX[selectedPoint]-screenx)*screenScale , (allGroundPointsY[selectedPoint]+screeny)*screenScale , 3+0.2*screenScale , 0 , _piTimes2);
 			ctx.stroke();
 		}
 	}

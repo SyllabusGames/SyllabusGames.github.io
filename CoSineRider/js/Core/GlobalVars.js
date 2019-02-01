@@ -44,7 +44,7 @@ var _xyzButtonColor = "#00A0A030";
 
 var _displayErrorColor = "#A00000";//		alpha value set in code so this color value must be 6 characters not 8 (RGB not RGBA)
 
-var _endAngle = 2*Math.PI;
+var _piTimes2 = 2*Math.PI;
 var _piOver2 = Math.PI/2;
 
 var _menuButtonColor = "#000000";
@@ -86,8 +86,6 @@ var theta = 0;//	stores angles for polar coordinates
 	var itmp = 0;//	int
 	var ftmp = 0;//	float
 	var dtmp = 0;//	float
-	var tmspx;
-	var tmspy;
 	var tmspz;
 	
 	
@@ -132,7 +130,7 @@ var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel ga
 var xyz2c;
 
 var activeInput;//		the currently selected text input field
-var mainInput;//		the first (botom left) input field and the one that is used if only one is active
+var mainInput;//		the first (bottom left) input field and the one that is used if only one is active
 
 var background = new Image;
 var drawBackground = true;

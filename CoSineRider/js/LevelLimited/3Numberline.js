@@ -326,7 +326,7 @@ function animDrawPointMove(xxa , yya , xxb , yyb , lerp){
 	
 	//		-----------------------------------------------------------------------		[   Point at xxa on yya   ]		-----------------------------------------------------------------------
 	ctx.beginPath();
-	ctx.arc(xxa , yya , animTxtHight/8 , 0 , _endAngle);
+	ctx.arc(xxa , yya , animTxtHight/8 , 0 , _piTimes2);
 	ctx.stroke();
 	ctx.closePath();
 	ctx.fill();
@@ -335,7 +335,7 @@ function animDrawPointMove(xxa , yya , xxb , yyb , lerp){
 	//		-----------------------------------------------------------------------		[   Point at xxb on yyb   ]		-----------------------------------------------------------------------
 	if(lerp > 0.8){
 		ctx.beginPath();
-		ctx.arc(xxb , yyb , animTxtHight/8 , 0 , _endAngle);
+		ctx.arc(xxb , yyb , animTxtHight/8 , 0 , _piTimes2);
 		ctx.stroke();
 		ctx.closePath();
 		ctx.fill();

@@ -98,7 +98,7 @@ function drawPolarGrid(){
 			ctx.lineWidth = 1;
 		}
 		ctx.beginPath();
-		ctx.arc( -screenx*screenScale , screeny*screenScale , i*gridScale*screenScale , 0 , _endAngle);
+		ctx.arc( -screenx*screenScale , screeny*screenScale , i*gridScale*screenScale , 0 , _piTimes2);
 		ctx.stroke();
 	}
 
@@ -120,7 +120,7 @@ function drawGoals(){
 	ctx.strokeStyle = _goalColor;
 	//		draw goal
 	ctx.beginPath();
-	ctx.arc((goalx-screenx)*screenScale , -(goaly-screeny)*screenScale , goalr*screenScale , 0 , _endAngle);
+	ctx.arc((goalx-screenx)*screenScale , -(goaly-screeny)*screenScale , goalr*screenScale , 0 , _piTimes2);
 	ctx.stroke();
 	
 	if(useCheckpoints){
@@ -128,7 +128,7 @@ function drawGoals(){
 		for(i = checkx.length-1 ; i > -1 ; i--){
 			//		draw circle
 			ctx.beginPath();
-			ctx.arc((checkx[i]-screenx)*screenScale , -(checky[i]-screeny)*screenScale , checkr[i]*screenScale , 0 , _endAngle);
+			ctx.arc((checkx[i]-screenx)*screenScale , -(checky[i]-screeny)*screenScale , checkr[i]*screenScale , 0 , _piTimes2);
 			ctx.stroke();
 		}
 	}

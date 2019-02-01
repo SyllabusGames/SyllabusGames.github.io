@@ -156,7 +156,7 @@ function cutScreenResize(){
 		cutSvgObject.setAttribute("width" , screenWidth + "px");
 	
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 50) + "px";
 	}
 }

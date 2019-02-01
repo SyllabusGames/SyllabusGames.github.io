@@ -101,12 +101,12 @@ function update(){
 //		-----------------------------------------------------------------------		[   Simulation Speed Changes   ]		-----------------------------------------------------------------------
 	if(simulating){
 		if(slowMotion){
-			dt *= 0.1;
+			dt *= 0.05;
 		}
 		
 		if(ctrlHeld){//		speed up game
 			if(slowMotion){
-				dt *= 80;
+				dt *= 120;
 			}else
 				dt *= 3;
 		}

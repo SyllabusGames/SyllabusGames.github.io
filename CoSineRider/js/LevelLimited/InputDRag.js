@@ -31,7 +31,7 @@ function dragInitialize(){//		called from LevelLoader.js
 	dragUpdateEqu();
 	
 	//		set up Math.js equation parser
-	scope = {x: 0 , t: 0};
+	scope = {x: 0 , t: 0 , z: 0};
 	equInput = math.parse(equRaw , scope);
 	equCompiled = equInput.compile();
 	
@@ -136,7 +136,7 @@ function dragMain(){
 			
 			//		draw point
 			ctx.beginPath();
-			ctx.arc( tmpx , tmpy , 4 , 0 , _endAngle);
+			ctx.arc( tmpx , tmpy , 4 , 0 , _piTimes2);
 			ctx.stroke();
 			
 			//		draw move direction arrows
@@ -223,7 +223,7 @@ function dragScreenResize(){
 	else
 		yEqualsText.style.top = (screenHeight-50) + "px";
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 50) + "px";
 	}
 }

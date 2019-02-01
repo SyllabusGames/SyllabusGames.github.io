@@ -294,7 +294,7 @@ function drawXYZ(){
 	//		Z position dot
 	xyz2.strokeStyle = _inputZColor;
 	xyz2.beginPath();
-	xyz2.arc(485 , 200 - apz*9 , 5 , 0 , _endAngle);
+	xyz2.arc(485 , 200 - apz*9 , 5 , 0 , _piTimes2);
 	xyz2.closePath();
 	xyz2.fill();
 	xyz2.stroke();

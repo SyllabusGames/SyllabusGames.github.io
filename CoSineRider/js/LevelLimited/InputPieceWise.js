@@ -4,10 +4,10 @@ var pieEquCompiled  = ["0" , "0" , "0" , "0" , "0" , "0"];//		these are the comp
 
 var pieEquInputsUsed = 1;
 var pieEquInput = [];//		input fields containing the equations
-var pieLeftInput = [];//		the limit input boxes to the left in the format __ < x < __
+var pieLeftInput = [];//		the limit input boxes to the left in the format __ < x < __ (Input field is never used for anything else)
 var pieLeftInputCompiled = [false,false,false,false,false];
 var pieLeftNumeric = [true,true,true,true,true];//		left input is just a number. If false, it is an equation containing t and must be updated every frame.
-var pieRightInput = [];
+var pieRightInput = [];//		the limit input boxes to the right in the format __ < x < __ (Input field is never used for anything else)
 var pieRightInputCompiled = [false,false,false,false,false];
 var pieRightNumeric = [true,true,true,true,true];
 var pieLimitsText = [];//		elements holding the "< x <" text on screen
@@ -15,7 +15,7 @@ var pieLimitsText = [];//		elements holding the "< x <" text on screen
 var pieLeftLimit = [0,0,0,0,0];
 var pieRightLimit = [0,0,0,0,0];
 var pieRaw = ["","","","",""];
-var pieLast = ["","","","",""];
+var pieLast = ["0","1","2","3","4"];
 
 //		-----------------------------------------------------------------------		[   Set up Equation Input Box   ]		-----------------------------------------------------------------------
 function pieInitialize(){
@@ -52,7 +52,7 @@ function pieScreenResize(){
 		yEqualsText.style.top = (screenHeight-50 - (pieEquInputsUsed-1)*23) + "px";
 	
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (screenHeight - 95 - (pieEquInputsUsed-1) * 46) + "px";
 	}
 }
@@ -230,6 +230,7 @@ function pieCheckInput(selectedElement){
 			pieEquCompiled[inputNum] = equCompiled;
 			equInvalid = false;
 		}catch(err){
+			console.log()
 			equInput = math.parse(pieLast[inputNum] , scope);
 			equCompiled = equInput.compile();
 			pieEquCompiled[inputNum] = equCompiled;

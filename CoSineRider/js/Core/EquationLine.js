@@ -8,7 +8,7 @@
  */
 
 //		equation input
-var scope;
+var scope = {x: 0 , t: 0 , z: 0};
 var equInput;
 var equCompiled;//		compiled Math.js parsers
 var equInvalid = false;
@@ -17,7 +17,6 @@ var guideInput;
 var guideCompiled;
 var guideTime = 0;
 
-var defaultEqu = "-x-5";
 var equInputField;
 var gridScale = 1;//		scales grid to show 1s, 10s, or 100s based on the screenScale
 
@@ -40,7 +39,7 @@ function graphAllLines(){
 		
 		if(usePolar){
 			ctx.moveTo(0 , (-guideCompiled.eval({x: screenx , t: (guideTime/2)%6}) + screeny)*screenScale);
-			for(i = 0.005 ; i < _endAngle ; i += 0.005){
+			for(i = 0.005 ; i < _piTimes2 ; i += 0.005){
 				ctx.lineTo(i , (-guideCompiled.eval({x: i/screenScale + screenx , t: (guideTime/2)%6}) + screeny)*screenScale);
 			}
 		}else{
@@ -56,7 +55,7 @@ function graphAllLines(){
 	//	----------------------------------		[   Graph Proxy Function inputs as separate functions   ]		----------------------------------
 	
 	//		if using InputProxyFunction, draw a line for every function with x substituted for a
-	if(isProxyFunction && !simulating){
+	if(isProxyFunction){// && !simulating){
 		ctx.lineWidth = 2.5;
 		for(k = pieEquInputsUsed ; k > 0 ; k--){
 			ctx.strokeStyle = _pFunLineColor[k-1] + "A0";//		set alpha to make the composite line stand out. There are 4 colors and 5 inputs so -1
@@ -64,7 +63,7 @@ function graphAllLines(){
 			
 			if(usePolar){
 				ctx.moveTo((pieEquCompiled[k].eval({a: 0}) - screenx)*screenScale , screeny*screenScale);
-				for(i = 0.005 ; i < _endAngle ; i += 0.005){
+				for(i = 0.005 ; i < _piTimes2 ; i += 0.005){
 					ftmp = pieEquCompiled[k].eval({a: i});//		ftmp = r 		read a as θ
 					ctx.lineTo((ftmp * math.cos(i) - screenx)*screenScale , (-ftmp * math.sin(i) + screeny)*screenScale);
 				}
@@ -82,7 +81,7 @@ function graphAllLines(){
 	ctx.lineWidth = 3;
 	
 	//	----------------------------------		[   Draw t=0 line (light grey)   ]		----------------------------------
-	if(useTime){
+	if(showt0){
 		//		draw time independent (t=0) equation line in grey
 		ctx.strokeStyle = _lineTimelessColor;
 		var tmpTime = frameTime;
@@ -117,7 +116,7 @@ function graphAllLines(){
 		
 		if(usePolar){
 			ctx.moveTo((equation(0) - screenx)*screenScale , screeny*screenScale);
-			for(i = 0.005 ; i < _endAngle ; i += 0.005){
+			for(i = 0.005 ; i < _piTimes2 ; i += 0.005){
 				ftmp = equation(i);//		ftmp = r
 				ctx.lineTo((ftmp * math.cos(i) - screenx)*screenScale , (-ftmp * math.sin(i) + screeny)*screenScale);
 			}
@@ -151,7 +150,8 @@ function graphLine(){
 	ctx.beginPath();
 	if(usePolar){
 		ctx.moveTo((equation(0) - screenx)*screenScale , screeny*screenScale);
-		for(i = 0.005 ; i < _endAngle ; i += 0.005){
+		for(i = 0.005 ; i < _piTimes2 ; i += 0.005){
+		// for(i = -2*_piTimes2 ; i < _piTimes2*5 ; i += 0.005){
 			ftmp = equation(i);//		ftmp = r
 			ctx.lineTo((ftmp * math.cos(i) - screenx)*screenScale , (-ftmp * math.sin(i) + screeny)*screenScale);
 		}

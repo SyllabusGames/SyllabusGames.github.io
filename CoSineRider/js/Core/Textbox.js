@@ -1,7 +1,7 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 var equChars;
 var containsVariables = false;
-var pieEquInput = [];//new Array();
+var pieEquInput = [];//		used when multiple input fields are needed but input field widths and y positions will not be changed.
 var yEqualsText;
 var yPrimeEqualsText;
 var parenOpen = 0;
@@ -215,6 +215,8 @@ function showHideInputs(show){//		"none" / "block"
 		dragShowHideInputs(show);
 	}else if(isFillBlanks){
 		blankShowHideInputs(show);
+	}else if (isProgramming){
+		proShowHideInputs(show);
 	}else if(isCutscene){
 		//		no input to show/hide
 	}else{
@@ -223,7 +225,7 @@ function showHideInputs(show){//		"none" / "block"
 	
 	playPauseButton.style.display = show;
 	yEqualsText.style.display = show;
-	if(useDerivative || useIntegral)
+	if(useDerivative)
 		yPrimeEqualsText.style.display = show;
 }
 
@@ -232,7 +234,7 @@ var inputZ = 0;
 function checkInputFields(selectedElement){
 	if(selectedElement == "all"){
 		if(isPiecewise){
-			for(var num = pieEquInputsUsed-1 ; num > -1 ; num--){//		for each input field excluding the main input [0]
+			for(var num = pieEquInputsUsed-1 ; num > -1 ; num--){//		for each input field including the main input [0]
 				pieCheckInput(pieEquInput[num]);
 			}
 			return;
@@ -244,6 +246,11 @@ function checkInputFields(selectedElement){
 		}else if(isProxyFunction){
 			for(var num = pieEquInputsUsed ; num > 0 ; num--){//		for each input field excluding the main input [0]
 				pFunCheckInput(pieEquInput[num]);
+			}
+			return;
+		}else if(isProgramming){
+			for(var num = pieEquInputsUsed ; num > -1 ; num--){//		for each input field including the main input [0]
+				proCheckInput(pieEquInput[num]);
 			}
 			return;
 		}
@@ -258,7 +265,9 @@ function checkInputFields(selectedElement){
 	}else if(isDrag){
 		//		run nothing. Drag input is always updated within InputDrag.js
 	}else if(isFillBlanks){
-		blankCheckInput();
+		blankCheckInput(selectedElement);
+	}else if(isProgramming){
+		proCheckInput(selectedElement);
 	}else if(isCutscene){
 		//		no input to check
 	}else{
@@ -266,10 +275,6 @@ function checkInputFields(selectedElement){
 	}
 	//		update the displayed derivative equation
 	if(useDerivative){
-		yPrimeEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y(dx)=' + 
-		formatTypedInput((math.derivative( equRaw , 'x' ) + " " )) + '</text>';//		class"unselectable" declared in CoSineRider.html"
-		//		add a blank space to the end to convert it to a string
-	}else if(useIntegral){
 		yPrimeEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y(dx)=' + 
 		formatTypedInput((math.derivative( equRaw , 'x' ) + " " )) + '</text>';//		class"unselectable" declared in CoSineRider.html"
 		//		add a blank space to the end to convert it to a string
@@ -371,14 +376,14 @@ function formatTypedInput(equChars){
 				break;
 		}
 		ftmp--;
-		if(ftmp == 0){//		current character is the caret position
-			lyy = rtmp;
-		}
-		if(ftmp == dtmp){//	current character is the end of the selection
-			ryy = rtmp;
-		}
 	}
+	lyy = rtmp + ftmp;//		set caret position
+	ryy = rtmp + ftmp;//		set end of selection
 	return equColored;
 }
+
+
+
+
 
 

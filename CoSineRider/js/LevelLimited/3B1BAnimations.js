@@ -270,7 +270,7 @@ function numberLine(xxx , dy , yyy){
 	
 	//		draw point at [xxx,dy] (Draw the graph points)
 	ctx.beginPath();
-	ctx.arc(xxx , (screeny - dy)*screenScale , 6 , 0 , _endAngle);
+	ctx.arc(xxx , (screeny - dy)*screenScale , 6 , 0 , _piTimes2);
 	ctx.stroke();
 	ctx.closePath();
 	ctx.fill();

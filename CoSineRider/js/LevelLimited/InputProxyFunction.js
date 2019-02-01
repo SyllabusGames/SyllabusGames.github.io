@@ -27,7 +27,7 @@ function pFunScreenResize(){
 	pFunUpdateEquDisplay();
 //	pieEquInput[0].style.top = "100px"
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 0) + "px";
 	}
 }
@@ -91,8 +91,7 @@ function pFunCheckInput(selectedElement){
 	if(!simulating){//		Only update the equation if the simulation is not running
 		equInputField = activeInput.style;
 		try{//		parse the input text to check if it is a valid equation to update the input border color to denote a valid/invalid equation
-			scope = {a: 2};
-			equInput = math.parse(absBarToFunction(activeInput.innerText) , scope);
+			equInput = math.parse(absBarToFunction(activeInput.innerText) , {a: 2});
 			pFunCompileTmp = pieEquCompiled[inputNum];//		store previous compiled equation in case this one is invalid
 			pieEquCompiled[inputNum] = equInput.compile();
 			equInvalid = false;
@@ -111,8 +110,8 @@ function pFunCheckInput(selectedElement){
 			equInputField.borderWidth = "1px";
 			
 			//		only update pieRaw (read into the display for the y= equation) when an equation is valid
-			pieRaw[inputNum] = activeInput.innerText;
-			equRaw = mainInput.innerText;
+			pieRaw[inputNum] = activeInput.innerText.toLowerCase().replace("π" , "pi");
+			equRaw = mainInput.innerText.toLowerCase().replace("π" , "pi");
 			//		substitute a,b,c, and d with the inputs for those fields. It doesn't mater if they don't use D because there just won't be and D in the equation.
 			//		do not add a ) at the end since I cannot delete the one left from f()
 			
@@ -241,12 +240,14 @@ function pFunFormatTypedInput(equChars){
 				break;
 		}
 		ftmp--;
-		if(ftmp == 0){//		current character is the caret position
+		/*if(ftmp == 0){//		current character is the caret position
 			lyy = rtmp;
 		}
 		if(ftmp == dtmp){//	current character is the end of the selection
 			ryy = rtmp;
-		}
+		}*/
 	}
+	lyy = rtmp + ftmp;//		set caret position
+	ryy = rtmp + ftmp;//		set end of selection
 	return equColored;
 }

@@ -8,23 +8,37 @@ var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
 var useGuide = false;//		show guide line.	Guide variables declared in EquationLine.js
-var useTime = false;//		time is not just set to zero
+var showt0 = false;//		time is not just set to zero
 //var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
 var useNone = false;//		This is not a game level so the sledder, background, and colliders will not be loaded
 var useRender = false;
 var useDerivative = false;
-var useIntegral = false;
 var usePolar = false;
+/*	Polar Guide
+		world coordinates to theta = math.atan(Y/X);
+			theta wrapping fix (so it goes from 0 to 2pi for a full circle)
+				if(X < 0){
+					theta = Math.PI + theta;
+				}else if(Y < 0){
+					theta = _piTimes2 + theta;
+				}
+		world coordinates to radius = math.sqrt(X*X + Y*Y)
+		
+		polar to world coordinates
+			X = R * math.cos(theta);
+			Y = R * math.sin(theta);
+*/
 var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
 
-var useScreenLimit = true;//		in checkpoint levels, lock the screen to show only the last and next checkpoints
+var useScreenLimit = true;//		in checkpoint levels, limit screen movement to show only the last and next checkpoints
 
 var isPiecewise = false;
 var isProxyVar = false;
 var isProxyFunction = false;
 var isDrag = false;
 var isFillBlanks = false;//Give the player blanks to fill in instead of letting them write their own equation
+var isProgramming = false;
 var isCutscene = false;//	level is a cutscene
 
 //var equationHistory[];//		a list of all equations that have beaten a level
@@ -124,6 +138,8 @@ function loadBuiltInLevel(){
 			pieLeftInput[k].style.display = "none";
 			pieRightInput[k].style.display = "none";
 			pieLimitsText[k].style.display = "none";
+			pieEquInput[k].setAttribute("contentEditable" , "true");
+			pieEquInput[k].style.backgroundColor = _inputColor;
 		}
 	}
 	//		some levels may change the background color of the main input, fix it here
@@ -147,23 +163,26 @@ function loadBuiltInLevel(){
 	isProxyFunction = false;
 	isDrag = false;
 	isFillBlanks = false;
+	isProgramming = false;
 	isCutscene = false;
 	
 	useGuide = false;
-	useTime = false;
+	showt0 = false;
 	useZ = false;
 	useNone = false;
 	useDerivative = false;
-	// useIntegral = false;
 	usePolar = false;
+	
+	useScreenLimit = false;
+	ay = -30;//		reset gravity after programming levels
 	
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 		case "SR":
-		//		"LV1: Using Time\nSR\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nuseTime\nuseZ\n44,4\nCave\nEnd"
-			defaultEqu = loadedLevel[lineNum];
-			mainInput.innerHTML = defaultEqu;
+		//		"LV1: Using Time\nSR\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nshowt0\nuseZ\n44,4\nCave\nEnd"
+			equRaw = loadedLevel[lineNum];
+			mainInput.innerHTML = equRaw;
 			mainInput.style.display = "block";
 			activeInput = mainInput;//		set the active input field to the only input field
 			lineNum++;
@@ -188,6 +207,16 @@ function loadBuiltInLevel(){
 
 				partstring = loadedLevel[k+lineNum].split(',');//		equations are stored as LeftLimit,RightLimit,Equation
 
+				//		----------------		[   Left Limit   ]		----------------
+				if(partstring[0][0] == 'L'){//		Lock input field
+					partstring[0] = partstring[0].substring(1);//		cut L off the front of this input
+					pieLeftInput[k].setAttribute("contentEditable" , "false");
+					pieLeftInput[k].style.backgroundColor = _inputLockedColor;
+				}else{//		unlock input field
+					pieLeftInput[k].setAttribute("contentEditable" , "true");
+					pieLeftInput[k].style.backgroundColor = _inputColor;
+				}
+				
 				pieLeftLimit[k] = parseInt(partstring[0]);
 				pieLeftInput[k].innerHTML = partstring[0];
 				if(partstring[0].indexOf("t") != -1){//		if limit contains t, store it as an equation
@@ -195,13 +224,31 @@ function loadBuiltInLevel(){
 					pieLeftInputCompiled[k] = equInput.compile();
 				}
 
+				//		----------------		[   Right Limit   ]		----------------
+				if(partstring[1][0] == 'L'){//		Lock input field
+					partstring[1] = partstring[1].substring(1);//		cut L off the front of this input
+					pieRightInput[k].setAttribute("contentEditable" , "false");
+					pieRightInput[k].style.backgroundColor = _inputLockedColor;
+				}else{//		unlock input field
+					pieRightInput[k].setAttribute("contentEditable" , "true");
+					pieRightInput[k].style.backgroundColor = _inputColor;
+				}
 				pieRightLimit[k] = parseInt(partstring[1]);
 				pieRightInput[k].innerHTML = partstring[1];
 				if(partstring[1].indexOf("t") != -1){//		if limit contains t, store it as an equation
 					equInput = math.parse(partstring[1] , {t: 0});
 					pieRightInputCompiled[k] = equInput.compile();
 				}
-
+				
+				//		----------------		[   Input field   ]		----------------
+				if(partstring[2][0] == 'L'){//		Lock input field
+					partstring[2] = partstring[2].substring(1);//		cut L off the front of this input
+					pieEquInput[k].setAttribute("contentEditable" , "false");
+					pieEquInput[k].style.backgroundColor = _inputLockedColor;
+				}else{//		unlock input field
+					pieEquInput[k].setAttribute("contentEditable" , "true");
+					pieEquInput[k].style.backgroundColor = _inputColor;
+				}
 				pieEquInput[k].innerHTML = partstring[2];
 			}
 			while(k < 5){//		hide each input field not used
@@ -221,7 +268,6 @@ function loadBuiltInLevel(){
 			pieEquInput[0].innerHTML = loadedLevel[lineNum].substring(2);
 			pieEquInput[0].style.display = "block";
 			if(loadedLevel[lineNum][1] == "="){
-				console.log("editable");
 				pieEquInput[0].setAttribute("contentEditable" , "true");
 				pieEquInput[0].style.backgroundColor = _inputColor;
 			}else{
@@ -408,7 +454,53 @@ function loadBuiltInLevel(){
 			lineNum++;
 			blankDefaultVar = loadedLevel[lineNum].split(',');//		load all default values
 			lineNum++;
+			partstring = loadedLevel[lineNum].split(',');//		load all input field widths
+			lineNum++;
+			for(i = partstring.length-1 ; i > -1 ; i--){
+				blankEquInput[i].style.width = partstring[i] + "px";
+			}
 			blankInitialize();
+			break;//		-----------------------------------------------------------------------		[   Programming   ]		-----------------------------------------------------------------------
+		case "PR":
+			isProgramming = true;
+			equRaw = loadedLevel[lineNum];
+			lineNum++;
+			//		for a maximum of 5*2 lines,  check for the 5 possible inputs the level could use
+			for(i = 0 ; i < 5 ; i++){
+				switch(loadedLevel[lineNum]){
+					case "proSledPosX":
+						proSledPosX = true;
+						lineNum++;
+						proEquPosX = loadedLevel[lineNum];
+						lineNum++;
+						break;
+					case "proSledPosY":
+						proSledPosY = true;
+						lineNum++;
+						proEquPosY = loadedLevel[lineNum];
+						lineNum++;
+						break;
+					case "proSledVelX":
+						proSledVelX = true;
+						lineNum++;
+						proEquVelX = loadedLevel[lineNum];
+						lineNum++;
+						break;
+					case "proPSledVelY":
+						proPSledVelY = true;
+						lineNum++;
+						proEquVelY = loadedLevel[lineNum];
+						lineNum++;
+						break;
+					case "proGravity":
+						proGravity = true;
+						lineNum++;
+						proEquGravity = loadedLevel[lineNum];
+						lineNum++;
+						break;
+				}
+			}
+			proInitialize();
 			break;
 		//		-----------------------------------------------------------------------		[   Cutscene   ]		-----------------------------------------------------------------------
 		case "CU":
@@ -425,15 +517,14 @@ function loadBuiltInLevel(){
 	//		Guide Equation
 	if(loadedLevel[lineNum].substring(0,2) == "y="){
 		useGuide = true;
-		scope = {x: 0 , t: 0};
-		guideInput = math.parse(loadedLevel[lineNum].substring(2) , scope);
+		guideInput = math.parse(loadedLevel[lineNum].substring(2) , {x: 0 , t: 0});
 		guideCompiled = guideInput.compile();
 		lineNum++;
 	}
 
-	//		UseTime
-	if(loadedLevel[lineNum] == "useTime"){
-		useTime = true;
+	//		showt0
+	if(loadedLevel[lineNum] == "showt0"){
+		showt0 = true;
 		lineNum++;
 	}
 
@@ -475,18 +566,22 @@ function loadBuiltInLevel(){
 		yPrimeEqualsText.style.display = "none";
 	}
 	
-	//		UseIntegral (graph the integral of the equation entered instead of the equation itself)
-	if(loadedLevel[lineNum] == "useIntegral"){
-		useIntegral = true;
-		lineNum++;
-	}
-	
 	//		UsePolar (graph in polar coordinates)
 	if(loadedLevel[lineNum] == "usePolar"){
 		usePolar = true;
 		lineNum++;
 	}
-		
+	
+	
+	
+	
+	
+	
+	//		useScreenLimit (in checkpoint levels, limit screen movement to show only the last and next checkpoints)
+	if(loadedLevel[lineNum] == "useScreenLimit"){
+		useScreenLimit = true;
+		lineNum++;
+	}
 	
 	//	----------------------------------		[   camera track point   ]		----------------------------------
 	partstring = loadedLevel[lineNum].split(',');//		camera track point
@@ -512,17 +607,6 @@ function loadBuiltInLevel(){
 	}
 	
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------
-		//		https://jsfiddle.net/AbdiasSoftware/VWzTL/
-	/*if(isPiecewise){
-	}else if(isProxyVar){
-		
-	}else if(isDrag){
-		
-	}else if(isFillBlanks){
-		blankInitialize();
-	}else{
-		typeInitialize();//		see InputTyped.js
-	}*/
 
 	//		if a 3B1B animation is called for, set up the input for that
 //	setUpNumberLines();//		see 3B1BAnimations.js
@@ -575,12 +659,12 @@ function loadCollidersFromSvg(sss){
 		//		Shift and scale the translation (dx,dy) so that 1000,1000 is the center and 1 meter in game is 5 units in svg
 		dx = (1000 - parseFloat(ministring[0]))/5;
 		dy = (1000 - parseFloat(ministring[1]))/5;
-		console.log("svg translation = " + partstring);
+		// console.log("svg translation = " + partstring);
 	}else{
 		dx = 200;//		1000/5
 		dy = 200;
 	}
-	console.log("dx = " + dx + " dy = " + dy);
+	// console.log("dx = " + dx + " dy = " + dy);
 
 	partstring = sss.split('<path');//		each partstring contains one path
 	//		loop through each path, through each set of points, then split X and Y on the ,
@@ -627,17 +711,11 @@ function loadCollidersFromSvg(sss){
 		
 
 		partstring[i] = partstring[i].replace(/-?[0-9]e-?[0-9]/g , (match, $1) => {//			replace exponents with their numeric equivalent 5e3 → 5000
-			console.log("match");
-			console.log(match);
-			console.log(parseInt(match[0]));
-			console.log(parseInt(match.substring(2)));
-			console.log(math.round(parseInt(match[0]) * math.pow(10 , parseInt(match.substring(2))) * 1000) / 1000);
-			
 			//		take the string aeb (5e-4), calculate it's equivalent a*10^b (0.0005), and round the answer to the 1000s place (0.000)
 			return math.round(parseInt(match[0]) * math.pow(10 , parseInt(match.substring(2))) * 1000) / 1000;
 		});
 		
-		console.log(partstring[i]);
+		// console.log(partstring[i]);
 		
 		//		remove unwanted markers and make all points in this line coma separated
 		partstring[i] = partstring[i].substring(0 , partstring[i].indexOf('"'));//		cut fluff off the end of partstring[i]
@@ -680,6 +758,21 @@ function loadCollidersFromSvg(sss){
 		
 			allGroundBreaks.push(true);
 			//console.log('y = '+allGroundPointsY[allGroundPointsY.length-2]);
+		}
+		
+		//		if using polar coordinates, translate all svg points to polar form
+		if(usePolar){
+			for(k = allGroundPointsX.length-1 ; k > -1 ; k--){
+				theta = math.atan(allGroundPointsY[k]/allGroundPointsX[k]);
+				if(allGroundPointsX[k] < 0){
+					theta = Math.PI + theta;
+				}else if(allGroundPointsY[k] < 0){
+					theta = _piTimes2 + theta;
+				}
+				
+				allGroundPointsY[k] = math.sqrt(allGroundPointsX[k]*allGroundPointsX[k] + allGroundPointsY[k]*allGroundPointsY[k])
+				allGroundPointsX[k] = theta;
+			}
 		}
 		//		change the last entry in this array to false so a line is not drawn between the end of one line and start of the next
 	}

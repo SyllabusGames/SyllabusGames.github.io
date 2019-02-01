@@ -1,8 +1,7 @@
 ﻿
 function typeInitialize(){
 	equInputField = mainInput.style;//		used to set the border color when the equation contains errors
-	equRaw = defaultEqu;
-	equLast = defaultEqu;
+	equLast = equRaw;
 	//mainInput.innerHTML = defaultEqu;//		set the input field to have the default equation. Then update it and set it active (focus).
 	mainInput.focus();
 	scope = {x: 0 , t: 0};
@@ -25,7 +24,7 @@ function typeScreenResize(){
 	else
 		yEqualsText.style.top = (screenHeight-50) + "px";
 	
-	if(useDerivative || useIntegral){
+	if(useDerivative){
 		yPrimeEqualsText.style.top = (parseInt(yEqualsText.style.top) - 50) + "px";
 	}
 }
