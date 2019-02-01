@@ -5,6 +5,11 @@
 	<link rel="shortcut icon" href="SGLogo.png">
 </head>
 
+<script type="text/javascript" src="SmoothScrolling.js"></script>
+<script type="text/javascript" src="PageZoom.js"></script>
+<script type="text/javascript" src="EduGameListJs/GameList.js"></script>
+<script type="text/javascript" src="EduGameListJs/ListSort.js"></script>
+
 <style>
 	@font-face {
 		font-family: OpenDyslexicAlta;
@@ -18,484 +23,473 @@
 		padding: 0;
 	}
 
-	#clickable {
+	.button {
 		transition: 0.2s;
 		cursor: pointer;
+		fill-opacity: 0;
 	}
+
+		.button:hover {
+			fill-opacity: 0.2;
+		}
 
 	body {
 		margin: 0;
 		width: 100%;
 		height: 100%;
 	}
-
 </style>
-<body>
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 8000" id="svgViewBox">
+
+<body bgcolor="#23d9b0">
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 10000" width="100%" id="svgViewBox">
 		<!--		Top Banner		-->
 		<g transform="translate(0 0)">
 			<rect x="-900" width="3e3" height="80" fill="#20a080" style="paint-order:normal" />
-			<text x="796" y="60" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="52px">
+			<text x="796" y="60" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="50px">
 				Syllabus Games
 			</text>
 			<path d="m173 4-43 71h420l43-71z" fill="none" stroke="#5cc0a8" stroke-width="3.7795" />
-			<text x="360" y="37" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="40px" fill="#D0D0D0">
+			<text x="360" y="37" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="38px" fill="#D0D0D0">
 				Educational
 			</text>
-			<text x="344" y="70" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="40px" fill="#D0D0D0">
+			<text x="344" y="70" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="38px" fill="#D0D0D0">
 				Games List
 			</text>
 			<path d="m1415 4 43 71h-420l-43-71z" fill="none" stroke="#5cc0a8" stroke-width="3.7795" />
-			<text x="1210" y="37" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="40px">
+			<text x="1210" y="37" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="38px">
 				Works In Progress
 			</text>
-			<text x="1232" y="70" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="40px">
-				and other projects
+			<text x="1232" y="70" font-weight="bold" stroke-width="1.5" text-anchor="middle" font-size="38px">
+				and Other Projects
 			</text>
 
 
 			<!--		Clickable Paths		-->
 			<a xlink:href="EduGameList.html" target="_parent">
-				<path d="m173 4-43 71h420l43-71z" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	EDU List		-->
+				<path d="m173 4-43 71h420l43-71z" class="button" /><!--	EDU List		-->
 			</a>
 
 			<a xlink:href="index.html" target="_parent">
-				<path d="m593 4h403l43 71h-490l43-71" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	index		-->
+				<path d="m593 4h403l43 71h-490l43-71" class="button" /><!--	index		-->
 			</a>
 
 			<a xlink:href="WIP.html" target="_parent">
-				<path d="m1415 4 43 71h-420l-43-71z" fill-opacity="0" style="paint-order:normal" class="button" id="clickable"
-					  onmouseover="evt.target.setAttribute('fill-opacity', '0.2');"
-					  onmouseout="evt.target.setAttribute('fill-opacity','0.0');" /><!--	WIP Page		-->
+				<path d="m1415 4 43 71h-420l-43-71z" class="button" /><!--	WIP Page		-->
 			</a>
 		</g>
 
-			<defs>
-				<g id="background" class="txt">
-					<rect height="40" width="1564" y="0" x="0" stroke="#5cc0a8" stroke-width="3" fill="#33e9c0" />
-					<path d="m1495 10v23m-60-23v23m-80-23v23m-60-23v23m-370-23v23m-610-23v23m-90-23v23m-170-23v23" stroke="#5cc0a8" stroke-width="3" fill="none" />
-				</g>
+		<!--		List Sort Buttons		-->
+		<g id="listHeader" class="txt" font-size="18" transform="translate(12 100)">
+			<path d="m1564 40v-22s0-12-12-12h-1542c-10 0-10 10-10 10v24h1565" stroke="#5cc0a8" stroke-width="3" fill="#00FFFF" />
 
+			<text y="28" x="6">Type</text>
+			<rect height="26" width="55" y="10" x="4" fill-opacity="0" class="button" onclick="sortProperty(0);" />
 
-				<g id="backgroundBlue" class="txt">
-					<rect height="40" width="1564" y="0" x="0" stroke="#5cc0a8" stroke-width="3" fill="#20D0E0" />
-					<path d="m1495 10v23m-60-23v23m-80-23v23m-60-23v23m-370-23v23m-610-23v23m-90-23v23m-170-23v23" stroke="#5cc0a8" stroke-width="3" fill="none" />
-				</g>
+			<text y="28" x="70">Play It?</text>
+			<rect height="26" width="80" y="10" x="68" fill-opacity="0" class="button" onclick="sortProperty(1);" />
 
-				<g id="listHeader" class="txt" font-size="18">
-					<path d="m1564 40v-22s0-12-12-12h-1542c-10 0-10 10-10 10v24h1565" stroke="#5cc0a8" stroke-width="3" fill="#00FFFF" />
-					<text y="28" x="6">Type</text>
-					<text y="28" x="80">Subject</text>
-					<text y="28" x="230">Play It?</text>
-					<text y="28" x="330">Subject (Specific)</text>
-					<text y="28" x="930">Title</text>
-					<text y="28" x="1290">Grade</text>
-					<text y="28" x="1360">Time</text>
-					<text y="28" x="1440">Price</text>
-					<text y="28" x="1500">Form</text>
-				</g>
-			</defs>
+			<text y="28" x="160">Title</text>
+			<rect height="26" width="370" y="10" x="158" fill-opacity="0" class="button" onclick="sortProperty(2);" />
+
+			<text y="28" x="540">Subject</text>
+			<rect height="26" width="140" y="10" x="538" fill-opacity="0" class="button" onclick="sortProperty(3);" />
+
+			<text y="28" x="690">Subject (Specific)</text>
+			<rect height="26" width="590" y="10" x="688" fill-opacity="0" class="button" onclick="sortProperty(3);" /><!--	Yes, clicking this sorts by Subject	-->
+
+			<text y="28" x="1290">Grade</text>
+			<rect height="26" width="65" y="10" x="1288" fill-opacity="0" class="button" onclick="sortProperty(5);" />
+
+			<text y="28" x="1360">Time</text>
+			<rect height="26" width="75" y="10" x="1358" fill-opacity="0" class="button" onclick="sortProperty(6);" />
+
+			<text y="28" x="1440">Price</text>
+			<rect height="26" width="55" y="10" x="1438" fill-opacity="0" class="button" onclick="sortProperty(7);" />
+
+			<text y="28" x="1500">Form</text>
+			<rect height="26" width="55" y="10" x="1498" fill-opacity="0" class="button" onclick="sortProperty(8);" />
+		</g>
 		<g id="gameList"></g><!--		This is the group all game list entries are added to		-->
+		<!--		Download Links		-->
+		<g id="downloadLinks" transform="translate(760 20000)">
+			<!--	Download Excell	-->
+			<text y="35" x="-132" font-size="30">Download List As:</text>
+			<svg x="-130" y="45" height="80" width="82" version="1.1" xmlns:cc="http://creativecommons.org/ns#" viewBox="0 0 88 86">
+				<path fill="#207245" d="m46.04 0h5.94v8c10.01 0 20.02 0.02 30.03-0.03 1.69 0.07 3.55-0.05 5.02 0.96 1.03 1.48 0.91 3.36 0.98 5.06-0.05 17.36-0.03 34.71-0.02 52.06-0.05 2.91 0.27 5.88-0.34 8.75-0.4 2.08-2.9 2.13-4.57 2.2-10.36 0.03-20.73-0.02-31.1 0v9h-6.21c-15.24-2.77-30.51-5.33-45.77-8v-69.99c15.35-2.67 30.7-5.3 46.04-8.01z" />
+				<path fill="#ffffff" d="m51.98 11h33v63h-33v-6h8v-7h-8v-4h8v-7h-8v-4h8v-7h-8v-4h8v-7h-8v-4h8v-7h-8v-6z" />
+				<path fill="#207245" d="m63.98 17h14v7h-14v-7z" />
+				<path fill="#ffffff" d="m29.62 26.37c2.26-0.16 4.53-0.3 6.8-0.41-2.67 5.47-5.35 10.94-8.07 16.39 2.75 5.6 5.56 11.16 8.32 16.76-2.41-0.14-4.81-0.29-7.22-0.46-1.7-4.17-3.77-8.2-4.99-12.56-1.36 4.06-3.3 7.89-4.86 11.87-2.19-0.03-4.38-0.12-6.57-0.21 2.57-5.03 5.05-10.1 7.7-15.1-2.25-5.15-4.72-10.2-7.04-15.32 2.2-0.13 4.4-0.26 6.6-0.38 1.49 3.91 3.12 7.77 4.35 11.78 1.32-4.25 3.29-8.25 4.98-12.36z" />
+				<g fill="#207245">
+					<path d="m63.98 28h14v7h-14v-7z" />
+					<path d="m63.98 39h14v7h-14v-7z" />
+					<path d="m63.98 50h14v7h-14v-7z" />
+					<path d="m63.98 61h14v7h-14v-7z" />
+				</g>
+			</svg>
+
+			<a href="EduGameListJs/EduGameList.xlsx" download="EduGameList.xlsx">
+				<rect x="-135" y="40" width="95" height="95" class="button" />
+			</a>
+
+
+			<!--	Download CSV	-->
+			<svg x="-30" y="33" height="110" width="110" stroke="#000000" stroke-width="5" viewBox="0 0 200 200">
+				<path d="m49 24h65l35 36v100c0 4-3 7-7 7h-93c-4 0-7-3-7-7v-129c0-4 3-7 7-7z" fill="#EEEEEE" />
+				<path d="m114 24c 0 11.6558 0 30.6732 0 36 11 0 22 0 35 0h-0.00018l" fill="none" />
+				<text y="123" x="44" font-size="45">CSV</text>
+			</svg>
+			<a href="EduGameListJs/EduGameList.csv" download="EduGameList.xlsx">
+				<rect x="-25" y="40" width="95" height="95" class="button" />
+			</a>
+
+			<!--	Google Sheets	-->
+			<svg x="70" y="30" height="110" width="110" viewBox="0 0 192 192">
+				<path fill-rule="evenodd" fill="#23a565" d="m49.4714 24h65.1885l35.4002 35.9756v100.493c0 4.142-3.3891 7.5311-7.5312 7.5311h-93.0575c-4.1421 0-7.5312-3.3891-7.5312-7.5311v-128.938c0-4.142 3.3891-7.531 7.5312-7.531z" />
+				<path fill="none" d="m120.24 59.52h29.9999c5.38857 48.8002-12.7985 11.2229-29.9999 0z" />
+				<g fill-rule="evenodd">
+					<path fill="#ffffff" d="m64.9416 90.2431h61.9688v52.5754h-61.9688v-52.5754zm6.3874 37.4245h21.9328v9.0874h-21.9328v-9.0874zm27.2612-31.3613h21.9328v9.0874h-21.9328v-9.0874zm0 31.3613h21.9328v9.0874h-21.9328v-9.0874zm0-15.6807h21.9328v9.0874h-21.9328v-9.0874zm-27.2612-15.6807h21.9328v9.0874h-21.9328v-9.0874zm0 15.6806h21.9328v9.0874h-21.9328v-9.0874z" />
+					<path d="m119.944 59.9627 30.1224 29.1228v-29.1153z" fill="#007d3f" />
+					<path fill="#8bd1b5" d="m150.06 59.9756-35.4-35.9756v28.5405c0 4.0894 3.3458 7.4351 7.4352 7.4351h27.965z" />
+				</g>
+			</svg>
+			<a xlink:href="https://docs.google.com/spreadsheets/d/1EIIjerj8TSJW46YZeHuN1IqoCR6MVXGjn9VA5cvj-bg/edit?usp=sharing" target="_parent">
+				<rect x="78" y="40" width="95" height="95" class="button" />
+			</a>
+
+		</g>
 	</svg>
+</body>
 
-	<script>
-		//	Client ID	70262411444-a10h5ke2hal8h6d4osulhqfediep37jh.apps.googleusercontent.com
-		//	API Key		AIzaSyAz_MlpR2UQNX3Ea39-zZWSCKjZHzip3e0
-		var list = [
-			["Edu","Programming","No","Basic Programming (Drag 'n drop)","Turtle Academy","4+","<1","0","Flash","TurtleAcademy","https://www.brainpop.com/games/turtleacademy/",],
-			["Edu","Programming","No","Basic Programming (Drag 'n drop)","Run Marco!","4+","1","0","Web","RunMarko","https://www.brainpop.com/games/runmarco/",],
-			["Edu","Programming","No","Basic Programming (Drag 'n drop)","Blockly: Maze","3+","<1","0","Web","BlocklyMaze","https://www.brainpop.com/games/blocklymaze/",],
-			["Edu","Programming","Yes","Basic Programming (Typing)","Codecombat: Ogre Encounter","5+","Class","0","Web","CodeCombat","https://www.brainpop.com/games/codecombatogreencounter/",],
-			["Edu","Math","Maybe","Vaguely teaches fraction estimation","Slice Fractions: School Edition","3-5","<1","0/$5","Flash","SliceFractions","https://www.brainpop.com/games/slicefractionsschooledition/",],
-			["Edu","Math","Yes","Geometry (Contains serious math)","A Tangled Web","7+","2","0","Web","TangledWeb","https://www.brainpop.com/games/atangledweb/",],
-			["Edu","Math","Yes","Geometry (unreasonably difficult)","Pyramid Panic","3+","<1","0","Flash","PyramidPanic","https://www.brainpop.com/games/pyramidpanic/",],
-			["Edu","Math","Maybe","Perimeter","Square Off","3+","<0.25","0","Flash","SquareOff","https://www.brainpop.com/games/squareoff/",],
-			["Edu","Math","Maybe","Perimeter and Area","Area Builder","3+","<0.25","0","Web","AreaBuilder","https://www.brainpop.com/games/areabuilder/",],
-			["Edu","Physics","Yes","Levers/Balances","Balancing Act","4+","<0.5","0","Web","BalancingAct","https://www.brainpop.com/games/balancingact/",],
-			["Edu","Physics","Maybe","Levers, pulleys, wheels, inclined planes","Simple Machines Game","3-8","<0.25","0","Flash","SimpleMachines","https://www.brainpop.com/games/simplemachinesgame/",],
-			["Edu","Astro-Physics","Yes","Astronomy: Phases of Sun, Moon, and constellations","Chronopticon","5+","<1","0","Flash","Chronopticon","https://www.brainpop.com/games/chronopticon/",],
-			["Edu","Astro-Physics","YES!","Orbital mechanics (EDU version also available)","Kerbal Space Program","9+","∞","$40","exe","KSP","http://store.steampowered.com/app/220200/Kerbal_Space_Program/",],
-			["Edu","Government","Yes","Getting a bill through the legislative branch","Lawcraft","6+","<1","0","Flash","LawCraft","https://www.brainpop.com/games/lawcraft/",],
-			["Edu","Misc.","YES!","Food prep safety","Ninja Kitchen","5+","<1","0","Flash","NinjaKitchen","https://www.brainpop.com/games/ninjakitchen/",],
-			["Edu","Physics","Yes","Constructive and destructive wave interference","Wave Combinator","6+","<0.5","0","Web","WaveCombinator","https://www.brainpop.com/games/wavecombinator/",],
-			["Edu","Physics","Yes","High and low pressure weather systems","Wind Simulator","4+","<0.5","0","Web","","https://www.brainpop.com/games/windsimulator/",],
-			["Edu","Weather","Yes","Atomspheric measurements to predict disasters","Disaster Detector","5+","1","0","Flash","DisasterDetector","https://ssec.si.edu/disaster-detector",],
-			["Edu","Physics","Yes","Buoyancy","Hot Air Balloon","3+","<0.5","0","Web","HotAirBalloon","https://www.brainpop.com/games/hotairballoon/",],
-			["Edu","Physics","Yes","Magnets and electromagnets","Magnethunt","3+","<0.75","0","Web","MagnetHunt","https://www.brainpop.com/games/magnethunt/",],
-			["Edu","Physics","Yes","Magnets and magnetic fields","The Electric Shocktopus","6+","<0.5","0/$6","exe","Shocktopus","http://testtubegames.com/shocktopus.html",],
-			["Edu","Physics","Yes","Relativity and near light speed travel","Velocity Raptor","9+","1","0","Web","VelocityRaptor","http://testtubegames.com/velocityraptor.html",],
-			["Edu","Physics","Yes","Heliocentric/Geocentric models and related physics","Odyssey: The Invention of Science","4-10","5","$15","exe","Odyssey","http://store.steampowered.com/app/558110/Odyssey__The_Next_Generation_Science_Game/",],
-			["Edu","Physics","Yes","Subatomic particle mechanics","Particulars","9+","7","$6","exe","Particulars","http://store.steampowered.com/app/259470/Particulars/",],
-			["Edu","Physics","Yes","Quantum mechanics","Quantum Marble Maze","9+","1","0",".jar","QuantumMarbleMaze","http://tropic.org.uk/~crispin/quantum/",],
-			["Edu","Physics","Yes","Atoms bonding","Bond Breaker","7+","2","0","Unity Web GL","BondBreaker","http://testtubegames.com/bondbreaker.html",],
-			["Edu","Misc.","","Very basic music mixing","One Man Band","0-4","<1/4","0","Flash","OneManBand","https://www.brainpop.com/games/onemanband/",],
-			["Edu","Geography","Maybe","Cities, their location, and a very brief history","Carmen Sandiago","varies","varies","0","DOS","CarmenSandiago","https://classicreload.com/where-in-the-world-is-carmen-sandiego-deluxe-edition.html ",],
-			["Edu","Government","Yes","Bill of rights (best of this series)","Do I Have A Right?","","","0","Web","","https://www.brainpop.com/games/doihavearight/",],
-			["Edu","Government","Maybe","Government: Court system of the US","Court Quest","","","0","Flash","","https://www.brainpop.com/games/courtquest/",],
-			["Edu","Government","No","NOOOOOOOOOOOO","Win The White House","","","0","Unity Web GL","","https://www.brainpop.com/games/winthewhitehouse/",],
-			["Edu","Government","Maybe","Pass a law through 3 branches of US federal government","Branches Of Power","","","0","Flash","","https://www.brainpop.com/games/branchesofpower/",],
-			["Edu","Government","No","Political personality test","Cast Your Vote","","","0","Flash","","https://www.brainpop.com/games/castyourvote/",],
-			["Edu","Government","Maybe","Perform the duties of the president","Executive Command","","","0","Unity Web GL","","https://www.brainpop.com/games/executivecommand/",],
-			["Edu","Government","Yes","Rules for immigrating to the US","Immigration Nation","","<1/2","0","Flash","","",],
-			["Edu","Government","No","Act as a juror on a court case","We The Jury","","","0","Flash","","https://www.brainpop.com/games/wethejury/",],
-			["Edu","History","Maybe","Historic Supreme Court cases","Argument Wars","","","0","Flash","","https://www.brainpop.com/games/argumentwars/",],
-			["Edu","Government","No","Manage a social advocacy group","Activate","","","0","Flash","","https://www.brainpop.com/games/activate/",],
-			["Edu","Government","Maybe","Bureaucracy","Counties Work","","","0","Web","","https://www.brainpop.com/games/countieswork/",],
-			["Edu","Government","Yes","Federal Budget","People'S Pie","","","0","Flash","PeoplesPie","https://www.brainpop.com/games/peoplespie/",],
-			["Edu","None!","Maybe","Stereotyping ","Represent Me","","","0","Flash","","https://www.brainpop.com/games/representme/",],
-			["Edu","Math","YES!","Graphing equations and equations graphs","Sine Rider","","","0","Everything","","http://sineridergame.com/",],
-			["Edu","Math","No","Just play Sine Rider","Quations","","<1/4","0","","","https://www.newgrounds.com/portal/view/680544",],
-			["Edu","Government","No","How the Supreme court makes decisions","Supreme Decision","","","0","Flash","","https://www.brainpop.com/games/supremedecision/",],
-			["Issue","Issue","No","Issue: The effects of war on civilians","This War Of Mine","","","$20","exe","","http://store.steampowered.com/app/282070/This_War_of_Mine/",],
-			["Issue","Issue","Maybe","Issue: Invasive species","Invasion!!","","","0","Flash","","https://www.brainpop.com/games/invasion/",],
-			["Issue","Issue","No","Issue: Gay relationships","Sam And Nicole","","","0","exe","","https://sigridsanglar.itch.io/sam-and-nicole-demo",],
-			["Issue","Issue","No","Issue: Getting water in Africa","Yaku International","0+","<0.5","0","Web","YakuInternational","http://www.kongregate.com/games/MouseCity/yaku-international",],
-			["Issue","Issue","Maybe","Issue: Waste managment and pollution","Super Energy Apocalypse","","1","0","","SuperEnergyApocalypse","http://www.newgrounds.com/portal/view/430963",],
-			["Edu","Physics","Yes","Heat transfer","Galactic Gloop Zoo","","","0","Flash","","http://cct2.edc.org/rubyrealm/module4/bin/Module4.html",],
-			["Edu","Biology","Yes","Cellular processes","The Ruby Realm","","","0","Flash","","http://cct2.edc.org/rubyrealm/bin/RubyRealmFlash.html",],
-			["Edu","Biology","Maybe","Punnett squares","Roboriot","","","0","Flash","","http://cct2.edc.org/rubyrealm/roboriot2/bin/RoboRiot.html",],
-			["Edu","Biology","Yes","Punnett squares","Fuzzies","","","0","","","https://www.newgrounds.com/portal/view/544333",],
-			["Edu","None!","No","Not a lot honestly (it's supposed to teach about electricity)","Monster Music","2+","","0","Flash","","http://cct2.edc.org/rubyrealm/monstermusic2/bin/MonsterMusic.html",],
-			["Edu","Biology","Yes","Human systems","Code Fred: Survival Mode","","","0","Flash","","https://www.brainpop.com/games/codefredsurvivalmode/",],
-			["Edu","Biology","Yes","Components in a cell","Cellcraft","","","0","Flash","","https://www.kongregate.com/games/cellcraft/cellcraft",],
-			["Edu","Biology","Yes","Ligands","Ligand Quest","","","0","exe","","https://artii.itch.io/ligandquest",],
-			["Edu","Biology","Yes","Microscopic tour of ?human? cells and systems","Metablast","","","0","exe","","http://www.metablast.org/",],
-			["Edu","Biology","No","Sepsis (a disease)","Sepsis","","<1/2","0","Flash","","http://www.newgrounds.com/portal/view/382253",],
-			["Edu","Biology","Maybe","Evolutionary Trees: very tutorial heavy","Life Preservers","1+","<1/4","0","Flash","","https://www.brainpop.com/games/lifepreservers/",],
-			["Edu","Language","Yes","German Language","Lost In Dutchland","0+","","0","exe or Web GL","","https://gamejolt.com/games/Lost_In_Deutschland/289399",],
-			["Edu","Biology","No","Evolution","Flap To The Future","2+","<1/4","0","Web","","https://www.brainpop.com/games/flaptothefuture/",],
-			["Edu","History","Yes","Native Americans","Mission Us: A Cheyenne Odyssey","5+","","0","Flash","","https://www.brainpop.com/games/missionusacheyenneodyssey/",],
-			["Edu","History","Yes","1820s life in NY as an immigrant","Mission Us: City Of Immigrants","5+","","0","Flash","","https://www.brainpop.com/games/missionuscityofimmigrants/",],
-			["Edu","History","Yes","The American Dust Bowl","Mission Us: Up From The Dust","5+","","0","Flash","","https://www.brainpop.com/games/missionusupfromthedust/",],
-			["Edu","Literature","Maybe","Philosophy: Henry David Thoreau doing very little","Walden","7+","","0","","","https://gameinnovationlab.itch.io/walden",],
-			["Edu","Biology","Yes","Food chain","Food Chain Game","","<1/4","0","Flash","","https://www.brainpop.com/games/foodchaingame/",],
-			["Edu","Biology","No","Food chain: couldn't figure out how to play","Food Fight","","<1/4","0","Web","","https://www.brainpop.com/games/foodfight/",],
-			["Edu","Math","Yes","Logic puzzles and proofs (propositional calculus)","Rational Redux","","","0","Flash(works in chrome)","RationalRedux","http://www.kongregate.com/games/tjubert/ir-rational-redux",],
-			["Edu","Anything","Yes","","Minecraftedu","0+","∞","0","exe","","",],
-			["Edu","Job","No","Working at a news company","The Sports Network 2","4+","","0","Flash","","https://www.brainpop.com/games/thesportsnetwork2/",],
-			["Issue","None!","NO!","morality (very vague and unhelpful) (propaganda)","Digital Compass","2-4","","0","Flash","","https://www.brainpop.com/games/digitalcompass/",],
-			["Edu","Job","Yes","Job as a pathologist","Medmyst Animal Alert!","6+","","0","Flash","","https://www.brainpop.com/games/medmystanimalalert/",],
-			["Edu","Managment","Yes","Making decisions based on public opinion","Quandary","4+","","0","Web","","https://www.brainpop.com/games/quandary/",],
-			["Edu","Job","Yes","Job at a modern newspaper","After The Storm: Day One","6+","","0","Web","","https://www.brainpop.com/games/afterthestormdayone/",],
-			["Edu","Job","No","Running a community center","Community In Crisis: Aftermath","6+","","0","Web","","https://www.brainpop.com/games/communityincrisistheaftermath/",],
-			["HW","Math","Yes","Math practice (addition) [Actually good]","Addition Blocks","1-4","","0","Web","","https://www.brainpop.com/games/additionblocks/",],
-			["HW","Math","Yes","Math practice (multiplication) [Actually good]","Multiplication Blocks","2-4","","0","Web","","https://www.brainpop.com/games/multiplicationblocks/",],
-			["HW","Math","Yes","Math practice (MATH PUNCHER!)","La Torre De Nozar","2-4","","0","exe","","https://sebagames.itch.io/la-torre-de-nozar",],
-			["HW","Math","YES!","Math practice (addution and subtraction)","Gate","2-4","","0","Flash","","https://www.brainpop.com/games/gate/",],
-			["HW","Math","Maybe","Math practice (+ - x / primes)","Number Munchers","1-4","","0","","","https://classicreload.com/number-munchers.html",],
-			["HW","Math","No","Math practice (confusing)","Lure Of The Labyrinth: Cafeteria","","","0","Flash","","https://www.brainpop.com/games/lureofthelabyrinthemployeecafeteria/",],
-			["HW","Math","No","Math practice (confusing)","Math Blaster (Original)","1-4","","0","","","https://classicreload.com/math-blaster-plus.html",],
-			["HW","Math","No","Math practice and educational mini-games","Math Blaster (Modern)","0-4","","0","exe","","http://www.mathblaster.com/",],
-			["HW","Math","No","Math practice (confusing)","Lure Of The Labyrinth: Lounge","","","0","Flash","","https://www.brainpop.com/games/lureofthelabyrinthemployeelounge/",],
-			["HW","Math","No","Math practice (confusing)","Lure Of The Labyrinth: Mine","","","0","Flash","","https://www.brainpop.com/games/lureofthelabyrinthmineshaft/",],
-			["HW","Math","No","Math practice (very boring)","Number Jumble","1-4","","0","Flash","","https://www.brainpop.com/games/numberjumble/",],
-			["HW","Math","M","Math practice (relatively complicated)","Primary Krypto","1-4","","0","Flash","","https://www.brainpop.com/games/primarykrypto/",],
-			["HW","Math","No","Math practice (Visual multiplication)","Teachley Mt. Multiplis","","","0","Web","","https://www.brainpop.com/games/teachleymtmultiplis/",],
-			["HW","Math","No","Math practice (addition)","Deep Sea Duel","1-4","","0","Flash","","https://www.brainpop.com/games/deepseaduel/",],
-			["HW","Math","Yes","Math practice (addition)","Addition Snowball Fight","1-4","","0","","","https://www.newgrounds.com/portal/view/489100",],
-			["HW","Math","No","Math practice (addition and subtraction)","Jelly Bean","1-2","","0","Flash","","https://www.brainpop.com/games/jellybean/",],
-			["HW","Math","No","Math practice / word problems (bad user interface)","Riddlebooks","2-4","","0","Flash","","https://www.brainpop.com/games/riddlebooks/",],
-			["HW","Math","No","Math practice (RPG with math poorly replacing combat)","Mathoria (Series)","","","0","exe","","http://store.steampowered.com/app/434480/Mathoria_It_All_Adds_Up/",],
-			["HW","Biology","YES!","GI-Tract (learn parts of the digestion system)","Gi-Tract Chain Game","4+","","0","","","https://www.newgrounds.com/portal/view/650397",],
-			["HW","Biology","Maybe","Human Amino Acids (test with no tutorial at all)","Amino Acid Match Game","","","0","","","https://www.newgrounds.com/portal/view/631652",],
-			["HW","Biology","Maybe","Glycolysis (trial and error matching game)","Glycolysis Match Game","","","0","","","https://www.athleticarcade.com/educational/match/glycolysis.html",],
-			["HW","Literature","No","Greek Alphabet: trial and error matching game","Greek Alphabet Match Game","","","0","","","https://www.athleticarcade.com/educational/match/greek-alphabet.html",],
-			["HW","Physics","No","What color metals burn","Production Line","6+","<1/4","0","Web","ProductionLine","http://www.kongregate.com/games/ChrisM15/production-line",],
-			["HW","Physics","Yes","Waveform/Sound association","Bird Song Hero","4+","","0","Web","","https://www.brainpop.com/games/birdsonghero/",],
-			["HW","Literature","No","French","Lost In Translation","0+","","0","exe  Unreal 4","","https://mottomi.itch.io/lost-in-translation",],
-			["HW","Physics","Yes","Sort Solids, liquids, gases, and plasmas","Matter Sorter","","<1/4","0","Flash","","https://www.brainpop.com/games/mattersorter/",],
-			["HW","Math","No","Add and subtract by fixed values (difficult controls)","Wuzzit Trouble","1-4","","0","Firefox","","https://www.brainpop.com/games/wuzzittrouble/",],
-			["HW","Math","Yes","Fractions/Decimals practice (0 to 1)","Treefrog Treasure","1-4","","0","Flash","","https://www.brainpop.com/games/treefrogtreasure/",],
-			["HW","Math","Yes","Fractions/Decimals estimation practice","Battleship Numberline","1-4","","0","Flash","","https://www.brainpop.com/games/battleshipnumberline/",],
-			["HW","Math","No","Fractions practice (0 to 9)","Dig It","1-4","","0","Flash","","https://www.brainpop.com/games/digit/",],
-			["HW","Math","No","Fractions practice (adding to 1)","Drop Zone","1-4","","0","Flash","","https://www.brainpop.com/games/dropzone/",],
-			["HW","Math","No","Couldn't figure this one out","Flower Power","","","0","Web","","https://www.brainpop.com/games/flowerpower/",],
-			["HW","Math","No","Adding to 10","Monster School Bus","1-2","","0","Flash","","https://www.brainpop.com/games/monsterschoolbus/",],
-			["HW","Math","No","Number estimation and button mashing","Pearl Diver","","","0","Flash","","https://www.brainpop.com/games/pearldiver/",],
-			["HW","Math","No","Ratio practice","Ratio Rumble","1-4","","0","Flash","","https://www.brainpop.com/games/ratiorumble/",],
-			["HW","Government","No","3 US Federal Gov. Branches Test","Branches Of Government Game","","","0","Flash","","https://www.brainpop.com/games/branchesofgovernmentgame/",],
-			["HW","Government","No","3 US Federal Gov. Branches Test","Checks And Balances","","","0","Flash","","https://www.brainpop.com/games/checksandbalances/",],
-			["HW","Health","No","Create a day's worth of balanced meals","Chef Solus' Build-A-Meal","","","0","Flash","","https://www.brainpop.com/games/chefsolusbuildameal/",],
-			["HW","Biology","No","Something about ecosystems???","Ibiome-Wetland School Edition","","","0","Flash","","https://www.brainpop.com/games/ibiomewetlandschooledition/",],
-			["HW","Literature","No","You are an editor (very bland)","Quill","","","0","Flash","","https://www.brainpop.com/games/quill/",],
-			["HW","Biology","M","How cancer is detected and treated","Oncology","","","0","Flash","","https://www.brainpop.com/games/oncology/",],
-			["HW","Geography","Yes","Test names, capitals, or flags of world countries.","World Countries Quiz","","","0","","","https://www.newgrounds.com/portal/view/629856",],
-			["HW","Geography","No","Test names or cities of European countries","Conquering Europe","","","0","","","https://www.newgrounds.com/portal/view/625046",],
-			["HW","Literature","No","Test for the book Lord of the Flies","Lord Of The Flies","","","0","Flash","","https://www.brainpop.com/games/lordoftheflies/",],
-			["HW","Physics","No","Text dumps","Theoreum","","<1/4","0","exe","","https://misfitvillage.itch.io/theoreum",],
-			["HW","Biology","Yes","Human systems inputs and outputs","Guts And Bolts","","","0","Web","","https://www.brainpop.com/games/gutsandbolts/",],
-			["HW","Biology","Yes","Human Biology: drag 'n drop","Build-A-Body: Digestive System","","","0","Flash","","https://www.brainpop.com/games/buildabodydigestivesystem/",],
-			["HW","Biology","Maybe","Human Biology: drag 'n drop","Organ Transplant 2","","","0","","","https://www.newgrounds.com/portal/view/600659",],
-			["HW","Biology","No","Human Biology: Fill in the blank","Immune System Game","","","0","","","https://www.newgrounds.com/portal/view/478787",],
-			["HW","Biology","Yes","Tree Biology: drag 'n drop","Build-A-Tree","","","0","Flash","","https://www.brainpop.com/games/buildatree/",],
-			["HW","Literature","No","Vocabulary (sorting by association)","Sortify (Series)","","","0","Web","","https://www.brainpop.com/games/sortify/",],
-			["HW","Programming","Maybe","Basic programming (Drag 'n drop)","Tynker (Series)","","","0","Flash","","https://www.brainpop.com/games/game-finder/?game_keyword=developer:%20Tynker",],
-			["HW","History","No","Historical timelines","Time Zone X (Series)","","","0","Web","","https://www.brainpop.com/games/timezonex/",],
-			["HW","Literature","No","Vocabulary","The Meaning Of Beep (Series)","","","0","Web","","https://www.brainpop.com/games/themeaningofbeep/",],
-			["HW","Chemistry","No","Build Molecules","Chemistry","","<3/4","0","","","https://www.newgrounds.com/portal/view/635310",],
-			["HW","Physics","Maybe","Gravity","Circle Master 2","4+","<0.5","0","Web","CircleMaster","http://www.kongregate.com/games/akane2002/circle-master-2-gravitation",],
-			["Sim","Astro-Physics","No","2D orbital mechanics sim","Build A Solar System","","<1/4","0","Flash","","https://www.brainpop.com/games/buildasolarsystem/",],
-			["Sim","Physics","Yes","Light spectrum and vision","Color Vision","","<1/4","0","Web","","https://www.brainpop.com/games/colorvision/",],
-			["Sim","Physics","Yes","Light interaction with particles","Molecules And Light","","<1/4","0","Web","","https://www.brainpop.com/games/moleculesandlight/",],
-			["Sim","Government","No","Balancing the US federal budget","The Fiscal Ship","","<1/4","0","Web","","https://www.brainpop.com/games/thefiscalship/",],
-			["Sim","Biology","Yes","Biological inputs of plants: Water, light, CO2","What Plants Need","","<1/4","0","Flash","","https://www.brainpop.com/games/whatplantsneed/",],
-			["Sim","Physics","No","Desalinating water (I couldn't figure it out)","Desalination","","<1/4","0","Flash","","https://www.brainpop.com/games/desalination/",],
-			["Sim","Biology","Maybe","Neuropsychology, toxicology, epidemiology, neurobiology","Cool Science Careers: Imagine Y.","","","0","Flash","","https://www.brainpop.com/games/coolsciencecareersimagineyourself/",],
-			["Sim","Government","Yes","Gerrymandering ","District","","","0","Web","","http://polytrope.com/district/",],
-			["Sim","Math","Yes","Statistics of population diversity","Parable Of The Polygons","","<1/2","0","Web","","http://ncase.me/polygons/",],
-			["Sim","History","No","American revolution timeline","American Revolution Timeline","","<1/4","0","Flash","","https://www.brainpop.com/games/americanrevolutiontimeline/",],
-			["Sim","Misc.","No","Phycology: Pavlov's dog and that's it","Pavlov's Dog","","<1/4","0","Flash","","https://www.brainpop.com/games/pavlovsdog/",],
-			["Sim","Chemistry","No","Solution concentrations","Concentration","","<1/4","0","Web","","https://www.brainpop.com/games/concentration/",],
-			["Sim","Physics","Yes","Energy = Potential + Kinetic + Friction losses","Energy Skate Park: Basics","","<1/4","0","Web","","https://www.brainpop.com/games/energyskateparkbasics/",],
-			["Sim","Math","No","Graphs","Graphing Lines","","<1/4","0","Web","","https://www.brainpop.com/games/graphinglines/",],
-			["Sim","Physics","Maybe","Waves","Wave On A String","","<1/4","0","Web","","https://www.brainpop.com/games/waveonastring/",],
-			["Sim","Physics","Maybe","Quantum mechanics (uncertainty)","Quantum Minigolf","","<1/4","0","exe","","http://quantumminigolf.sourceforge.net/",],
-			["Sim","Astro-Physics","No","Shows scale of planetary/universal bodies","Sizing Up The Universe","","<1/4","0","Web","","https://www.brainpop.com/games/sizinguptheuniverse/",],
-			["Sim","Physics","","Gravity","Gravity Simulator","6+","∞","0/$6","Web","GravitySimulator","http://testtubegames.com/gravity.html",],
-			["Sim","Astro-Physics","Maybe","Orbits and other planetary physics","Universe Sandbox","","<1/4","$25","exe","","http://store.steampowered.com/app/230290/Universe_Sandbox/",],
-			["Sim","Physics","No","Not a lot (Was obviously made for a museum)","Csi: Flight Adv. Forces Of Flight","","<1/4","0","Flash","","https://www.brainpop.com/games/csiflightadventuresforcesofflight/",],
-			["Sim","Physics","No","Not a lot (Was obviously made for a museum)","Csi: Flight Adv. Flight School","","<1/4","0","Flash","","https://www.brainpop.com/games/csiflightadventuresflightschool/",],
-			["Sim","History","No","Dinosaurs (Was obviously made for a museum)","Construct-A-Saurus","","<1/4","0","Flash","","https://www.brainpop.com/games/constructasaurus/",],
-			["Sim","Misc.","No","Stock market game (exactly as boring as it sounds)","Stock Market Game","","<1/4","0","","","https://www.newgrounds.com/portal/view/410269",],
-			["Sim","Biology","No","Basic fish anatomy and artificial selection","Sticky Outie Bits","","<1/4","0","","","https://www.newgrounds.com/portal/view/629919",],
-			["Vid","Job","No","Water concentration in food affects shelf life","Virtual Labs: U. Water Activity","","<1/2","0","Flash","","https://www.brainpop.com/games/virtuallabsunderstandingwateractivity/",],
-			["Vid","Job","No","Brief overview of some jobs","Virtual Labs (Series)","","<1/2","0","Flash","","https://www.brainpop.com/games/game-finder/?game_keyword=developer:%20NMSU%20Learning%20Games%20Lab",],
-			["Vid","Misc.","No","Watch www.youtube.com/watch?v=8YmiRfCDeNg instead","Drake Equation","","<1/4","0","Flash","","https://www.brainpop.com/games/drakeequation/",],
-			["Vid","Biology","No","Ecosystems of microbes","Close-Knit Neighbors","","<1/4","0","Flash","","https://www.brainpop.com/games/closeknitneighbors/",],
-			["Vid","History","","Moon Landing","Apollo 11 VR","","","0","VR Game","","http://store.steampowered.com/app/457860/Apollo_11_VR/",],
-			["Vid","History","","Titanic","Titanic VR","","","0","VR Game","","http://store.steampowered.com/app/741430/Titanic_VR/",]
-		];
+<script>
 
+	var xmlns = "http://www.w3.org/2000/svg";
+	var xlinkns = "http://www.w3.org/1999/xlink";
 
-		var xmlns = "http://www.w3.org/2000/svg";
-		var xlinkns = "http://www.w3.org/1999/xlink";
+	var pos = 140;
+	var t = performance.now();//		record to see total load time for this page
+	var k = 0;
+	var svg = document.getElementsByTagName('svg')[0];
+	var header;
+	var screenShot;
 
-		var textX = [6, 60, 230, 320, 930, 1300, 1360, 1440, 1500];
-		var pos = 140;
-		var t = performance.now();//		record to see total load time for this page
-		var k = 0;
-		var svg = document.getElementsByTagName('svg')[0];
-		var markTop;
-		var markBottom;
-		var markTopOfScreen = 0;
-		var markTime = 2;
-		var header;
-		var screenShot;
-		//	document.getElementById("svgCanvas").style.height = (list.length * 44 + 200).toString();
+	//	HVS V=0.781 S=0.914		H=0.45	H=0.48		H=0.51		H=0.42
+	var backgroundColors = ['#33E9B2', '#33E9D3', '#33DEE9'];
 
-		list.sort(function (a, b) {
-			itmp = a[1].localeCompare(b[1]);//		compare subjects
-			a[11] = a[1];//		store the variable used to sort the list in slot 12
-			b[11] = b[1];//		store the variable used to sort the list in slot 12
-			if (itmp == 0) {
-				itmp = a[5].localeCompare(b[5]);
-				if (a[5] != b[5]) {//		compare ratings. (runs if ratings are not the same)
-					switch (a[5]) {//		No just leaves itmp at 0
-						case "YES!":
-							itmp = -3;
-							break;
-						case "Yes":
-							itmp = -2;
-							break;
-						case "Maybe":
-							itmp = -1;
-							break;
-					}
-					switch (b[5]) {
-						case "YES!":
-							itmp += 3;
-							break;
-						case "Yes":
-							itmp += 2;
-							break;
-						case "Maybe":
-							itmp += 1;
-							break;
-					}
-				} else {
-					if (a[0] != b[0]) {//		compare game Type. (runs if types are not the same)
-						switch (a[0]) {//		No just leaves itmp at 0
-							case "Edu":
-								itmp = -3;
-								break;
-							case "Sim":
-								itmp = -2;
-								break;
-							case "HW":
-								itmp = -1;
-								break;
-						}
-						switch (b[0]) {
-							case "Edu":
-								itmp += 3;
-								break;
-							case "Sin":
-								itmp += 2;
-								break;
-							case "HW":
-								itmp += 1;
-								break;
-						}
-					} else {
-						itmp = a[2].localeCompare(b[2]);//		compare names
-					}
+	//	set up the search input field
+	var mainInput = document.createElement("p");
+	mainInput.setAttribute("contentEditable" , "true");
+	mainInput.style = "position:absolute;left:60px;top:50px;width:1480px;font-size:35px; font-family:'Arial'; background-color: #FFFFFFBB; border:1px solid #AAAAAA;";
+	mainInput.innerHTML = "";
+	mainInput.style.display = "none";
+	mainInput.style.zIndex = "990";//		input field should always be above everything except Play/Pause button which is on 991 (and so will any input fields made by cloning it)
+	document.body.appendChild(mainInput);
+	mainInput.style.display = "none";
+	var searchString;
+	var useSearch = false;
+	
+	
+	//	----------------------------------		[   ReSort List   ]		----------------------------------
+	function sortProperty(typ) {//		called from SVG buttons above
+		if (sortVar[0] == typ) {//		double clicked the sort button
+			list.reverse();
+			listUpdate();
+			return;
+		}
+		//		shift every sort property down one and assign the new one as the primary sort variable
+		sortVar[2] = sortVar[1];
+		sortVar[1] = sortVar[0];
+		sortVar[0] = typ;
+		list.sort(sortList);
+		listUpdate();
+	}
+
+	var sortVar = [3, 1, 0];//	sort by subject [3], then rating[1], then type[0]
+
+	//	----------------------------------		[   Sort list called   ]		----------------------------------
+	list.sort(sortList);//		see GameList.js and ListSort.js
+	//	0		1		2		3					4							5	6	7		8		9			10									11	12	13
+	//["Edu","No","Run Marco!","Programming","Basic Programming (Drag 'n drop)","4+","1","0","Web","RunMarko","https://www.brainpop.com/games/runmarco/",,,true],
+	//		list element 11 is the property it is sorted by, 12 is the dom element holding it, and 13 is true/false for whether it is displayed or not
+
+	var gameList = document.getElementById("gameList");
+
+	//	----------------------------------		[   Create SVG List Elements   ]		----------------------------------
+	for (i = 0; i < list.length; i++) {
+		var entry = document.createElementNS(xmlns, "g");
+		gameList.appendChild(entry);
+		//		create each entry in the game list as an SVG
+		entry.innerHTML = '<rect height = "40" width = "1564" stroke = "#5cc0a8" id=' + i.toString() + ' stroke-width="3" fill="' + backgroundColors[i % 3] + '"/>\
+					<path d="m1495 10v23m-60-23v23m-80-23v23m-60-23v23m-610-23v23m-150-23v23m-380-23v23m-90-23v23" stroke="#5cc0a8" stroke-width="3"/>\
+					<text y="28" x="6" font-size="18">' + list[i][0] + '</text>\
+					<text y="28" x="70" font-size="18">' + list[i][1] + '</text>\
+					<text y="28" x="160" font-size="18">' + list[i][2] + '</text>\
+					<text y="28" x="540" font-size="18">' + list[i][3] + '</text>\
+					<text y="28" x="690" font-size="18">' + list[i][4] + '</text>\
+					<text y="28" x="1300" font-size="18">' + list[i][5] + '</text>\
+					<text y="28" x="1360" font-size="18">' + list[i][6] + '</text>\
+					<text y="28" x="1440" font-size="18">' + list[i][7] + '</text>\
+					<text y="28" x="1500" font-size="18">' + list[i][8] + '</text>\
+					<a xlink: href="' + list[i][10] + '" target="_parent">\
+						<rect height="25" width="374" y="9" x="158" fill-opacity="0" class="button" onmouseover="imageUpdate(\'' + list[i][9] + '\');" onmouseout="imageUpdate(\'\');"></rect>\
+					</a>';
+		entry.setAttribute("transform", 'translate(12 ' + pos.toString() + ')');
+
+		list[i][12] = entry;//	store the visual element for each game in that game's list entry
+
+		if (i != list.length - 1 && list[i][11] != list[i + 1][11]) {//		this line is sorted into the same group as the last line
+			pos += 80;
+			//		add catigory header here
+		} else {
+			pos += 40;
+		}
+	}
+
+	//		check for broken links
+	//window.requestAnimationFrame(checkBrokenLinks);
+
+	document.getElementById("downloadLinks").setAttribute("transform", 'translate(760 ' + pos.toString() + ')');//		move download icons to bottom of page
+	document.getElementById("svgViewBox").setAttribute("viewBox", "0 0 1600 " + (pos + 150).toString());//		move end of screen to be just after download links
+//	console.log("Loaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
+
+	//	----------------------------------		[   Set Up Image   ]		----------------------------------
+	screenShot = document.createElement("img");
+	screenShot.setAttribute('style', 'opacity: 0.85;position: absolute;left: 50%; top: 100;margin-left: -300px;pointer-events: none; display: none');
+	screenShot.setAttribute("width", "600");
+	document.body.appendChild(screenShot);
+
+	console.log("Loaded page in\n" + Math.round(performance.now() - t).toString() + "ms");
+
+	function UrlExists(url) {//		FROM	https://forum.alphasoftware.com/showthread.php?94811-How-to-check-for-a-broken-link-bad-url
+		var http = new XMLHttpRequest();
+		http.open('HEAD', url[10], true);
+		http.send();
+		if (http.status != 200)
+			console.log("URL for " + url[2] + "broken");
+		return;
+	}
+	/*
+	function checkBrokenLinks() {
+		for (i = 0; i < 5; i++) {
+			var request;
+			if (window.XMLHttpRequest)
+				request = new XMLHttpRequest();
+			else
+				request = new ActiveXObject("Microsoft.XMLHTTP");
+			request.open('GET', 'http://www.mozilla.org', true);
+			// the object request will be actually modified
+			request.onload = function (e) {
+				if (request.status === 200) {
+					alert("The page you are trying to reach is not available.");
+				}else{
+					console.log("yay" + request.status);
 				}
 			}
-			return itmp;
-		});//	sort by subject, then by rating, then Edu-Sim-HW, then by name
+			request.send(); // there will be a 'pause' here until the response to come.
+		}
+	}*/
+	/*
+	function checkBrokenLinks() {
+		for (i = 0; i < 5; i++) {
+			var http = new XMLHttpRequest();
+			http.timeout = 4000;
+			http.open('GET', list[i][10], true);
+			http.onload = function(e){
+				if (http.readyState === 4) {
+					if (http.status === 200) {
+						console.log("URL for " + list[i][2] + " working");
+					} else {
+						console.log("URL for " + list[i][2] + " broken");
+					}
+				}
+			};
 
-		//	list.sort(function(a, b){return a[1].localeCompare(b[1])});//	sort by name
-		var gameList = document.getElementById("gameList");
+			http.onerror = function (e) {
+				console.error(xhr.statusText);
+			};
 
-		for (i = 0; i < 160; i++) {
-			var useElem = document.createElementNS(xmlns, "use");
+			http.send(null);
+		//	if (http.status != 200)
+		//		console.log(http.status + " URL for " + list[i][2] + " broken");
+		}
+	}*/
 
-			useElem.setAttributeNS(null, "x", 12);
-			useElem.setAttributeNS(null, "y", pos);
-			if (i % 2 == 0)
-				useElem.setAttributeNS(xlinkns, "xlink:href", "#background");
-			else
-				useElem.setAttributeNS(xlinkns, "xlink:href", "#backgroundBlue");
+	//	----------------------------------		[   Update list after re-sort   ]		----------------------------------
+	function listUpdate() {//		move all elements to their new positions in list
+		t = performance.now();
 
-			gameList.appendChild(useElem);
-
-			for (k = 0; k < 9; k++) {//		for each text field in the current entry
-				var newText = document.createElementNS(xmlns, "text");
-				newText.setAttributeNS(null, "x" , textX[k] + 12);
-				newText.setAttributeNS(null, "y" , pos + 28);
-				newText.setAttributeNS(null, "font-size" , "18");
-				var textNode = document.createTextNode(list[i][k]);
-				newText.appendChild(textNode);
-				gameList.appendChild(newText);
-			}
-
-			//		add clickable field for link to game page
-			var rect = document.createElementNS(svg.namespaceURI, 'rect');
-			rect.setAttribute('x' , 940);
-			rect.setAttribute('y' , pos + 9);
-			rect.setAttribute('width' , 360);
-			rect.setAttribute('height' , 25);
-			rect.setAttribute('fill' , '#000000');
-			rect.setAttribute('fill-opacity' , '0');
-			rect.setAttribute('id' , 'clickable');
+		if(mainInput.style.display == "block")//		search is still active, leave room for search input field
+			pos = 200;
+		else
+			pos = 140;
 			
-			rect.setAttribute('onmouseover' , "evt.target.setAttribute('fill-opacity' , '0.2');imageUpdate('"+list[i][9]+"');");
-			rect.setAttribute('onmouseout' , "evt.target.setAttribute('fill-opacity' , '0.0');imageUpdate('');");
+		for (i = 0; i < list.length; i++){
+			//		check if a search is active and this element should be hidden
+			if(useSearch){
+				if(list[i][13]){
+					list[i][12].style.display = "block";
+				}else{
+					list[i][12].style.display = "none";
+					continue;
+				}
+			}
+			
+			list[i][12].setAttribute("transform", 'translate(12 ' + pos.toString() + ')');
+			list[i][12].children[0].setAttribute('fill', backgroundColors[i % 3]);
 
-			var link = document.createElementNS(svg.namespaceURI, 'a');
-			link.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', list[i][10]);
-			link.appendChild(rect);
-			svg.appendChild(link);
-			if (i != 159 && list[i][11] != list[i + 1][11]) {//		this line is sorted into the same group as the last line
+			if (i != list.length - 1 && list[i][11] != list[i + 1][11]) {//		this line is sorted into the same group as the last line
 				pos += 80;
 				//		add catigory header here
 			} else {
 				pos += 40;
 			}
 		}
-		console.log("Loaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
+		document.getElementById("downloadLinks").setAttribute("transform", 'translate(760 ' + pos.toString() + ')');//		move download icons to bottom of page
+		document.getElementById("svgViewBox").setAttribute("viewBox", "0 0 1600 " + (pos + 150).toString());//		move end of screen to be just after download links
 
-		//		draw markers
-		markTop = document.createElementNS(svg.namespaceURI, 'rect');
-		markTop.setAttribute('x', 0);
-		markTop.setAttribute('y', Math.round(((window.pageYOffset || document.documentElement.scrollTop)*8000/document.getElementById("svgViewBox").clientHeight-100)/40)*40+100-2+80);
-		markTop.setAttribute('width',  1600);
-		markTop.setAttribute('height', 6);
-		markTop.setAttribute('fill', '#FFF0A0');//	#F0C000
-		markTop.setAttribute('fill-opacity', '1');
-		link.appendChild(markTop);
-		
-		markBottom = document.createElementNS(svg.namespaceURI, 'rect');
-		markBottom.setAttribute('x', 0);
-		markBottom.setAttribute('y',  Math.round((((window.pageYOffset || document.documentElement.scrollTop)+window.innerHeight)*8000/document.getElementById("svgViewBox").clientHeight-100)/40)*40+100-2-80);
-		markBottom.setAttribute('width', 1600);
-		markBottom.setAttribute('height', 6);
-		markBottom.setAttribute('fill', '#A0FFA0');//40C020
-		markBottom.setAttribute('fill-opacity', '1');
-		link.appendChild(markBottom);
-		
-		
-		screenShot = document.createElement("img");
-		screenShot.setAttribute('style', 'opacity: 0.85;position: absolute;left: 50%; top: 100;margin-left: -300px;pointer-events: none; display: none');
-		screenShot.setAttribute("width", "600");
-		document.body.appendChild(screenShot);
+		//console.log("Reloaded list in\n" + Math.round(performance.now() - t).toString() + "ms");
+	}
 
 
-		//	draw header
-		var useElem = document.createElementNS(xmlns, "use");
-		useElem.setAttributeNS(null, "x", 12);
-		useElem.setAttributeNS(null, "y", 100);
-		useElem.setAttributeNS(xlinkns, "xlink:href", "#listHeader");
-		gameList.appendChild(useElem);
-
-		console.log("Loaded page in\n" + Math.round(performance.now() - t).toString() + "ms");
-		
-		markUpdate();
-
-		function markUpdate(){
-			markTime += 0.016666;
-			if(markTopOfScreen != window.pageYOffset){//		the screen has been scrolled or resized
-				markTopOfScreen = window.pageYOffset;
-				markTime = 0;
-			}else if(markTime > 0.7){//		screen has been still for over 1/2 seconds
-				markTop.setAttribute('y', Math.round(((window.pageYOffset || document.documentElement.scrollTop)//		get top of screen Y position in local (ViewBox) space pixels
-				*8000/document.getElementById("svgViewBox").clientHeight//		convert from ViewBox coordinates to screen coordiantes. 8000 is the ViewBox height value
-				-100)/40)*40+100-2+80);//		round to the nearest 40 pixels which should place it on a dividing line
-
-			
-				markBottom.setAttribute('y', Math.round((((window.pageYOffset || document.documentElement.scrollTop)+window.innerHeight)//		get top of screen Y position in local (ViewBox) space pixels
-				*8000/document.getElementById("svgViewBox").clientHeight//		convert from ViewBox coordinates to screen coordiantes. 8000 is the ViewBox height value
-				-100)/40)*40+100-2-80);//		round to the nearest 40 pixels which should place it on a dividing line
-			//	markerTop.setAttribute('y', document.getElementById("svgViewBox").clientHeight);
-			//	console.log(window.innerHeight);
+	//	----------------------------------		[   Update Image   ]		----------------------------------
+	function imageUpdate(imageLink) {
+		if (imageLink == "") {
+			fadeIn = false;
+		} else if (window.innerWidth > 600) {//		screen is wide enough that images will not fill the whole page
+			fadeIn = true;
+			screenShot.style.display = "block";
+			screenShot.style.top = Math.max(window.pageYOffset + 10, 100);
+			screenShot.setAttribute("src", "GameListImages/" + imageLink + ".png");
+			//		wait for image to load
+			/*
+			function waitForImageToLoad(imageElement) {
+				return new Promise(resolve => { imageElement.onload = resolve })
 			}
-			
-			window.requestAnimationFrame(markUpdate);
+
+			var myImage = document.getElementById('myImage');
+			var newImageSrc = "https://pmchollywoodlife.files.wordpress.com/2011/12/justin-bieber-bio-photo1.jpg?w=620"
+
+			myImage.src = newImageSrc;
+			waitForImageToLoad(myImage).then(() => {
+				// Image have loaded.
+				console.log('Loaded lol')
+			});*/
+
 		}
-
-		function imageUpdate(imageLink){
-			if(imageLink == ""){
-				fadeIn = false;
-			}else if(window.innerWidth > 600){
-				fadeIn = true;
-				screenShot.style.display = "block";
-				screenShot.style.top = Math.max(window.pageYOffset+10 , 100);
-				screenShot.setAttribute("src" , "../../GameListImages/"+imageLink+".png");
-			}
-			if(!fading){//		if imageFade() is not already running
-				fading = true;
-				imageFade();
-			}
+		if (!fading) {//		if imageFade() is not already running
+			fading = true;
+			imageFade();
 		}
+	}
 
-		var fadeIn = true;
-		var fading = false;
-		var fadeValue = 0.1;
 
-		function imageFade(){
-			//		shift fade value in direction set in imageUpdate()
-			if(fadeIn){
-				fadeValue += 0.07;
+	//	----------------------------------		[   Image Transition Animation   ]		----------------------------------
+	var fadeIn = true;
+	var fading = false;
+	var fadeValue = 0.1;
+
+	function imageFade() {
+		//		shift fade value in direction set in imageUpdate()
+		if (fadeIn) {
+			fadeValue += 0.07;
+		} else {
+			fadeValue -= 0.05;
+		}
+		//		if fade ends, stop this function from being called again and set the final value to exactly what it should be.
+		if (fadeValue > 0.93) {
+			fadeValue = 0.93;//		set to 1 so there are 2 frames where the cursor is off the selection but the image has not started fading yet
+			fading = false;
+		} else if (fadeValue < 0) {
+			fadeValue = 0;
+			screenShot.style.display = "none";//		hide image
+			fading = false;
+		}
+		screenShot.style.opacity = Math.min(fadeValue, 0.85);
+		if (fading)//		fade has not reached its final value so call this function again next frame
+			requestAnimationFrame(imageFade);
+	}
+	
+	
+	//	----------------------------------		[   Keyboard inputs for search bar   ]		----------------------------------
+	document.addEventListener("keydown", function(e){
+		if(!useSearch && e.keyCode >= 48 && e.keyCode <= 90){//		number or letter key was pressed and a search is not currently being run
+			useSearch = true;
+			mainInput.style.display = "block";
+			mainInput.focus();
+			mainInput.innerText = "";//String.fromCharCode(e.keyCode).toLowerCase();
+			//		move header to make room for the search bar
+			document.getElementById("listHeader").setAttribute("transform" , "translate(12 160)");
+
+		}
+		
+		if(e.keyCode == 27){//		27		Escape key
+			hideSearch();
+		}
+		
+		//		update the search every time a key is pressed
+		if(useSearch){
+			window.requestAnimationFrame(nextFrameSearchUpdate);
+		}
+	});
+	
+	
+	//	----------------------------------		[   Search bar resize   ]		----------------------------------
+	window.addEventListener("resize", function(e){
+		var screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
+		mainInput.style.top = Math.round(screenWidth*0.05 - 25).toString() + "px";
+		mainInput.style.left = Math.round(screenWidth*0.1).toString() + "px";
+		mainInput.style.width = Math.round(screenWidth*0.8).toString() + "px";
+	});
+	
+	//		this function is used so functions are called after the key press has updated the input field
+	function nextFrameSearchUpdate(){
+		searchString = mainInput.innerText.toLowerCase();
+			
+		//		search field empty. Remove input field.
+		if(searchString == ''){
+			hideSearch();
+			return;
+		}
+		
+		//		set all games not including the search term to not render
+		for (i = 0; i < list.length; i++){
+			//		if title, subject, or subject (specific) contains the search term, show it
+			if((list[i][2].toLowerCase().indexOf(searchString) != -1) ||
+				(list[i][3].toLowerCase().indexOf(searchString) != -1) ||
+				(list[i][4].toLowerCase().indexOf(searchString) != -1)){
+					list[i][13] = true;
 			}else{
-				fadeValue -= 0.05;
+					list[i][13] = false;
 			}
-			//		if fade ends, stop this function from being called again and set the final value to exactly what it should be.
-			if(fadeValue > 0.93){
-				fadeValue = 0.93;//		set to 1 so there are 2 frames where the cursor is off the selection but the image has not started fading yet
-				fading = false;
-			}else if(fadeValue < 0){
-				fadeValue = 0;
-				screenShot.style.display = "none";//		hide image
-				fading = false;
-			}
-			screenShot.style.opacity = Math.min(fadeValue , 0.85);
-			if(fading)//		fade has not reached its final value so call this function again next frame
-				requestAnimationFrame(imageFade);
 		}
+		listUpdate();
+	}
+	
+	function hideSearch(){
+		mainInput.style.display = "none";
+		mainInput.blur();
+		//		set all games to show
+		for (i = 0; i < list.length; i++){
+			list[i][13] = true;
+		}
+		//		move header back
+		document.getElementById("listHeader").setAttribute("transform" , "translate(12 100)");
 
-	</script>
-</body>
+		
+		listUpdate();
+		useSearch = false;
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

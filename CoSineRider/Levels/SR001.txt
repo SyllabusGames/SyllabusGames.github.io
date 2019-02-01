@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 LV1: Using Time
 SR
 0,0
@@ -6,4 +7,14 @@ useTime
 useZ
 44,4
 Cave
+=======
+LV1: Using Time
+SR
+0,0
+sin(x-8*t)+(x-12)^2/300-1
+useTime
+useZ
+44,4
+Cave
+>>>>>>> a3503f6d8084bec8645c5c94b584ec9e6b4120a9
 End
