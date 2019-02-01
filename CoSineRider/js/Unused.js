@@ -27,19 +27,19 @@ function drawForceVectors(){
 	ctx.strokeStyle="#FF0000";
 	ctx.beginPath();
 	ctx.moveTo(spx , spy);
-	ctx.lineTo(spx-tmspx*200/screenScale , spy);
+	ctx.lineTo(spx-dxdt*200/screenScale , spy);
 	ctx.stroke();
 
 	ctx.strokeStyle="#00FF00";
 	ctx.beginPath();
 	ctx.moveTo(spx , spy);
-	ctx.lineTo(spx ,spy+tmspy*200/screenScale);
+	ctx.lineTo(spx ,spy+dydt*200/screenScale);
 	ctx.stroke();
 		
 	ctx.strokeStyle="#0000FF";
 	ctx.beginPath();
 	ctx.moveTo(spx , spy);
-	ctx.lineTo(spx-tmspx*200/screenScale , spy+tmspy*200/screenScale);
+	ctx.lineTo(spx-dxdt*200/screenScale , spy+dydt*200/screenScale);
 	ctx.stroke();
 
 	ctx.fillText("X = " + Math.round(apx).toString() + "m",10,150);

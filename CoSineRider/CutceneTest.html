@@ -1,0 +1,85 @@
+﻿<!-------	[  This is free and unencumbered software released into the public domain  ]	------->
+<!-------	[  All function calls originate from this file , KeyboardMouseInput.js , and TextInput.js. Start reading in those files to understand what's going on.   ]		------->
+
+<!DOCTYPE html>
+<canvas id="gc" width="1600" height="800" style="z-index: -2; background=#FF0000;"></canvas>
+
+
+<!--	Load External Libraries	-->
+<!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
+
+<body style="margin: 0;"></body>
+
+
+<script>
+/*
+	//var comicSvg = new Object;
+	var svg   = document.documentElement;
+    var svgNS = svg.namespaceURI;
+
+    var comicSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+//	comicSvg.setAttribute('use', 'Cutscenes/Cutscene1.svg');
+	comicSvg.innerHTML = '<use xlink:href="Cutscenes/Cutscene1.svg"></use>';
+	
+	//background.src = "Cutscenes/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
+	comicSvg.src = "Cutscenes/Cutscene1.svg";//		load background SVG
+	
+//	var div = document.createElement("div");
+
+//	div.innerHTML = comicSvg;
+	//document.body.insertBefore(div, document.body.childNodes[0]);
+	console.log(comicSvg);
+	console.log(comicSvg.innerHTML);
+	console.log("-");
+	console.log(comicSvg.outerHTML);
+	document.body.appendChild(comicSvg);*/
+	
+	var ajax = new XMLHttpRequest();
+	ajax.open("GET", "https://syllabusgames.github.io/CoSineRider/Cutscenes/Cutscene1.svg", true);
+	ajax.send();
+	ajax.onload = function(e) {
+		var div = document.createElement("div");
+		document.body.appendChild(div);
+		div.innerHTML = ajax.responseText;
+		
+		//		set comic's position to absolute and place the upper right corner at 0,0
+		div.style = "position: absolute; margin: 0px 0px 0px 0px left:0px; top:0px;";
+		for(i = div.childNodes.length-1 ; i > -1 ; i--){
+			if(div.childNodes[i].toString() == "[object SVGSVGElement]"){//		find the child of div that actually contains the .svg information
+				var comicSvgObject = div.childNodes[i];
+				break;
+			}
+		}
+		//		set the .svg width to the screen size
+		comicSvgObject.setAttribute("width" , "1000px");
+
+		//		hide all but the first panel
+		if(document.getElementById('0b') != null)
+			document.getElementById('0b').style.display = "none";
+		if(document.getElementById('0c') != null)
+			document.getElementById('0c').style.display = "none";
+		if(document.getElementById('0d') != null)
+			document.getElementById('0d').style.display = "none";
+		if(document.getElementById('0e') != null)
+			document.getElementById('0e').style.display = "none";
+		if(document.getElementById('0f') != null)
+			document.getElementById('0f').style.display = "none";
+		if(document.getElementById('1a') != null)
+			document.getElementById('1a').style.display = "none";
+		if(document.getElementById('1b') != null)
+			document.getElementById('1b').style.display = "none";
+		if(document.getElementById('1c') != null)
+			document.getElementById('1c').style.display = "none";
+		if(document.getElementById('1d') != null)
+			document.getElementById('1d').style.display = "none";
+		if(document.getElementById('1e') != null)
+			document.getElementById('1e').style.display = "none";
+		if(document.getElementById('1f') != null)
+			document.getElementById('1f').style.display = "none";
+	}
+	
+	
+
+
+	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
+</script>

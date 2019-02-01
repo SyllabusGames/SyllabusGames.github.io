@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Error Screen</title>
+</head>
+
+
+<!--		Remove white space around canvas (also makes cursor more accurate) and Disable right click menu		-->
+<body oncontextmenu="return false;" style="background-color:#FFFFFF; margin: 0;">
+	
+	<canvas id="gc" width="1920" height="1080" style="z-index: -2;"></canvas>
+	<script>
+	
+		var canvas = document.getElementById('gc');
+		var ctx = canvas.getContext('2d');
+		var tou = Math.PI * 2;
+		var scale = 3.6;
+		
+		document.body.style.overflow = 'hidden';//		turn off page scrolling
+		scale = 3.4/1920*document.documentElement.clientWidth;
+		
+		//		scale canvas to screen size
+		canvas.width = document.documentElement.clientWidth;
+		canvas.height = document.documentElement.clientHeight;
+		
+		
+		
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.lineWidth = 0;
+		drawRect(30, 80, 150, 200, "#F59664", true);//		basic house
+		drawRect(30, 80, 150, 200, "#F59664", false);
+		triangle(30, 80, 105, 30, 180, 80, "#000000");
+
+		paintWindow(40, 100);										//windows
+		paintWindow(125, 100);
+
+		//door
+		drawRect(85, 190, 40, 90, "#824141", true);
+		drawRect(110, 235, 10, 4, "#DCDC28", true);
+
+		triangle(380, 235, 475, 175, 385, 250, "#644B4B");	//tree
+		triangle(385, 200, 295, 155, 380, 215, "#644B4B");
+		drawRect(375, 100, 20, 200, "#644B4B", true);//		Tree trunk
+		drawEllipse(335, 85, 100, 95, "#00FF4B", true);//		tree leaves
+		drawEllipse(430, 160, 70, 35, "#00FF4B", true);
+		drawEllipse(260, 140, 70, 35, "#00FF4B", true);
+
+		//face
+		drawEllipse(365, 110, 10, 10, "#C800FF", true);
+		drawEllipse(400, 110, 10, 10, "#C800FF", true);
+
+		drawEllipse(366, 111, 5, 5, "#000000", true);
+		drawEllipse(401, 111, 5, 5, "#000000", true);
+		drawEllipse(365, 140, 25, 30, "#000000", true);
+
+		//		paintLandscape
+		drawRect(0, 280, 600, 280, "#32FF32", true);
+		//		invader
+		//drawEllipse(210 , 50 , 80 , 50 , "#FF961E" , false);						//Body
+		drawEllipse(190, 75, 120, 40, "#FF961E", true);
+		drawEllipse(210, 50, 80, 50, "#FF961E", true);
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = "#000000";
+		drawEllipse(215, 67, 10, 20, "#00FFC8", false);							//Windows
+		drawEllipse(235, 70, 10, 20, "#E1E114", false);
+		drawEllipse(255, 70, 10, 20, "#961EFF", false);
+		drawEllipse(275, 67, 10, 20, "#1496C8", false);
+		
+		ctx.fillStyle = "#800000";
+		ctx.textAlign = "center";
+		ctx.font = "80px Arial";
+		ctx.fillText("Something went wrong" , 960 , 80);
+		
+
+		function paintWindow(x, y) {
+			drawRect(x, y, 45, 65, "#464546", true);
+			drawRect(x, y, 20, 30, "#3264FF", true);
+			drawRect(x + 25, y, 20, 30, "#3264FF", true);
+			drawRect(x, y + 35, 20, 30, "#3264FF", true);
+			drawRect(x + 25, y + 35, 20, 30, "#3264FF", true);
+		}
+
+		function triangle(x, y, xTwo, yTwo, xThree, yThree, col) {
+			ctx.strokeStyle = col;
+			ctx.fillStyle = col;
+
+			ctx.beginPath();
+			ctx.moveTo(x * scale, y * scale);
+			ctx.lineTo(xTwo * scale, yTwo * scale);
+			ctx.lineTo(xThree * scale, yThree * scale);
+			ctx.lineTo(x * scale, y * scale);
+			ctx.stroke();
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		function drawEllipse(xx, yy, wid, hei, col, fill) {
+			xx *= scale;
+			yy *= scale;
+			wid *= scale;
+			hei *= scale;
+
+			if(fill)
+				ctx.strokeStyle = col;
+				
+			ctx.beginPath();
+			ctx.ellipse(xx + wid / 2, yy + hei / 2, wid / 2, hei / 2, 0, 0, tou);
+			ctx.stroke();
+			ctx.fillStyle = col;
+			ctx.closePath();//?
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		function drawRect(xx, yy, wid, hei, col, fill) {
+			ctx.strokeStyle = col;
+			xx *= scale;
+			yy *= scale;
+			wid *= scale;
+			hei *= scale;
+			ctx.beginPath();
+			ctx.moveTo(xx, yy);
+			ctx.lineTo(xx + wid, yy);
+			ctx.lineTo(xx + wid, yy + hei);
+			ctx.lineTo(xx, yy + hei);
+			ctx.moveTo(xx, yy);
+			ctx.stroke();
+			if (fill) {
+				ctx.fillStyle = col;
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+			}
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+LV1: Blank Lines
+BL
+0,0
+_/10*(x+_)^2+_
+1,2,-1
+44,4
+Tower
+End

@@ -1,0 +1,13 @@
+<svg version="1.1" viewBox="0 0 2e3 2e3" xmlns="http://www.w3.org/2000/svg">
+	<g fill="none">
+		<path d="m896.49 1229.9 188.89 0.081 1.0211-272.29h81.657l51.643-71.66h66.659l82.541 26.07h259.01l82.49 221.91h115.83l0.57-194.91h79.224l66.976-107.74h85.562l74.138 93.48h76.055l90.645-160.03h72.886l-1.6858 39.57 55.777 0.18508 8.9229 151.97h93.484l144.12-175.9h101.44v268.81l85.19 0.5601" stroke="#000" stroke-width="1px"/>
+		<g stroke="#00c10c" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+			<circle cx="1271.5" cy="870.8" r="13.108" style="paint-order:normal"/>
+			<circle cx="1613.8" cy="897.39" r="13.108" style="paint-order:normal"/>
+			<circle cx="2041.3" cy="815.83" r="13.108" style="paint-order:normal"/>
+		</g>
+		<circle id="Goal" cx="2756.3" cy="761.8" r="13.108" stroke="#17b2ff" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" style="paint-order:normal"/>
+	</g>
+	<path d="M 896.49,1229.9 1100,940" fill="none" stroke="#000" stroke-width="1px"/>
+	<circle cx="1100" cy="940" r="10" fill="#c8c8c8" style="paint-order:normal"/>
+</svg>

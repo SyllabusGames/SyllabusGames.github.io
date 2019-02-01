@@ -1,0 +1,225 @@
+﻿<!-------	[  This is free and unencumbered software released into the public domain  ]	------->
+<!-------	[  All function calls originate from this file , KeyboardMouseInput.js , and TextInput.js. Start reading in those files to understand what's going on.   ]		------->
+
+<!DOCTYPE html>
+<canvas id="gc" width="1600" height="800" style="z-index: -2;"></canvas>
+<canvas id="XYZ" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:0px;"></canvas>
+<canvas id="XYZ2" width="500" height="400" style="display: none; z-index: 0; /*border: 1px solid #AAAAAA;*/ position:absolute;left:1100px;top:1px;" ></canvas>
+
+<head>
+	<link rel="icon" href="SineRiderSGLogo.png">
+	<link rel="shortcut icon" href="SineRiderSGLogo.png">
+	<title>Sine Rider SG</title>
+	<!--		Prevent accidental scaling when holding Ctrl and zooming in		-->
+	<!--	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">	-->
+</head>
+
+<!--		Dissable right click menu		-->
+<body oncontextmenu="return false;"></body>
+
+<!--	Load External Libraries	-->
+<!--From   https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.14.2/math.min.js-->
+<script src="js/Math.js"></script>
+
+<!--	Load Internal Scripts	-->
+<script type="text/javascript" src="js/Collisions.js"></script>
+<script type="text/javascript" src="js/Sledder.js"></script>
+<script type="text/javascript" src="js/EquationLine.js"></script>
+<script type="text/javascript" src="js/LevelSaver.js"></script>
+<script type="text/javascript" src="js/LevelLoader.js"></script>
+<script type="text/javascript" src="js/XYZView.js"></script>
+<script type="text/javascript" src="js/3B1BAnimations.js"></script>
+<script type="text/javascript" src="js/SvgEditor.js"></script>
+<script type="text/javascript" src="js/AudioControl.js"></script>
+<script type="text/javascript" src="js/Pause.js"></script>
+<script type="text/javascript" src="js/Menu.js"></script>
+<script type="text/javascript" src="js/3Numberline.js"></script>
+
+<script type="text/javascript" src="js/KeyboardMouseInput.js"></script>
+<script type="text/javascript" src="js/TextInput.js"></script>
+
+<script type="text/javascript" src="js/DebugView.js"></script>
+
+<!--		Remove white space around canvas (also makes cursor more accurate)		-->
+<body style="margin: 0;"></body>
+
+<!--		File Loader		-->
+<input type="file" id="files" hidden="hidden" name="files[]" multiple />
+<output id="list"></output>
+<script>
+	function handleFileSelect(evt) {
+		var files = evt.target.files; // FileList object
+
+		// files is a FileList of File objects. List some properties.
+		var output = [];
+		for (var i = 0, f; f = files[i]; i++) {
+			output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+				f.size, ' bytes, last modified: ',
+				f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+				'</li>');
+		}
+		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+	}
+
+	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+</script>
+<!--		File Loader		-->
+
+<script>
+	//		Ctrl+Shift+J	shows error log in Chrome
+	
+	//		time
+	var frameTime = 0;//		time since level started (used as t in equations)
+	var lastTime = 0;
+	var dt = 0.01;//		change in time since last frame
+	//var lastTimeRaw = 0;
+
+	//		temporary variables (all of these are used in multiple places. This is to avoid the inefficiency of redeclaring i 10 times a frame)
+	//		all these variables should be assumed to be reset outside the context of a single function
+	var dx = 0;//	float
+	var dy = 0;//	float
+	var lyy = 0;//	float
+	var ryy = 0;//	float
+	var dydt = 0;//	float
+	var dxdt = 0;//	float
+	var i = 0;//	int
+	var k = 0;//	int
+	var itmp = 0;//	int
+	var ftmp = 0;//	float
+	var dtmp = 0;//	float
+	var ltmp = 0;//	float
+	var rtmp = 0;//	float
+	var stmp = "";//	string
+	var ctmp = ['a' , 'a'];
+	var tmspx;
+	var tmspy;
+	var tmspz;
+
+	//		should be deleted before launch
+	var debugSkipFrame = false;
+	var debugSingleFrame = false;
+	var debugFramerateCount = 0;
+	var debugFramerateLast = 0;
+	var debugFramerateTime = 0;
+	var ctrlHeld = false;
+
+	//		camera position and scale. These coordinates are the position of the upper left corner of the screen.
+	var screenWidth = 1600;
+	var screenHeight = 800;
+	var screenx = 0;
+	var screeny = 0;
+	var screenScale = 20;
+	var trackPointx = 0;//		point the camera will try to keep on screen
+	var trackPointy = 0;
+
+	//		gameplay state
+	var camLocked = false;
+	var paused = false;//		player has not paused and window is in focus
+	var menuOpen = false;//		game is paused because the menu is open
+	var writeCursor = false;
+
+	//		canvas
+	var canvas;//		main canvas for 2D elements
+	var ctx;
+	var xyz;//		canvas for 3D elements
+	var xyzc;
+	var xyzWidth = 500;
+	var xyzHeight = 500;
+	var xyz2;//		duplicate of xyz offset down 1 pixel on the Y to fill in 1 pixel gaps caused by a low sample rate.
+	var xyz2c;
+
+	var mainInput;
+
+	var parenOpen = 0;
+
+	var timestamp;//		used only for running update()
+
+	window.onload = function(){
+		canvas = document.getElementById('gc');
+		ctx = canvas.getContext('2d');
+		xyzc = document.getElementById('XYZ');
+		xyz  = xyzc.getContext('2d');
+		xyz2c = document.getElementById('XYZ2');
+		xyz2  = xyz2c.getContext('2d');
+		document.body.style.overflow = 'hidden';//		turn off page scrolling
+		lastTime = performance.now()*0.001;
+
+		mainInput = document.createElement("p");
+		mainInput.setAttribute("id" , "input0");
+		mainInput.setAttribute("contentEditable" , "true");
+		mainInput.style = "position:absolute;left:50px;top:715px;width:1440px;font-size:35px; font-family:'Arial'; background-color: #FFFFFF; border:1px solid #AAAAAA;";
+		mainInput.innerHTML = "-x"
+		document.body.appendChild(mainInput);
+		pieEquInput.push(mainInput);
+
+		saveLevel();//		for testing
+		buildLevelMap();//		for testing
+		loadLevelMap();//		for testing
+		//ctx.save();
+
+		setUpSledder();
+		setUpAnim();
+		ctx.textAlign="center";
+		window.requestAnimationFrame(update);
+
+		//		-----------------------------------------------------------------------		[   Page Icon   ]		-----------------------------------------------------------------------
+		var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+		link.type = 'image/x-icon';
+		link.rel = 'shortcut icon';
+		link.href = 'SineRiderSGLogo.png';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	}
+
+
+		//		-----------------------------------------------------------------------		[   UPDATE   ]		-----------------------------------------------------------------------
+	function update(timestamp){
+		window.requestAnimationFrame(update);
+		dt = Math.min(performance.now()*0.001 - lastTime , 0.125);//		no frame can skip more than 1/8 seconds. (if framerate is below 8, game will actually slow down)
+		lastTime = performance.now()*0.001;
+		
+		if(ctrlHeld){//		speed up game x5
+			dt *= 5;
+		}
+
+		if(lastTime - debugFramerateTime > 1){
+			debugFramerateTime = lastTime;
+			debugFramerateLast = debugFramerateCount;
+			debugFramerateCount = 0;
+			if(useZ){//		change the 3D view update frequency based on framerate
+				if(debugFramerateLast < 30){
+					if(debugFramerateLast < 20)
+						scanStep = 2;
+					else
+						scanStep = 6;
+				}else{
+					if(debugFramerateLast > 57)
+						scanStep = 12;
+					else
+						scanStep = 8;
+				}
+			}
+		}else{
+			debugFramerateCount++;
+		}
+		
+		if(debugSkipFrame && !debugSingleFrame){
+			//drawNumberLines();//		see 3B1BAnimations
+			return;
+		}
+		debugSingleFrame = false;
+		//				Debug pause and frame advance
+//		-----------------------------------------------------------------------		[   /Debugging   ]		-----------------------------------------------------------------------
+		
+//		-----------------------------------------------------------------------		[   Draw Screen   ]		-----------------------------------------------------------------------
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		
+		if(simulating){
+			frameTime += dt;
+		}else{
+			frameTime = 0;
+		}
+		animCore();
+	//		ctx.fillText( Math.round(debugFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , Math.round(screenHeight*0.85));
+	}
+	//		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------
+</script>

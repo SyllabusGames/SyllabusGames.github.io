@@ -1,0 +1,37 @@
+<svg version="1.1" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+	<g transform="translate(0 -152.36)">
+		<rect id="Outline" x="190" y="188.36" width="1230" height="824" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="8"/>
+		<g id="0Panel">
+			<rect x="200" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+			<text id="0text" x="387.14285" y="289.50488" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="387.14285" y="289.50488">w</tspan></text>
+			<text id="1text" x="227.14285" y="245.21916" fill="#000000" font-family="sans-serif" font-size="26.667px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="227.14285" y="245.21916" fill="#0000f0">w</tspan></text>
+		</g>
+		<g id="1Panel">
+			<rect x="606" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+			<text id="2text" x="751.42859" y="262.36203" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="751.42859" y="262.36203">w</tspan></text>
+			<text id="3text" x="806.42859" y="284.50488" fill="#000000" font-family="sans-serif" font-size="26.667px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="806.42859" y="284.50488">w</tspan></text>
+		</g>
+		<g id="2Panel">
+			<rect x="1012" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+			<text id="4text" x="1168.5714" y="280.93344" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1168.5714" y="280.93344">w</tspan></text>
+		</g>
+		<g id="3Panel">
+			<rect x="200" y="604.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+			<text id="5text" x="290" y="676.64771" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="290" y="676.64771">w</tspan></text>
+		</g>
+		<g id="4Panel">
+			<rect x="606" y="604.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+			<text id="6text" x="718.57141" y="736.64771" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="718.57141" y="736.64771">w</tspan></text>
+		</g>
+		<g id="5Panel">
+			<rect x="1012" y="604.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+			<text id="7text" x="1185.7144" y="682.362" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="1185.7144" y="682.362">w</tspan></text>
+		</g>
+		<g id="6Panel" transform="translate(0,-340)">
+			<g id="1a" transform="translate(20,360)">
+				<rect x="200" y="198.36" width="398" height="398" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="4"/>
+				<text id="8text" x="387.14285" y="289.50488" fill="#000000" font-family="sans-serif" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="387.14285" y="289.50488">w</tspan></text>
+			</g>
+		</g>
+	</g>
+</svg>
