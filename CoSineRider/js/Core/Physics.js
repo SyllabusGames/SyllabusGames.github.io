@@ -50,9 +50,14 @@ var spx = 150;//		position in screen space. Used for drawing the sledder.
 var spy = 50;//			spy has the opposite sign as apy since the screen coordinate system has 0,0 in the upper right corner
 var vx = 0;//		sled velocity
 var vy = 0;
+var lastvx = 0;//	used for acceleration display
+var lastvy = 0;
+var maxAcceleration = 0;
+var accelerationLimit = 500;
 var ay = -30;//		vertical acceleration (30*0.15=4.5m/s^2)
 var av = 0;//	angular velocity
 var rotation = 0;//		sled current rotation in radians
+var sledWidth = 0.6;
 var rotPointx = 0;
 var rotPointy = 0;
 var apx = 150;//		position in global (absolute) space. This is used for physics and most calculations.
@@ -94,6 +99,10 @@ function runPhysics(){
 			pxLastx = pxapx;
 			pxLasty = pxapy;
 			
+			//		record last frame's velocity averaged with the one before which was averaged with the one before that which...
+			lastvx = (lastvx*3 + vx)/4;
+			lastvy = (lastvy*3 + vy)/4;
+			
 			//		if this is a programming level, use the programming physics instead of normal calculations
 			if(isProgramming){
 				proPhysics();//		see inputProgramming.js
@@ -101,12 +110,13 @@ function runPhysics(){
 				//		calculate next position using last step's velocities
 				if(usePolar){
 					pxapy += vy*pxdt*0.15;
-					pxapx += vx*pxdt*0.15/pxapy;//		absolute position (in meters)
+					pxapx += vx*pxdt*0.15/pxapy;//		absolute position (in radians) divide by r (pxapy) so movement is faster closer to the origin
 				}else{
 					pxapx += vx*pxdt*0.15;//		absolute position (in meters)
 					pxapy += vy*pxdt*0.15;
 				}
 
+				
 				rotation = rotation%(Math.PI*2);//		keep rotation between 0 and 2pi
 
 				tempZ = apz;//		set the Z coordinate used by equation() [tempZ] (see InputTyped.js) to the sled's Z coordinate 
@@ -133,10 +143,28 @@ function runPhysics(){
 				   Equation Line--\
 				*/
 				if(usePolar){
-					pxapx = (pxapx + _piTimes2)%_piTimes2;//		wrap pxapx to be between 0 and 2pi. I add _piTimes2 so pxapx never goes negative
+					//		polar coordinates use linear coordinates for most of the calculations, then just curve the result and loop at 0/2pi
+					
+					//		if pxapx goes outside the range of 0-2pi, it needs to be pulled back into that range, and while using a % operator
+					//			would work, we also need to change pxLastx so the interpolation does not animate the sled going the wrong way arround
+					//			the level to wrap from 0 to 2pi
+					if(pxapx > _piTimes2){
+						pxapx -= _piTimes2;
+						pxLastx  -= _piTimes2;
+					}else if(pxapx < 0){
+						pxapx += _piTimes2;
+						pxLastx  += _piTimes2;
+					}
 					//		----------------		[   Polar Physics   ]		----------------
 					if(pxLiney > pxapy){//		Sled is below the line.
-						pxapy = pxLiney;
+						pxapy = math.abs(pxLiney);//		avoid having a negative radius
+						//		you fell into the origin, reset
+						if(pxapy < 0.75){
+							showMessage = true;//		see CoSineRider.html
+							messageTime = 0;
+							messageText = "FELL INTO GRAVITATIONAL SINGULARITY";
+							resetSledder();
+						}
 						//		----------------		[   Get the tangent unit vector   ]		----------------
 						dy = (equation((pxapx+_piTimes2+0.1/pxapy)%_piTimes2) - equation((pxapx-0.1/pxapy)%_piTimes2));
 						scaler = 1/Math.sqrt(0.2/pxapy*0.2/pxapy + dy*dy);
@@ -175,7 +203,7 @@ function runPhysics(){
 					//		----------------		[   Linear Physics   ]		----------------
 					//		All of this only runs if the sled is below (touching) the equation line. If it is above the line, it is in freefall.
 					if(pxLiney > pxapy){//		Sled is below the line.
-					
+						//console.log(frameTime);//		used to calculate gravity
 						pxapy = pxLiney;//		Jump to surface of equation line where the sled will be next frame so the sled is never below the line.
 						
 						//		if the sled is trying to jump up further than its velocity will allow, reverse direction
@@ -253,8 +281,8 @@ function runPhysics(){
 			}
 			//		----------------		[   Set Rotation   ]		----------------
 			//		get the vector from the center to the end of the sled
-			rotPointx = Math.cos(-rotation)*0.6;
-			rotPointy = Math.sin(-rotation)*0.6;
+			rotPointx = Math.cos(-rotation)*sledWidth;
+			rotPointy = Math.sin(-rotation)*sledWidth;
 
 			if((-equation(pxapx + rotPointx) < (-pxapy + rotPointy))		||		(-equation(pxapx - rotPointx) < (-pxapy - rotPointy))){//		one of the sled's ends is below the line
 				av = -((equation(pxapx - rotPointx) - (pxapy + rotPointy)) - (equation(pxapx + rotPointx) - (pxapy - rotPointy)))*pxdt*20;
@@ -339,8 +367,8 @@ function runPhysics(){
 			ctx.rotate( rotation + apx - 0.4 );
 			ctx.translate( -spx, -spy );
 		}else{
-			spx = apx*screenScale - screenx*screenScale;//		screen position (in pixels)
-			spy = -apy*screenScale + screeny*screenScale;//		y is flipped since the top of the screen is 0
+			spx = (apx - screenx)*screenScale;//		screen position (in pixels)
+			spy = (-apy + screeny)*screenScale;//		y is flipped since the top of the screen is 0
 			
 			
 			//		----------------------------------------------------		[   Draw Sledder   ]		----------------------------------------------------
@@ -414,8 +442,8 @@ function checkSvgColliders(){
 						}
 					}
 					
-					rotPointx = Math.cos(-rotation)*0.6;//		get x and y position of one end of the sled
-					rotPointy = Math.sin(-rotation)*0.6;
+					rotPointx = Math.cos(-rotation)*sledWidth;//		get x and y position of one end of the sled
+					rotPointy = Math.sin(-rotation)*sledWidth;
 					segmentLength = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
 					/*
 					//		SLED ROTATION USING BOTH ENDS OF THE SLED
@@ -545,7 +573,7 @@ function checkSvgCollidersPolar(){
 				rtmp = pxSleddx/dx;//		fraction of line from [i] to [i-1] that is from [i] to sled position
 				pxLiney = -dy*rtmp - allGroundPointsY[i];//		pxLiney = y position on line at sled X coordinate
 	
-	
+				console.log(pxLiney + " - " +  pxSleddx + " - " +  rtmp + " - " + dx  + " - " +  dy);
 				if(Math.abs(pxLiney - pxapy) < 5){//		Sled is less than 1 meter from this line, run collision and rotation calculations. (this stops lines above and below the line the sled is on from effecting its rotation)
 								console.log("between " + i + "and" + (i-1));
 	
@@ -571,8 +599,8 @@ function checkSvgCollidersPolar(){
 						}
 					}
 					
-					rotPointx = Math.cos(-rotation)*0.6;//		get x and y position of one end of the sled
-					rotPointy = Math.sin(-rotation)*0.6;
+					rotPointx = Math.cos(-rotation)*sledWidth;//		get x and y position of one end of the sled
+					rotPointy = Math.sin(-rotation)*sledWidth;
 					segmentLength = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
 
 					rtmp = -(dx - pxSleddx - rotPointx)/dx*dy - rotPointy;

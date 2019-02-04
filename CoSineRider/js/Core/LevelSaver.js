@@ -1,7 +1,89 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 function saveLevel(){
-	localStorage.setItem("Blank" , "Title not shown\nSR\n-10,0\nx\nshowt0\nuseBlank\n0,0\nnone\nEnd");//	sin(x-8*t)+(x-12)^2/300-1
-	localStorage.setItem("DR000" , `LV1: Drag Points
+	localStorage.setItem("NoneTyped" , `Title not shown
+TY
+-10,0
+x
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+	localStorage.setItem("NonePie" , `Title not shown
+PW
+-10,0
+5
+-999,10,-x/2+t*1.5
+10,20,t*1.5-10
+20,30,x/5-16+t*1
+30,40,x/8-16+t*0.5
+40,200,x/10-16+t*2
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+
+	localStorage.setItem("NoneMulti" , `Title not shown
+MT
+-10,0
+hideMax
+5
+x/1
+x/2
+x/3
+x/4
+x/5
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+
+	localStorage.setItem("NoneProxyVar" , `Title not shown
+PV
+-10,0
+y=A+B+C+D
+A=x+t
+B=x+t
+C=x+t
+D=x+t
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+	localStorage.setItem("NoneProxyFunction" , `Title not shown
+PF
+-10,0
+y=f[x]+g[x]+h[x]+k[x]
+f=a/1
+g=a/2
+h=a/3
+k=a/4
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+	localStorage.setItem("NoneProgramming" , `Title not shown
+TY
+-10,0
+x
+showt0
+showAcceleration100000
+useZ
+useNone
+10,0
+none
+End`);
+
+	localStorage.setItem("DR000" , `LV1: DR000
 DR
 0,0
 _*x+_
@@ -10,17 +92,19 @@ _*x+_
 44,4
 Cave
 End`);
-	localStorage.setItem("DR001" , `LV1: Drag Points
+
+	localStorage.setItem("DR001" , `LV1: DR001
 DR
 0,0
 _*(x-_)^2+_
 1,y,1,0,1,2,-1
 0,x,0,1,2,-1,-1
-0,y,0,0,1,-1,-1
+-2,y,0,0,1,-1,-1
 44,4
 Cave
 End`);
-	localStorage.setItem("DR002" , `LV1: Drag Points
+
+	localStorage.setItem("DR002" , `LV1: DR002
 DR
 0,0
 _*sin((x-_)/_)+_
@@ -32,7 +116,7 @@ showt0
 10,0
 Cave
 End`);
-	localStorage.setItem("DR003" , `LV1: Drag Points
+	localStorage.setItem("DR003" , `LV1: DR003
 DR
 0,0
 _*sin((x-_-t*_)/_)+_
@@ -45,7 +129,7 @@ showt0
 10,0
 Cave
 End`);
-	localStorage.setItem("DR004" , `LV1: Drag Points
+	localStorage.setItem("DR004" , `LV1: DR004
 DR
 0,0
 _*sin((x-_-t*_)/_)+_ + _/100*(x-_)^2+_
@@ -62,7 +146,7 @@ showt0
 Easy
 End`);
 
-	localStorage.setItem("BL001" , `LV1: Drag Points
+	localStorage.setItem("BL001" , `LV1: BL001
 BL
 0,0
 _/10*(x+_)^2+_
@@ -72,7 +156,7 @@ _/10*(x+_)^2+_
 Easy
 End`);
 
-	localStorage.setItem("BL002" , `LV1: Complex Numbers
+	localStorage.setItem("BL002" , `LV1: BL002
 BL
 0,0
 _+_*i+000000000000000+_
@@ -82,20 +166,20 @@ _+_*i+000000000000000+_
 Easy
 End`);
 
-	localStorage.setItem("SR000" , `LV1: Using Time
-SR
+	localStorage.setItem("TY000" , `LV1: TY000
+TY
 0,23
 22.6-x+t*1.9
 y=10-2*x/3.14159
 showt0
 usePolar
-4,0
+0,0
 Polar
 parallax=City
 End`);
 
-	localStorage.setItem("SR001" , `LV1: Using Time
-SR
+	localStorage.setItem("TY001" , `LV1: TY001
+TY
 0,0
 round(x/10-t/8)%2*5
 y=sin(x-8*t)+(x-12)^2/300-1.4
@@ -105,8 +189,8 @@ useZ
 Cave
 End`);
 
-	localStorage.setItem("SR002" , `LV2: Using Time
-SR
+	localStorage.setItem("TY002" , `LV2: TY002
+TY
 0,0
 cos(x-8*t+1)+(x-12)^3/1000-x
 y=t/2
@@ -117,16 +201,16 @@ useDerivative
 Cave
 End`);
 
-	localStorage.setItem("SR003" , `LV2: Using Time
-SR
+	localStorage.setItem("TY003" , `LV2: TY003
+TY
 0,0
 -x/10
 44,4
 Cave
 End`);
 
-	localStorage.setItem("SR010" , `LV1: Using Time
-SR
+	localStorage.setItem("TY010" , `LV1: TY010
+TY
 0,10
 sin(x-8*t)+(x+3)^2/300+9
 showt0
@@ -135,19 +219,20 @@ useScreenLimit
 Checkpoint
 End`);
 
-	localStorage.setItem("PW001" , `LV2: Piecwise
+	localStorage.setItem("PW001" , `LV2: PW001
 PW
 0,0
 2
 L-999,20,-x/2+t*1.7
 60,L80+t*2,x/10-16+t*1.7
+sled=RockA,0.1
 y=sin(t)+cos(t+pi)
-useDerivative
+showAcceleration100
 91,17
 Tower
 parallax=CityGreen
 End`);
-	localStorage.setItem("PW002" , `LV2: Piecwise
+	localStorage.setItem("PW002" , `LV2: PW002
 PW
 0,0
 3
@@ -155,11 +240,12 @@ L-999,20,-x/2+t*1.7
 20,60,t*1.7-10
 60,L200,x/10-16+t*1.7
 y=sin(t)+cos(t+pi)
+useDerivative
 91,17
 Tower
 parallax=CityGreen
 End`);
-	localStorage.setItem("PW003" , `LV2: Piecwise
+	localStorage.setItem("PW003" , `LV2: PW003
 PW
 0,0
 4
@@ -167,10 +253,12 @@ L-999,10,-x/2+t*1.5
 10,20,t*1.5-10
 20,30,x/5-16+t*1
 30,L40,x/8-16+t*0.5
+sled=RockB,0.6
+showAcceleration100
 91,17
 Tower
 End`);
-	localStorage.setItem("PW004" , `LV2: Piecwise
+	localStorage.setItem("PW004" , `LV2: PW004
 PW
 0,0
 5
@@ -182,7 +270,7 @@ L-999,10,-x/2+t*1.5
 91,17
 Tower
 End`);
-	localStorage.setItem("PV001" , `LV1: Variables
+	localStorage.setItem("PV001" , `LV1: PV001
 PV
 0,2
 y-A*2
@@ -190,7 +278,7 @@ A=(abs(x+4)*2)^0.5
 91,17
 Tower
 End`);
-	localStorage.setItem("PV002" , `LV1: Variables
+	localStorage.setItem("PV002" , `LV1: PV002
 PV
 0,2
 y-A+B
@@ -199,7 +287,7 @@ B=cos(x-4*t+3)
 91,17
 Tower
 End`);
-	localStorage.setItem("PV003" , `LV1: Variables
+	localStorage.setItem("PV003" , `LV1: PV003
 PV
 0,2
 y=A+B+C
@@ -210,7 +298,7 @@ C=-1
 Tower
 End`);
 
-	localStorage.setItem("PV004" , `LV1: Variables
+	localStorage.setItem("PV004" , `LV1: PV004
 PV
 0,2
 y-A+B+C+D
@@ -222,7 +310,7 @@ D--1.4
 Tower
 End`);
 
-	localStorage.setItem("PR001" , `LV1: Variables
+	localStorage.setItem("PR001" , `LV1: PR001
 PR
 0,2
 -x/5
@@ -232,6 +320,8 @@ proSledPosY
 sled.y+sled.velocity.y
 proGravity
 -5
+sled=RockB
+showAcceleration100
 91,17
 Tower
 End`);
@@ -239,7 +329,7 @@ End`);
 // proSledPosX				Let the player set the sled's X position when it hits the line
 // proSledPosY				Let the player set the sled's Y position when it hits the line
 // proSledVelX				Let the player set the sled's X position when it hits the line
-// proPSledVelY			Let the player set the sled's X position when it hits the line
+// proPSledVelY				Let the player set the sled's X position when it hits the line
 // proGravity				Let the player set gravity
 
 	localStorage.setItem("PF001" , `LV1: Variables
@@ -311,7 +401,7 @@ End`);
 
 
 function buildLevelMap(){
-	localStorage.setItem("LevelMap" , "SR000,PR001,PF002,SR001,PW003,BL002,PW001,PW002,PW004,PF001,PF003,PV003,CU001,BL001,PV001,PV004,DR001,CU001")
+	localStorage.setItem("LevelMap" , "TY000,PW004,NoneMulti,PF002,DR002,PV004,DR001,TY002,PW001,PW002,PR001,TY001,PW003,BL002,PF001,PF003,PV003,CU001,BL001,PV001,CU001")
 }
 
 /*
@@ -328,15 +418,17 @@ A = elliptical Arc
 Z = closepath
 
 
-	Standard Sine Rider level
+		Typed input like the original Sine Rider
 LV1: Easy				Name
-SR						Level Type
+TY						Level Type
 0,0						Sled start position
-y=-x/3-4				Guide Equation
 -x/2-3					Default equation
-		//		All levels can contain the following modifiers
-showt0//				Optional declaration. t can always be used in equations. Adding this graphs a t=0 line
-useZ//					Optional declaration. Allows z to be used in equation
+		//		All levels can contain any combination of the following modifiers
+y=-x/3-4				Guide Equation
+sled=Sled2A,0.7			Replace sled graphic with Sled2A.svg for this level and all following levels until the value is set by another level. Set the sled's physics width to 0.7 meters.
+showt0//				t can always be used in equations. Adding this graphs a t=0 line
+showAcceleration80		Displays the sled's acceleration when the game is running. Resets the sledder if acceleration exceeds 80.
+useZ//					Allows z to be used in equation
 useNone					Not a game level, this is just a graphing application (Do not render sled or background)
 useDerivative			Graph the derivative of whatever function the player enters and use that for the sled physics
 
@@ -353,6 +445,20 @@ PW						Level Type
 -999,20,-x/2+t*1.5		Equation #1 range minimum, range maximum, default equation
 L20,L60,Lt*1.5-10		Equation #2. Adding an L in front of the input locks that input field so the player cannot edit it.
 60-sin(t),200,x/10-16	Equation #3. Equation limits can be equations using time. If they are equations not containing time, they will be reduced to their numeric value the first time they are edited.
+91,17					Camera track point
+nTower					.svg background to load
+End
+
+
+		Multi-Typed Input
+LV1: Easy				Name
+MT						Level Type
+0,0						Sled start position
+hideMax					Optional declaration which hides the max line used for physics. Just don't include this line to use the line.
+3						Number of equations
+-x/2+t*1.5				Equation #1 range minimum, range maximum, default equation
+Lt*1.5-10				Equation #2. Adding an L in front of the input locks that input field so the player cannot edit it.
+200,x/10-16				Equation #3. Equation limits can be equations using time. If they are equations not containing time, they will be reduced to their numeric value the first time they are edited.
 91,17					Camera track point
 nTower					.svg background to load
 End

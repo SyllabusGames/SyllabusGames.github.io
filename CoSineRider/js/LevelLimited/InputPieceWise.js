@@ -24,6 +24,7 @@ function pieInitialize(){
 	pieLeftInputCompiled = [false,false,false,false,false];
 	pieRightInputCompiled = [false,false,false,false,false];
 	yEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y=</text>';
+	yEqualsText.style.display = "block";
 	pieScreenResize();
 }
 
@@ -58,7 +59,7 @@ function pieScreenResize(){
 }
 
 function pieShowHideInputs(showHide){
-	for(i = pieEquInputsUsed ; i > -1 ; i--){
+	for(i = pieEquInputsUsed-1 ; i > -1 ; i--){
 		pieEquInput[i].style.display = showHide;
 		pieLeftInput[i].style.display = showHide;
 		pieRightInput[i].style.display = showHide;
@@ -198,7 +199,7 @@ function pieCheckInput(selectedElement){
 	
 	activeInput = pieEquInput[inputNum];
 	equInputField = activeInput.style;
-	activeInput.setAttribute("z-index" , ++inputZ);
+	// activeInput.setAttribute("z-index" , ++inputZ);
 
 	pieUndoListAdd(selectedElement , pieRaw[inputNum] , activeInput.innerText);
 

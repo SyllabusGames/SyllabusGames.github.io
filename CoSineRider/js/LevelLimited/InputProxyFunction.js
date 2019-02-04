@@ -10,6 +10,7 @@ function pFunInitialize(){
 	pieRaw[2] = "";
 	pieRaw[4] = "";
 	pieRaw[5] = "";
+	yEqualsText.style.display = "block";
 	pFunScreenResize();//		move input field to the correct place on the screen
 }
 
@@ -56,7 +57,7 @@ function pFunUpdateEquDisplay(){
 }
 
 function pFunShowHideInputs(showHide){
-	for(i = pieEquInput.length-1 ; i > -1 ; i--){
+	for(i = pieEquInputsUsed ; i > -1 ; i--){
 		pieEquInput[i].style.display = showHide;
 	}
 }
