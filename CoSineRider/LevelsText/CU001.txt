@@ -1,0 +1,7 @@
+Cutscene!!!
+CU
+0,0
+Cutscene1.svg
+0,0
+none
+End

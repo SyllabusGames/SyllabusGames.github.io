@@ -1,0 +1,15 @@
+LV1: PR001
+PR
+0,2
+-x/5
+proSledPosX
+sled.x+sled.velocity.x
+proSledPosY
+sled.y+sled.velocity.y
+proGravity
+-sled.y*3-10+sled.x*0.65
+sled=RockB
+showAcceleration100
+91,17
+Tower
+End

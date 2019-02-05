@@ -1,0 +1,10 @@
+LV1: TY001
+TY
+0,0
+round(x/10-t/8)%2*5
+y=sin(x-8*t)+(x-12)^2/300-1.4
+showt0
+useZ
+44,4
+Cave
+End
