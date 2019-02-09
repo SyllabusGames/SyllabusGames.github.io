@@ -1,0 +1,10 @@
+LV1: TY000
+TY
+0,23
+22.6-x+t*1.9
+y=10-2*x/3.14159
+showt0
+usePolar
+0,0
+Polar
+End
