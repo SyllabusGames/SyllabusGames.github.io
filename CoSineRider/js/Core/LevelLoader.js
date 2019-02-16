@@ -7,13 +7,13 @@ var partstring = "";
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
 
-var useGuide = false;//		show guide line.	Guide variables declared in EquationLine.js
-var showt0 = false;//		time is not just set to zero
+var showGuide = false;//		show guide line.	Guide variables declared in EquationLine.js
 //var usePGaps = false;//		piecewise with gaps. When false, there are no gaps between where one equation ends and the next starts
 var useZ = false;//			read Z as a variable and show a line for Z = -10 and Z = 10. Give the player a slider to shift Z.
 var useNone = false;//		This is not a game level so the sledder, background, and colliders will not be loaded
 var useRender = false;
 var useDerivative = false;
+var useScreenLimit = false;//		in checkpoint levels, limit screen movement to show only the last and next checkpoints
 var usePolar = false;
 /*	Polar Guide
 		world coordinates to theta = math.atan(Y/X);
@@ -30,10 +30,13 @@ var usePolar = false;
 			Y = R * math.sin(theta);
 */
 var show3D = false;//		Show/Hide 3D view. If off, still show the Z slider and current value, just don't render the 3D view
+var showAcceleration = false;//		Show/Hide acceleration display for levels where you move something fragile
+var showt0 = false;//		time is not just set to zero
 
-var useScreenLimit = true;//		in checkpoint levels, limit screen movement to show only the last and next checkpoints
 
 var isPiecewise = false;
+var isMulti = false;
+var hideMultiMax = false;
 var isProxyVar = false;
 var isProxyFunction = false;
 var isDrag = false;
@@ -97,12 +100,14 @@ function loadExternalLevel(){
 function levelCleared(){
 	localStorage.setItem(levelCode , 1);//	save that the current level has been cleared
 	mapIndex++;//		advance to the next level
+	levelCode = levelMap[mapIndex];
 	loadBuiltInLevel();//		load the next level
 }
 
 function loadLevelMap(){//		load the list of levels which was created in LevelSaver.js
 	levelMap = localStorage.getItem("LevelMap").split(',');
 //	preloadLevelAssets(levelMap[mapIndex+1]);
+	levelCode = levelMap[mapIndex];
 	loadBuiltInLevel();
 }
 
@@ -110,7 +115,6 @@ function loadBuiltInLevel(){
 	simulating = false;
 	clearGraphedPoints();
 	graphPointUndoXs = [[]];
-	levelCode = levelMap[mapIndex];
 //	console.log(levelCode);
 //	console.log(localStorage.getItem(levelCode));
 	loadedLevel = localStorage.getItem(levelCode).split('\n');
@@ -132,7 +136,7 @@ function loadBuiltInLevel(){
 	lineNum++;
 
 	//		last level used multiple input fields but this one doesn't so hide all inputs
-	if((isPiecewise || isProxyVar || isProxyFunction) && (levelType != "PW" || levelType != "PV" || levelType != "PF")){
+	if((isPiecewise || isMulti || isProxyVar || isProxyFunction) && (levelType != "PW" || levelType != "MT"  || levelType != "PV" || levelType != "PF")){
 		for(k = 0 ; k < 5 ; k++){
 			pieEquInput[k].style.display = "none";
 			pieLeftInput[k].style.display = "none";
@@ -159,6 +163,8 @@ function loadBuiltInLevel(){
 	}
 
 	isPiecewise = false;
+	isMulti = false;
+	hideMultiMax = false;
 	isProxyVar = false;
 	isProxyFunction = false;
 	isDrag = false;
@@ -166,8 +172,10 @@ function loadBuiltInLevel(){
 	isProgramming = false;
 	isCutscene = false;
 	
-	useGuide = false;
+	showGuide = false;
 	showt0 = false;
+	showAcceleration = false;
+	
 	useZ = false;
 	useNone = false;
 	useDerivative = false;
@@ -179,8 +187,8 @@ function loadBuiltInLevel(){
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
-		case "SR":
-		//		"LV1: Using Time\nSR\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nshowt0\nuseZ\n44,4\nCave\nEnd"
+		case "TY":
+		//		"LV1: Using Time\nTY\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nshowt0\nuseZ\n44,4\nCave\nEnd"
 			equRaw = loadedLevel[lineNum];
 			mainInput.innerHTML = equRaw;
 			mainInput.style.display = "block";
@@ -256,6 +264,43 @@ function loadBuiltInLevel(){
 				pieLeftInput[k].style.display = "none";
 				pieRightInput[k].style.display = "none";
 				pieLimitsText[k].style.display = "none";
+				k++;
+			}
+			lineNum += pieEquInputsUsed;
+
+			break;//		-----------------------------------------------------------------------		[   Piecewise Typed Input   ]		-----------------------------------------------------------------------
+		case "MT":
+		//		LV2: Piecwise\nPW\n0,0\n3\n-999,20,-x/2+t*1.5\n20,60,t*1.5-10\n60,200,x/10-16+t*1.5\n91,17\nTower\nEnd"
+			isMulti = true;
+			if(loadedLevel[lineNum] == "hideMax"){
+				hideMultiMax = true;
+				lineNum++;
+			}else{
+				hideMultiMax = false;
+			}
+
+			pieEquInputsUsed = parseInt(loadedLevel[lineNum]);//		get total number of input fields used
+			multiInitialize();//		see InputMultiTyped.js
+			lineNum++;
+
+			for(k = 0 ; k < pieEquInputsUsed ; k++){//		for each input field
+				pieEquInput[k].style.display = "block";
+
+				partstring = loadedLevel[k+lineNum];//		equations are stored as LeftLimit,RightLimit,Equation
+				
+				//		----------------		[   Input field   ]		----------------
+				if(partstring[0] == 'L'){//		Lock input field
+					partstring = partstring.substring(1);//		cut L off the front of this input
+					pieEquInput[k].setAttribute("contentEditable" , "false");
+					pieEquInput[k].style.backgroundColor = _inputLockedColor;
+				}else{//		unlock input field
+					pieEquInput[k].setAttribute("contentEditable" , "true");
+					pieEquInput[k].style.backgroundColor = _inputColor;
+				}
+				pieEquInput[k].innerHTML = partstring;
+			}
+			while(k < 5){//		hide each input field not used
+				pieEquInput[k].style.display = "none";
 				k++;
 			}
 			lineNum += pieEquInputsUsed;
@@ -423,6 +468,16 @@ function loadBuiltInLevel(){
 			//		-----------------------------------------------------------------------		[   Drag Points   ]		-----------------------------------------------------------------------
 		case "DR":
 			isDrag = true;
+			//		reset the point list
+			dragVar = [];
+			dragDirection = [];
+			dragDefaultx = [];
+			dragx = [];
+			dragDefaulty = [];
+			dragy = [];
+			dragDependent0 = [];
+			dragDependent1 = [];
+			dragDependent2 = [];
 		//			"LV1: Drag Points\nRD\n0,0\n_*x+_\n2,v,1,1,1\n44,4\nCave\nEnd"
 			//		load like a standard typed input level
 			equRaw = loadedLevel[lineNum];
@@ -514,17 +569,36 @@ function loadBuiltInLevel(){
 	
 	//		-----------------------------------------------------------------------		[   Optional Modes   ]		-----------------------------------------------------------------------
 
+	//		Replacement sled graphic
+	if(loadedLevel[lineNum].substring(0,5) == "sled="){
+		stmp = loadedLevel[lineNum].substring(5).split(',');
+		console.log(stmp[0]);
+		console.log(stmp[1]);
+		sledderSvg.src = "Sleds/" + stmp[0] + ".svg";
+		sledWidth = parseFloat(stmp[1]);
+		lineNum++;
+	}
+	
 	//		Guide Equation
 	if(loadedLevel[lineNum].substring(0,2) == "y="){
-		useGuide = true;
+		showGuide = true;
 		guideInput = math.parse(loadedLevel[lineNum].substring(2) , {x: 0 , t: 0});
 		guideCompiled = guideInput.compile();
 		lineNum++;
 	}
 
-	//		showt0
+	//		show time=0 line
 	if(loadedLevel[lineNum] == "showt0"){
 		showt0 = true;
+		lineNum++;
+	}
+	
+	//		show acceleration and check if the sled impacts anything with excessive force
+	if(loadedLevel[lineNum].substring(0,5) == "showA"){
+		showAcceleration = true;
+		lastvx = 0;
+		lastvy = 0;
+		accelerationLimit = parseInt(loadedLevel[lineNum].substring(16));
 		lineNum++;
 	}
 
@@ -574,9 +648,6 @@ function loadBuiltInLevel(){
 	
 	
 	
-	
-	
-	
 	//		useScreenLimit (in checkpoint levels, limit screen movement to show only the last and next checkpoints)
 	if(loadedLevel[lineNum] == "useScreenLimit"){
 		useScreenLimit = true;
@@ -604,6 +675,13 @@ function loadBuiltInLevel(){
 			drawParallax = true;
 			lineNum++;
 		}
+	}else{//		don't load a new level and erase the existing collision points
+		allGroundPointsX = [];
+		allGroundPointsY = [];
+		allGroundBreaks = [];
+		checkx = [];
+		checky = [];
+		checkr = [];
 	}
 	
 		//		-----------------------------------------------------------------------		[   Text Input Field   ]		-----------------------------------------------------------------------

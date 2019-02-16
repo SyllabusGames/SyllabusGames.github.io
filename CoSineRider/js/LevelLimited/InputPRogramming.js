@@ -90,6 +90,7 @@ function proInitialize(){
 	
 	pieEquInputsUsed = k;
 	yEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">' + proDisplayText + '</text>';
+	yEqualsText.style.display = "block";
 	
 	//		set first blank to be the active input
 	pieEquInput[0].focus();
@@ -159,7 +160,7 @@ function proCheckInput(selectedElement){
 	//		assign the input based on what the input field is mapped to not its input
 	activeInput = pieEquInput[inputNum];
 	equInputField = activeInput.style;
-	activeInput.setAttribute("z-index" , ++inputZ);
+	// activeInput.setAttribute("z-index" , ++inputZ);
 
 	pieUndoListAdd(selectedElement , pieRaw[proInputIndex] , activeInput.innerText);
 	
@@ -204,7 +205,7 @@ var proEquVelY = "";
 //		sled physics using inputs from the player
 function proPhysics(){
 	//		move input fields to leave room for the real time value display
-	k = screenWidth-170;	console.log('proScreenResize');
+	k = screenWidth-170;
 
 	for(i = 0 ; i < pieEquInputsUsed ; i++){
 		equInputField = pieEquInput[i].style;
@@ -237,7 +238,7 @@ function proPhysics(){
 
 	
 	if(proGravity){
-		ay = pieEquCompiled[4].eval(scope);
+		ay = pieEquCompiled[4].eval(scope)*6.666666;
 	}
 	
 			

@@ -1,7 +1,89 @@
 ﻿//	-----	[  This is free and unencumbered software released into the public domain  ]	-----
 function saveLevel(){
-	localStorage.setItem("Blank" , "Title not shown\nSR\n-10,0\nx\nshowt0\nuseBlank\n0,0\nnone\nEnd");//	sin(x-8*t)+(x-12)^2/300-1
-	localStorage.setItem("DR000" , `LV1: Drag Points
+	localStorage.setItem("NoneTyped" , `Title not shown
+TY
+-10,0
+x
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+	localStorage.setItem("NonePie" , `Title not shown
+PW
+-10,0
+5
+-999,10,-x/2+t*1.5
+10,20,t*1.5-10
+20,30,x/5-16+t*1
+30,40,x/8-16+t*0.5
+40,200,x/10-16+t*2
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+
+	localStorage.setItem("NoneMulti" , `Title not shown
+MT
+-10,0
+hideMax
+5
+x/1
+x/2
+x/3
+x/4
+x/5
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+
+	localStorage.setItem("NoneProxyVar" , `Title not shown
+PV
+-10,0
+y=A+B+C+D
+A=x+t
+B=x+t
+C=x+t
+D=x+t
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+	localStorage.setItem("NoneProxyFunction" , `Title not shown
+PF
+-10,0
+y=f[x]+g[x]+h[x]+k[x]
+f=a/1
+g=a/2
+h=a/3
+k=a/4
+showt0
+useZ
+useNone
+10,0
+none
+End`);
+	localStorage.setItem("NoneProgramming" , `Title not shown
+TY
+-10,0
+x
+showt0
+showAcceleration100000
+useZ
+useNone
+10,0
+none
+End`);
+/*
+	localStorage.setItem("DR000" , `LV1: DR000
 DR
 0,0
 _*x+_
@@ -10,17 +92,19 @@ _*x+_
 44,4
 Cave
 End`);
-	localStorage.setItem("DR001" , `LV1: Drag Points
+
+	localStorage.setItem("DR001" , `LV1: DR001
 DR
 0,0
 _*(x-_)^2+_
 1,y,1,0,1,2,-1
 0,x,0,1,2,-1,-1
-0,y,0,0,1,-1,-1
+-2,y,0,0,1,-1,-1
 44,4
 Cave
 End`);
-	localStorage.setItem("DR002" , `LV1: Drag Points
+
+	localStorage.setItem("DR002" , `LV1: DR002
 DR
 0,0
 _*sin((x-_)/_)+_
@@ -32,7 +116,7 @@ showt0
 10,0
 Cave
 End`);
-	localStorage.setItem("DR003" , `LV1: Drag Points
+	localStorage.setItem("DR003" , `LV1: DR003
 DR
 0,0
 _*sin((x-_-t*_)/_)+_
@@ -45,7 +129,7 @@ showt0
 10,0
 Cave
 End`);
-	localStorage.setItem("DR004" , `LV1: Drag Points
+	localStorage.setItem("DR004" , `LV1: DR004
 DR
 0,0
 _*sin((x-_-t*_)/_)+_ + _/100*(x-_)^2+_
@@ -62,7 +146,7 @@ showt0
 Easy
 End`);
 
-	localStorage.setItem("BL001" , `LV1: Drag Points
+	localStorage.setItem("BL001" , `LV1: BL001
 BL
 0,0
 _/10*(x+_)^2+_
@@ -72,7 +156,7 @@ _/10*(x+_)^2+_
 Easy
 End`);
 
-	localStorage.setItem("BL002" , `LV1: Complex Numbers
+	localStorage.setItem("BL002" , `LV1: BL002
 BL
 0,0
 _+_*i+000000000000000+_
@@ -82,20 +166,20 @@ _+_*i+000000000000000+_
 Easy
 End`);
 
-	localStorage.setItem("SR000" , `LV1: Using Time
-SR
+	localStorage.setItem("TY000" , `LV1: TY000
+TY
 0,23
 22.6-x+t*1.9
 y=10-2*x/3.14159
 showt0
 usePolar
-4,0
+0,0
 Polar
 parallax=City
 End`);
 
-	localStorage.setItem("SR001" , `LV1: Using Time
-SR
+	localStorage.setItem("TY001" , `LV1: TY001
+TY
 0,0
 round(x/10-t/8)%2*5
 y=sin(x-8*t)+(x-12)^2/300-1.4
@@ -105,8 +189,8 @@ useZ
 Cave
 End`);
 
-	localStorage.setItem("SR002" , `LV2: Using Time
-SR
+	localStorage.setItem("TY002" , `LV2: TY002
+TY
 0,0
 cos(x-8*t+1)+(x-12)^3/1000-x
 y=t/2
@@ -117,16 +201,16 @@ useDerivative
 Cave
 End`);
 
-	localStorage.setItem("SR003" , `LV2: Using Time
-SR
+	localStorage.setItem("TY003" , `LV2: TY003
+TY
 0,0
 -x/10
 44,4
 Cave
 End`);
 
-	localStorage.setItem("SR010" , `LV1: Using Time
-SR
+	localStorage.setItem("TY010" , `LV1: TY010
+TY
 0,10
 sin(x-8*t)+(x+3)^2/300+9
 showt0
@@ -135,19 +219,20 @@ useScreenLimit
 Checkpoint
 End`);
 
-	localStorage.setItem("PW001" , `LV2: Piecwise
+	localStorage.setItem("PW001" , `LV2: PW001
 PW
 0,0
 2
 L-999,20,-x/2+t*1.7
 60,L80+t*2,x/10-16+t*1.7
+sled=RockA,0.1
 y=sin(t)+cos(t+pi)
-useDerivative
+showAcceleration100
 91,17
 Tower
 parallax=CityGreen
 End`);
-	localStorage.setItem("PW002" , `LV2: Piecwise
+	localStorage.setItem("PW002" , `LV2: PW002
 PW
 0,0
 3
@@ -155,11 +240,12 @@ L-999,20,-x/2+t*1.7
 20,60,t*1.7-10
 60,L200,x/10-16+t*1.7
 y=sin(t)+cos(t+pi)
+useDerivative
 91,17
 Tower
 parallax=CityGreen
 End`);
-	localStorage.setItem("PW003" , `LV2: Piecwise
+	localStorage.setItem("PW003" , `LV2: PW003
 PW
 0,0
 4
@@ -167,10 +253,12 @@ L-999,10,-x/2+t*1.5
 10,20,t*1.5-10
 20,30,x/5-16+t*1
 30,L40,x/8-16+t*0.5
+sled=RockB,0.6
+showAcceleration100
 91,17
 Tower
 End`);
-	localStorage.setItem("PW004" , `LV2: Piecwise
+	localStorage.setItem("PW004" , `LV2: PW004
 PW
 0,0
 5
@@ -182,7 +270,7 @@ L-999,10,-x/2+t*1.5
 91,17
 Tower
 End`);
-	localStorage.setItem("PV001" , `LV1: Variables
+	localStorage.setItem("PV001" , `LV1: PV001
 PV
 0,2
 y-A*2
@@ -190,7 +278,7 @@ A=(abs(x+4)*2)^0.5
 91,17
 Tower
 End`);
-	localStorage.setItem("PV002" , `LV1: Variables
+	localStorage.setItem("PV002" , `LV1: PV002
 PV
 0,2
 y-A+B
@@ -199,7 +287,7 @@ B=cos(x-4*t+3)
 91,17
 Tower
 End`);
-	localStorage.setItem("PV003" , `LV1: Variables
+	localStorage.setItem("PV003" , `LV1: PV003
 PV
 0,2
 y=A+B+C
@@ -210,7 +298,7 @@ C=-1
 Tower
 End`);
 
-	localStorage.setItem("PV004" , `LV1: Variables
+	localStorage.setItem("PV004" , `LV1: PV004
 PV
 0,2
 y-A+B+C+D
@@ -222,7 +310,7 @@ D--1.4
 Tower
 End`);
 
-	localStorage.setItem("PR001" , `LV1: Variables
+	localStorage.setItem("PR001" , `LV1: PR001
 PR
 0,2
 -x/5
@@ -231,7 +319,9 @@ sled.x+sled.velocity.x
 proSledPosY
 sled.y+sled.velocity.y
 proGravity
--5
+-sled.y*3-10+sled.x*0.65
+sled=RockB
+showAcceleration100
 91,17
 Tower
 End`);
@@ -239,7 +329,7 @@ End`);
 // proSledPosX				Let the player set the sled's X position when it hits the line
 // proSledPosY				Let the player set the sled's Y position when it hits the line
 // proSledVelX				Let the player set the sled's X position when it hits the line
-// proPSledVelY			Let the player set the sled's X position when it hits the line
+// proPSledVelY				Let the player set the sled's X position when it hits the line
 // proGravity				Let the player set gravity
 
 	localStorage.setItem("PF001" , `LV1: Variables
@@ -284,7 +374,7 @@ CU
 Cutscene1.svg
 0,0
 none
-End`);
+End`);*/
 
 	localStorage.setItem("CaveColliders" , '<svg width="2e3" height="2e3" version="1.1" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0 947.64)" stroke="#000000"><path d="m1187.8 38.78-4.5114 4.6461-10.734 4.6196-12.908-1.7663-18.071 0.13588-23.506 4.0761-40.626 2.7174-17.392-4.212-10.87-2.038-11.142-1.087-5.5707-3.6685-1.9022-3.6685 1.7919-4.1638 10.642-11.331 34.578-7.8748 34.376 0.54348 59.39-9.1243 16.64 23.431-0.1853 8.7645" fill="#ffffff" fill-rule="evenodd"/><path d="m0 78.696 949.47-15.024 24.593-0.74728 15.218-1.9022h19.905l8.6145 1.4618 2.7862 0.33626 2.546 0.7686 0.4803 0.72056 5.0921 8.1107 3.6029 1.8254 1.345 2.1752 2.8343 1.2009 1.9215 1.8735 3.8911 2.2578 4.0832 1.6813 3.5548 1.1049 3.747 2.0176 5.8127 2.4019 7.8302 3.891 3.843 2.1617 1.9216 0.0961 1.2489-0.57644 0.9608 0.19214 1.297 0.76861 3.6029 0.1441 0.4324-1.0088 3.2665-0.24019 3.0264 0.33626 1.6333-0.14411 2.9784 0.81663 5.8606-0.1441 10.04-2.4019 0.8647-1.1529 2.2098-0.72056 1.4891 0.28822 1.4412-0.048 2.0176-0.9127-0.3363-0.62449 0.1441-1.0088 4.3235-2.1617 7.4459-0.24018 1.2009 0.5284 7.5901-2.1136 12.826-0.43233 1.7774-0.43233 2.6421-0.048 2.2577 0.57645 1.6333 1.0088h4.8519l4.0832-0.86467 6.245 1.1048 11.322-0.24559 7.9272-5.0115 3.4649-7.7949 4.7994-3.7885 2.5388-5.0776 3.0829-4.8963 2.5692-1.7327 11.827-5.7659 15.468-0.91271 33.002-5.14 731.85-3.7593" fill="none"/><circle cx="1222.1" cy="38.434" r="8.6607" fill="none" stroke-width=".94488"/></g></svg>');
 	localStorage.setItem("TowerColliders" , '<svg width="2e3" height="2e3" version="1.1" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0 1e3)" fill="none" stroke="#000000"><g><g><path d="m0 333.28h2e3"/><path d="m956.39 30.499h52.58" stroke-width=".5"/><path d="m954.57 11.078 11.137-11.093h33.751l11.756 11.084-56.007 9e-3" stroke-width=".5"/><path d="m1447.4-57.843h86.136l10.144-5.1315 11.217-1.9116 11.465 0.82942 10.89 3.1786 5.0778 3.0351h86.189"/></g><g><path d="m1439.5-39.088-5.7258-0.90802-3.2386-2.6712-2.1278-3.6035-1.0356-4.1539 0.038-4.3225 1.0931-4.1093 2.1296-3.5143 3.1477-2.5374 4.1471-1.1787 4.5637 1.2969 3.3776 3.2352 2.0733 4.3645 0.6508 4.6849-0.911 5.7476-3.2886 4.9442-4.8935 2.7256" stroke-linejoin="bevel"/><path d="m1676.7-39.088 5.7258-0.90804 3.2386-2.6712 2.1278-3.6035 1.0356-4.1539-0.038-4.3225-1.0931-4.1093-2.1296-3.5143-3.1477-2.5374-4.1471-1.1787-4.5637 1.2969-3.3775 3.2352-2.0733 4.3645-0.651 4.6849 0.9111 5.7476 3.2885 4.9442 4.8935 2.7257" stroke-linejoin="bevel"/><path d="m1514.1-24.388h88.311"/><path d="m1542-91.011-28.608-3.1516-27.52-8.0823-3.9101-2.8305-0.982-4.0469 1.676-3.9518 4.0642-2.545 29.407-8.0035 30.442-2.9517 61.081 4.2764 15.72 3.9863 7.1901 3.5273 4.5762 6.093-6.3927 7.1408-9.2049 3.8289-19.917 4.0001-57.621 2.7104" stroke-linejoin="bevel"/></g></g><circle cx="1457.9" cy="-76.339" r="11.518"/></g></svg>');	
@@ -311,7 +401,8 @@ End`);
 
 
 function buildLevelMap(){
-	localStorage.setItem("LevelMap" , "SR000,PR001,PF002,SR001,PW003,BL002,PW001,PW002,PW004,PF001,PF003,PV003,CU001,BL001,PV001,PV004,DR001,CU001")
+	// localStorage.setItem("LevelMap" , "TY000,PW004,NoneMulti,PF002,DR002,PV004,DR001,TY002,PW001,PW002,PR001,TY001,PW003,BL002,PF001,PF003,PV003,CU001,BL001,PV001,CU001")
+	localStorage.setItem("LevelMap" , "TY001,PW001,NoneMulti,PF001,DR001,PV001,DR001,PR001,BL001,CU001,NoneTyped")
 }
 
 /*
@@ -328,15 +419,17 @@ A = elliptical Arc
 Z = closepath
 
 
-	Standard Sine Rider level
+		Typed input like the original Sine Rider
 LV1: Easy				Name
-SR						Level Type
+TY						Level Type
 0,0						Sled start position
-y=-x/3-4				Guide Equation
 -x/2-3					Default equation
-		//		All levels can contain the following modifiers
-showt0//				Optional declaration. t can always be used in equations. Adding this graphs a t=0 line
-useZ//					Optional declaration. Allows z to be used in equation
+		//		All levels can contain any combination of the following modifiers
+y=-x/3-4				Guide Equation
+sled=Sled2A,0.7			Replace sled graphic with Sled2A.svg for this level and all following levels until the value is set by another level. Set the sled's physics width to 0.7 meters.
+showt0//				t can always be used in equations. Adding this graphs a t=0 line
+showAcceleration80		Displays the sled's acceleration when the game is running. Resets the sledder if acceleration exceeds 80.
+useZ//					Allows z to be used in equation
 useNone					Not a game level, this is just a graphing application (Do not render sled or background)
 useDerivative			Graph the derivative of whatever function the player enters and use that for the sled physics
 
@@ -353,6 +446,20 @@ PW						Level Type
 -999,20,-x/2+t*1.5		Equation #1 range minimum, range maximum, default equation
 L20,L60,Lt*1.5-10		Equation #2. Adding an L in front of the input locks that input field so the player cannot edit it.
 60-sin(t),200,x/10-16	Equation #3. Equation limits can be equations using time. If they are equations not containing time, they will be reduced to their numeric value the first time they are edited.
+91,17					Camera track point
+nTower					.svg background to load
+End
+
+
+		Multi-Typed Input
+LV1: Easy				Name
+MT						Level Type
+0,0						Sled start position
+hideMax					Optional declaration which hides the max line used for physics. Just don't include this line to use the line.
+3						Number of equations
+-x/2+t*1.5				Equation #1 range minimum, range maximum, default equation
+Lt*1.5-10				Equation #2. Adding an L in front of the input locks that input field so the player cannot edit it.
+200,x/10-16				Equation #3. Equation limits can be equations using time. If they are equations not containing time, they will be reduced to their numeric value the first time they are edited.
 91,17					Camera track point
 nTower					.svg background to load
 End
@@ -417,7 +524,7 @@ End
 
 		Programming
 LV1: Easy				Name
-BL						Level Type
+PR						Level Type
 0,0						Sled start position
 5*x+2					Line equation (the player cannot change this)
 proSledPosX				Let the player set the sled's X position when it hits the line

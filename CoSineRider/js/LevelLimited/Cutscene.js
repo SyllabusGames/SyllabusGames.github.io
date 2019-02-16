@@ -11,7 +11,10 @@ var languageFileString;
 //	----------------------------------		[   Set up Drag Level   ]		----------------------------------
 function cutInitialize(){//		called from LevelLoader.js
 	cutCurrentPanel = 0;
-
+	
+	yEqualsText.innerHTML = '<text></text>';//		set text to blank
+	yPrimeEqualsText.innerHTML = '<text></text>';//		set text to blank
+	
 	ajax = new XMLHttpRequest();
 	ajax.open("GET", "https://syllabusgames.github.io/CoSineRider/Cutscenes/Cutscene1.svg", true);
 	ajax.send();

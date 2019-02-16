@@ -19,6 +19,7 @@ function blankInitialize(){
 	equCurrentUndo = 0;
 	
 	yEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y=</text>';
+	yEqualsText.style.display = "block";
 	
 	//		Space out input blanks to fit between the fixed text of the input
 	ctx.font="35px Arial";

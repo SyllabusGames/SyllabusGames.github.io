@@ -49,15 +49,17 @@ function meunMain(){
 	menuLevel = 0;
 	menuShowText = false;
 	menuButtons = [[0.5 , 0.3 , "Skip Level" , levelCleared , true],
-				[0.5 , 0.5 , "Instructions" , menuSupportedOpperations , false],
-				[0.5 , 0.7 , "Nothing" , levelCleared , true],
-				[0.125 , 0.1 , "Close" , menuClose]];
+				[0.5 , 0.45 , "Instructions" , menuSupportedOpperations , false],
+				[0.5 , 0.6 , "Nothing" , levelCleared , true],
+				[0.5 , 0.75 , "Grapher" , menuNoneLevels , false],
+				[0.1375 , 0.075 , "Close" , menuClose]];
 }
 
 //		called from KeyboardMouseInput.js
 function menuClose(){
 	document.removeEventListener('keydown', menuKeyDown);
 	document.removeEventListener('mousedown', menuMouseDown);
+	ctx.textAlign = "left";
 	
 	showHideInputs("block");
 	menuOpen = false;
@@ -141,7 +143,7 @@ function menuUpdate(){
 				menuTime = -25;//		20=screen scale
 			}
 			break;
-		case 1://		Supported Operations
+		case 1://		Buttons only
 			ctx.font = math.round(screenWidth/40) + "px Arial";
 			ctx.textAlign = "center";
 			break;
@@ -175,7 +177,7 @@ function menuDrawMenuButtons(){
 	for(i = menuButtons.length - 1 ; i > -1 ; i--){
 		
 		//		mouseX set in KeyboardMouseInput.js
-		if(math.abs(mouseX - screenWidth*menuButtons[i][0]) < screenWidth/10 && math.abs(mouseY - screenHeight*menuButtons[i][1]) < screenWidth/40){//		mouse is over current button
+		if(math.abs(mouseX - screenWidth*menuButtons[i][0]) < screenWidth*0.125 && math.abs(mouseY - screenHeight*menuButtons[i][1]) < screenWidth/40){//		mouse is over current button
 			mouseCurrentButton = i;
 		}
 		
@@ -197,7 +199,7 @@ function menuDrawMenuButtons(){
 		
 		
 		ctx.beginPath();
-		ctx.rect(screenWidth * menuButtons[i][0] - screenWidth/10, screenHeight * menuButtons[i][1] - screenWidth/40 , screenWidth/5 , screenWidth/20);
+		ctx.rect(screenWidth * menuButtons[i][0] - screenWidth*0.125, screenHeight * menuButtons[i][1] - screenWidth/40 , screenWidth*0.25 , screenWidth/20);
 		ctx.stroke();
 		
 		ctx.closePath();
@@ -224,8 +226,43 @@ function menuSupportedOpperations(){
 	[0.5 , 0.7 , "ceil(#)  floor(#)  round(#)  max(#,#)  min(#,#)"],
 	[0.5 , 0.8 , "|#|  OR  abs(#)"],
 	[0.5 , 0.9 , "e  pi"]];
-	menuButtons = [[0.125 , 0.1 , "Back" , meunMain]]
+	menuButtons = [[0.1375 , 0.075 , "Back" , meunMain]]
 }
 
+function menuNoneLevels(){
+	menuLevel = 1;
+	menuShowText = false;
+	menuButtons = [[0.5 , 0.15 , "Typed" , menuLoadNoneType , true],
+				[0.5 , 0.3 , "Piecewise" , menuLoadNonePie , true],
+				[0.5 , 0.45 , "Multi-Typed" , menuLoadNoneMulti , true],
+				[0.5 , 0.6 , "Proxy Variable" , menuLoadNoneProxyVar , true],
+				[0.5 , 0.75 , "Proxy Function" , menuLoadNoneProxyFunction , true],
+				[0.5 , 0.9 , "Programming" , menuLoadNoneProgramming , true],
+				[0.1375 , 0.075 , "Back" , meunMain]];
+}
 
+function menuLoadNoneType(){
+	levelCode = "NoneTyped";
+	loadBuiltInLevel();
+}
+function menuLoadNonePie(){
+	levelCode = "NonePie";
+	loadBuiltInLevel();
+}
+function menuLoadNoneMulti(){
+	levelCode = "NoneMulti";
+	loadBuiltInLevel();
+}
+function menuLoadNoneProxyVar(){
+	levelCode = "NoneProxyVar";
+	loadBuiltInLevel();
+}
+function menuLoadNoneProxyFunction(){
+	levelCode = "NoneProxyFunction";
+	loadBuiltInLevel();
+}
+function menuLoadNoneProgramming(){
+	levelCode = "NoneProgramming";
+	loadBuiltInLevel();
+}
 

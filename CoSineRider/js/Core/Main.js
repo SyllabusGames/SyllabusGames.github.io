@@ -129,11 +129,12 @@ function update(){
 	}else{
 		frameTime = 0;
 		pxt = 0;
-		
-		//		Level is not running, display the name
-		ctx.fillStyle = "black";//		font color for text overlay
-		ctx.font = "40px Arial";
-		ctx.fillText(levelName,10,40);
+		if(drawBackground){
+			//		Level is not running, display the name
+			ctx.fillStyle = "black";//		font color for text overlay
+			ctx.font = "40px Arial";
+			ctx.fillText(levelName,10,40);
+		}
 	}
 
 	graphAllLines();
@@ -153,6 +154,9 @@ function update(){
 		}
 	}
 	
+	if(!useNone && ! isCutscene)
+		drawGoals();//		see DrawBackground.js
+	
 //		write cursor position to screen	
 	if(shiftHeld && (!simulating || !camLocked)){
 		cursorPosition();//		see SvgEditor.js
@@ -161,8 +165,6 @@ function update(){
 	if(graphingPoints)
 		drawGraphedPoints();//		see SvgEditor.js
 	
-	if(!useNone && ! isCutscene)
-		drawGoals();//		see DrawBackground.js
 	
 	if(showSVGPoints)
 		drawSVGColliders();
@@ -175,6 +177,43 @@ function update(){
 	if(isDrag)//		render drag points
 		dragMain();
 
+	if(simulating && showAcceleration){//		show current acceleration value
+		dx = (vx-lastvx)*0.15*0.15/pxdt*1.6666;//		(current velocity - last physics step's velocity)*conversion factor to m/s / frame time * not sure why *40 but it works
+		dy = (vy-lastvy)*0.15*0.15/pxdt*1.6666;
+		ftmp = math.round(math.sqrt(dx*dx + dy*dy)*10)/10;
+		
+		if(ftmp > maxAcceleration)//		record highest acceleration so far
+			maxAcceleration = ftmp;
+		
+		ctx.strokeStyle = _dragFadeColor;
+		drawCircle(apx , apy , 2);
+		
+		
+		//		Draw arrow vector indicating the direction and magnitude of acceleration
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.moveTo(spx , spy);
+		dx = dx*screenScale/2;
+		dy = -dy*screenScale/2;
+		rtmp = ftmp*screenScale/10;
+		ctx.lineTo(spx + dx , spy + dy);
+		ctx.lineTo(spx + dx + (-dx+dy)/rtmp , spy + dy - (dx+dy)/rtmp);
+		ctx.moveTo(spx + dx , spy + dy);
+		ctx.lineTo(spx + dx + (-dx-dy)/rtmp , spy + dy + (dx-dy)/rtmp);
+		ctx.stroke();
+		
+		
+		ctx.fillStyle = _gridTextColor;
+		ctx.font = "bold 35px Arial";
+		ctx.fillText("Acceleration limit = " + accelerationLimit + "m/s². Max = " + maxAcceleration + "m/s². Current = " + ftmp + "m/s²." , 10 , 40);//		place text in the upper center of screen (measure text)
+		if(ftmp > accelerationLimit){
+			showMessage = true;//		see CoSineRider.html
+			messageTime = 0;
+			messageText = "TOO MUCH G FORCE";
+			//		play break sound effect
+			resetSledder();
+		}
+	}
 //		-----------------------------------------------------------------------		[   Display messages in Big Red Text   ]		-----------------------------------------------------------------------
 	if(showMessage){
 		messageTime += dt;

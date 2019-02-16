@@ -31,6 +31,11 @@ csvFileSelector.setAttribute('display' , "none");
 
 //		activate load file button when Insert is pressed
 document.addEventListener("keydown", function(e){
+	if(e.keyCode == 121){//		F10
+		e.preventDefault();
+		levelCode = "NoneTyped";
+		loadBuiltInLevel();
+	}
 	if(e.keyCode == 45){//		Insert
 		e.preventDefault();//		don't type a space
 		csvFileSelector.click();//		open file selector

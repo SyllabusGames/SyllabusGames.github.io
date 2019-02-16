@@ -28,7 +28,7 @@ function graphAllLines(){
 	
 	tempZ = apz;//		read in the sled's z position so equation() uses the right value
 	//	----------------------------------		[   Draw Guide Line (Grey and dashed)   ]		----------------------------------
-	if(useGuide && !simulating){
+	if(showGuide && !simulating){
 		ctx.lineWidth = 5;
 		ctx.setLineDash([40,20]);
 		ctx.strokeStyle = _lineFadedColor;
@@ -107,6 +107,25 @@ function graphAllLines(){
 		tempZ = apz;//		tempZ is always created from apz so setting a temporary variable to store tempZ is not nessisary
 	}
 	
+	if(isMulti){
+		ctx.lineWidth = 3;
+		for(k = pieEquInputsUsed-1 ; k > -1 ; k--){
+			ctx.strokeStyle = _colors[k];
+			ctx.beginPath();
+			//		this one is a do while loop instead of a for loop so it goes through 1 more iteration and there is no gap on the right side of the screen
+			ctx.moveTo(0 , (-pieEquCompiled[k].eval({x: screenx , t: frameTime , z: tempZ}) + screeny)*screenScale);
+			i = lineResolution - lineResolution;
+			do{
+				i += lineResolution
+				ctx.lineTo(i , Math.min( Math.max(-pieEquCompiled[k].eval({x: (i/screenScale + screenx) , t: frameTime , z: tempZ}) + screeny , -10)*screenScale , 2000));
+			}while(i < screenWidth);
+			ctx.stroke();
+		}
+		if(hideMultiMax){
+			return;
+		}
+	}
+	
 	//	----------------------------------		[   Show original when using Derivative   ]		----------------------------------
 	if(useDerivative){
 		ctx.strokeStyle = _lineRaw;
@@ -133,7 +152,7 @@ function graphAllLines(){
 	
 	//	----------------------------------		[   draw equation line (black)   ]		----------------------------------
 	//		Black Line if the sledder is above the line. 
-	if(simulating || equation(apx) < apy + 0.01){
+	if(useNone || simulating || equation(apx) < apy + 0.01){
 		ctx.strokeStyle = _lineColor;
 	}else{//		Red Line if the sledder is below the line (level cannot start)
 		ctx.strokeStyle = _lineInvalidColor;
@@ -156,10 +175,13 @@ function graphLine(){
 			ctx.lineTo((ftmp * math.cos(i) - screenx)*screenScale , (-ftmp * math.sin(i) + screeny)*screenScale);
 		}
 	}else{
+		//		this one is a do while loop instead of a for loop so it goes through 1 more iteration and there is no gap on the right side of the screen
 		ctx.moveTo(0 , (-equation(screenx) + screeny)*screenScale);
-		for(i = lineResolution ; i < screenWidth ; i+=lineResolution){
+		i = lineResolution - lineResolution;
+		do{
+			i += lineResolution
 			ctx.lineTo(i , Math.min( Math.max(-equation(i/screenScale + screenx) + screeny , -10)*screenScale , 2000));
-		}
+		}while(i < screenWidth);
 	}
 	ctx.stroke();
 }

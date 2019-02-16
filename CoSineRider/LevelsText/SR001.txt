@@ -1,0 +1,9 @@
+LV1: Using Time
+SR
+0,0
+sin(x-8*t)+(x-12)^2/300-1
+showt0
+useZ
+44,4
+Cave
+End

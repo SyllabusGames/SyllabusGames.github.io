@@ -11,31 +11,31 @@ var themeDarkK = false;
 //	holding the W T keys will switch the game to the normal white theme
 var themeWhiteW = false;
 var themeWhiteT = false;
-
+//	get keycodes from here: https://css-tricks.com/snippets/javascript/javascript-keycodes/
 document.addEventListener("keydown", function(e){
-		if(e.keyCode == 68){//		D key
-			themeDarkD = true;
-		}
-		if(e.keyCode == 82){//		R key
-			themeDarkR = true;
-		}
-		if(e.keyCode == 75){//		K key
-			themeDarkK = true;
-		}
-		
-		if(e.keyCode == 87){//		W key
-			themeWhiteW = true;
-		}
-		if(e.keyCode == 84){//		T key
-			themeWhiteT = true;
-		}
-		
-		if(themeDarkD && themeDarkR && themeDarkK){
-			setDarkTheme();
-		}
-		if(themeWhiteW && themeWhiteT){
-			setWhiteTheme();
-		}
+	if(e.keyCode == 68){//		D key
+		themeDarkD = true;
+	}
+	if(e.keyCode == 82){//		R key
+		themeDarkR = true;
+	}
+	if(e.keyCode == 75){//		K key
+		themeDarkK = true;
+	}
+	
+	if(e.keyCode == 87){//		W key
+		themeWhiteW = true;
+	}
+	if(e.keyCode == 84){//		T key
+		themeWhiteT = true;
+	}
+	
+	if(themeDarkD && themeDarkR && themeDarkK){
+		setDarkTheme();
+	}
+	if(themeWhiteW && themeWhiteT){
+		setWhiteTheme();
+	}
 });
 
 document.addEventListener("keyup", function(e){

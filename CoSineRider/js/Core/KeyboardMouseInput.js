@@ -39,6 +39,13 @@ function setUpPlayerInputs(){
 		if(e.keyCode == 36){//		Home
 			draggingScreen = true;
 		}
+		if(e.keyCode == 220){//		\ or |
+			e.preventDefault();
+			if(shiftHeld)
+				showHideInputs("none");
+			else
+				showHideInputs("block");
+		}
 		if(e.keyCode == 16){//		Shift
 			e.preventDefault();
 			shiftHeld = true;
@@ -49,12 +56,12 @@ function setUpPlayerInputs(){
 			e.preventDefault();
 			equExecutingUndo = true;//		set this so the equation you pull from the undo list is not then added to the undo list
 			if(shiftHeld){//		Redo
-				if(isPiecewise || isProxyVar || isProxyFunction)
+				if(isPiecewise || isProxyVar || isProxyFunction || isMulti)
 					pieUndoRedo(false);
 				else
 					equUndoRedo(false);
 			}else{//		Undo
-				if(isPiecewise || isProxyVar || isProxyFunction)
+				if(isPiecewise || isProxyVar || isProxyFunction || isMulti)
 					pieUndoRedo(true);
 				else
 					equUndoRedo(true);
@@ -230,6 +237,8 @@ function screenSizeChanged(){
 //	console.log(isPiecewise + " - " + isDrag + " - " + isFillBlanks + " - " + isCutscene);
 	if(isPiecewise)
 		pieScreenResize();
+	else if(isMulti)
+		multiScreenResize();
 	else if(isProxyVar)
 		pVarScreenResize();
 	else if(isProxyFunction)

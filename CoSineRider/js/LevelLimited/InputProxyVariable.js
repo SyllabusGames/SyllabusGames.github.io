@@ -9,6 +9,7 @@ function pVarInitialize(){
 	pieRaw[2] = "";
 	pieRaw[4] = "";
 	pieRaw[5] = "";
+	yEqualsText.style.display = "block";
 }
 
 function pVarScreenResize(){
@@ -54,7 +55,7 @@ function pVarUpdateEquDisplay(){
 }
 
 function pVarShowHideInputs(showHide){
-	for(i = pieEquInput.length-1 ; i > -1 ; i--){
+	for(i = pieEquInputsUsed ; i > -1 ; i--){
 		pieEquInput[i].style.display = showHide;
 	}
 }

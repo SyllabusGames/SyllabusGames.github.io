@@ -1,0 +1,8 @@
+LV1 Variables
+PF
+0,2
+y-f[x]f[x+1]
+f=a
+91,17
+Tower
+End

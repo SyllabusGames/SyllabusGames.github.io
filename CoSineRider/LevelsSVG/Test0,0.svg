@@ -1,0 +1,8 @@
+<svg version="1.1" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
+	<g transform="translate(-2843.2 55.085)" fill="none">
+		<path d="m5191.3-453.58-393.94 280.71-396.94 364.61-115.3 442.51-441.88 310.67" stroke="#000" stroke-width="2"/>
+		<circle id="Goal" cx="3820.7" cy="846.14" r="13.1" stroke="#00b0ff"/>
+		<path d="m3943.2 944.92 247.11-55.104 226.14-261.84 70.334 127.67 121.27-222.89" fill="none" stroke="#000"/>
+		<path d="m3843.2 844.92 92.883-765.91 11.985 757.67" fill="none" stroke="#000" stroke-width="2"/>
+	</g>
+</svg>

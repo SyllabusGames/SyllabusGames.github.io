@@ -56,7 +56,7 @@ var _menuText = "#000000";
 //		All colors have different Hues but the same Saturation and Value 
 //		Text _colors, [0-9] Partenthasis, [11] x, [12] t, [13] z
 //	"#FF0000" , "#009900" , "#0000FF"];//	10-12
-var _colors = ['#d12020', '#3420d1', '#d2a320', '#d120ce', '#206cd1', '#b0d120', '#D15E20', '#7820d1', '#20d120', '#20b0d1'];
+var _colors = ['#d12020', '#3420d1', '#d2a320', '#d120ce', '#20d120', '#b0d120', '#D15E20', '#7820d1', '#206cd1', '#20b0d1'];
 
 
 //		time

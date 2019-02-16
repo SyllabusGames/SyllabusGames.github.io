@@ -207,6 +207,8 @@ function getCaretLocation(element){
 function showHideInputs(show){//		"none" / "block"
 	if(isPiecewise){
 		pieShowHideInputs(show);
+	}else if(isMulti){
+		multiShowHideInputs(show);
 	}else if(isProxyVar){
 		pVarShowHideInputs(show);
 	}else if(isProxyFunction){
@@ -238,6 +240,11 @@ function checkInputFields(selectedElement){
 				pieCheckInput(pieEquInput[num]);
 			}
 			return;
+		}else if(isMulti){
+			for(var num = pieEquInputsUsed ; num > -1 ; num--){//		for each input field excluding the main input [0]
+				multiCheckInput(pieEquInput[num]);
+			}
+			return;
 		}else if(isProxyVar){
 			for(var num = pieEquInputsUsed ; num > 0 ; num--){//		for each input field excluding the main input [0]
 				pVarCheckInput(pieEquInput[num]);
@@ -258,6 +265,8 @@ function checkInputFields(selectedElement){
 	
 	if(isPiecewise){
 		pieCheckInput(selectedElement);
+	}else if(isMulti){
+		multiCheckInput(selectedElement);
 	}else if(isProxyVar){
 		pVarCheckInput(selectedElement);
 	}else if(isProxyFunction){
