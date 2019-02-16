@@ -7,6 +7,7 @@ function typeInitialize(){
 	scope = {x: 0 , t: 0};
 	equInput = math.parse(equRaw , scope);
 	equCompiled = equInput.compile();
+	yEqualsText.style.display = "block";
 	//		reset undo list
 	equUndo = [];
 	equCurrentUndo = 0;
@@ -156,10 +157,10 @@ function typeCheckInput(){
 	}
 	
 	if(!containsVariables){//		if equation does not contain x, z, or t, (output is constant) show the answer above the input line.
-		yEqualsText.innerHTML = '<text alignment-baseline="baseline" style="font-size: 35px; font-family: Arial; color: blue;"> y=' + equation(0).toString() + '</text>';
+		yEqualsText.innerHTML = '<text alignment-baseline="baseline" style="font-size: 35px; font-family: Arial; color: blue;">y=' + equation(0).toString() + '</text>';
 		yEqualsText.style.top = (screenHeight-95) + "px";
 	}else if(equInvalid){
-		yEqualsText.innerHTML = '<text alignment-baseline="baseline" style="font-size: 35px; font-family: Arial; color: grey;"> y=' + equLast + '</text>';
+		yEqualsText.innerHTML = '<text alignment-baseline="baseline" style="font-size: 35px; font-family: Arial; color: grey;">y=' + equLast + '</text>';
 		yEqualsText.style.top = (screenHeight-95) + "px";
 	}else{
 		yEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y=</text>';//		class"unselectable" declared in CoSineRider.html"

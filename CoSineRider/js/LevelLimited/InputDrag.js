@@ -1,8 +1,8 @@
 ﻿
 //		set by LevelLoader.js
-var dragEquGaps = [];//		stoed as [,*x+ , +t/,+2]. If it starts with a dragable value, the first value is blank.
-var dragVar = [];
-var dragDirection = [];//		= h or v for hoizontal or vertical
+var dragEquGaps = [];//		stored as [,*x+ , +t/,+2]. If it starts with a dragable value, the first value is blank.
+var dragVar = [];//		default value for dragged variable
+var dragDirection = [];//		= h or v for horizontal or vertical
 var dragx = [];//		x coordinate of each handle point
 var dragy = [];
 var dragDefaultx = [];
@@ -25,6 +25,7 @@ function dragInitialize(){//		called from LevelLoader.js
 	mainInput.setAttribute("contentEditable" , "false");
 	mainInput.style.backgroundColor = _inputLockedColor;
 	mainInput.style.display = "block";
+	yEqualsText.innerHTML = '<text class="unselectable" style="font-size: 35px; font-family: Arial; color: black;">y=</text>';
 	dragScreenResize();
 	
 	//		set the default equation to be the given equation with the gaps replaced with the default values
@@ -37,24 +38,6 @@ function dragInitialize(){//		called from LevelLoader.js
 	
 	dragUpdatePoints();
 }
-/*
-function dragUndoRedo(undo){//		true = undo, false = redo
-	if(undo){
-		if(equCurrentUndo == 0){//		nothing available to undo
-			equExecutingUndo = false;
-			return;
-		}
-		equCurrentUndo--;
-	}else{
-		if(equCurrentUndo > equUndo.length-2){//		nothing available to redo
-			equExecutingUndo = false;
-			return;
-		}
-		equCurrentUndo++;
-	}
-	mainInput.innerHTML = equUndo[equCurrentUndo];
-	typeCheckInput();// is called from OnKeyUp, so this call is unnessisary except for when someone holds Ctrl+Z
-}*/
 
 function dragUpdateEqu(){//		concatinate string fragments of equation and variables to form full equation. Also form colored version for the Input text box.
 	equRaw = "";
@@ -100,7 +83,7 @@ function dragMain(){
 			}
 		}else if(shiftHeld){//		move by incraments of 0.00001
 			if(math.abs(dmouse/screenScale) > 0.00001){//		number will not change (since it is rounded to the nearest 0.001) so return
-				dragVar[dragPointIndex] = Math.round((dragVar[dragPointIndex] + dmouse/screenScale)*100000)/100000;
+				dragVar[dragPointIndex] = Math.round((dragVar[dragPointIndex] + dmouse/screenScale/5)*100000)/100000;
 				dragStart += sign * Math.round(dmouse/screenScale*100000)/100000*screenScale;
 				dragUpdateEqu();
 				dragCheckInput();
