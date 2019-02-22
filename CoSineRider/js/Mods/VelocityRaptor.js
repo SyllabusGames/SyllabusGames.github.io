@@ -1,5 +1,8 @@
-﻿
+﻿/*
+	Velocity Raptor (the inspiration for this Cosine Rider mod) was created by Andy Hall of TestTubeGames. (https://testtubegames.com/velocityraptor.html)
+*/
 
+//		keys pressed to activate velocity raptor mode
 var velocityRaptorR = false;
 var velocityRaptorA = false;
 var velocityRaptorP = false;
@@ -8,41 +11,47 @@ var velocityRaptorO = false;
 
 var velocityRaptorRunning = false;
 
-var velocityRaptorX = 0;
-var velocityRaptorY = 0;
 
+//		buttons held
 var velocityRaptorUp = false;
 var velocityRaptorDown = false;
 var velocityRaptorLeft = false;
 var velocityRaptorRight = false;
 
-
-
+//		raptor position
+var velocityRaptorX = 0;
+var velocityRaptorY = 0;
+//		raptor velocity
+var velocityRaptorVx = 0;
+var velocityRaptorVy = 0;
+//		raptor velocity last frame
 var velocityRaptorOldVx = 0;
 var velocityRaptorOldVy = 0;
 
-
+//		input vector components
 var velocityRaptorInputX = 0;
 var velocityRaptorInputY = 0;
 
 
-var velocityRaptorVx = 0;
-var velocityRaptorVy = 0;
-
+//		temporary variable
 var velocityRaptorScale;
-
-
-
-var velocityRaptorImage = new Image;
-
+//		svg screen elements for rendering velocity raptor
+var velocityRaptorSVGTemplate;
 var velocityRaptorSVG;
-var velSVG;
 
+//		type RAPTOR to start this mode
 document.addEventListener("keydown", function(e){
 	if(e.keyCode == 82){//		R key
 		velocityRaptorR = true;
-		// if(velocityRaptorO)//		activate velocity raptor mode
+		//		Reset position and velocity
+		velocityRaptorVx = 0;
+		velocityRaptorVy = 0;
+		velocityRaptorX = 0;
+		velocityRaptorY = 0;
+		if(velocityRaptorO){//		activate velocity raptor mode
 			initializeVelocityRaptor();
+			e.preventDefault();
+		}
 	}
 	if(e.keyCode == 65 && velocityRaptorR){//		A key
 		velocityRaptorA = true;
@@ -57,16 +66,16 @@ document.addEventListener("keydown", function(e){
 		velocityRaptorO = true;
 	}
 	
-	if(e.keyCode == 38){//		Up Arrow
+	if(e.keyCode == 38 || e.keyCode == 87){//		Up Arrow / W
 		velocityRaptorUp = true;
 	}
-	if(e.keyCode == 40){//		Down Arrow
+	if(e.keyCode == 40 || e.keyCode == 83){//		Down Arrow / S
 		velocityRaptorDown = true;
 	}
-	if(e.keyCode == 37){//		Left Arrow
+	if(e.keyCode == 37 || e.keyCode == 65){//		Left Arrow / A
 		velocityRaptorLeft = true;
 	}
-	if(e.keyCode == 39){//		Right Arrow
+	if(e.keyCode == 39 || e.keyCode == 68){//		Right Arrow / D
 		velocityRaptorRight = true;
 	}
 	
@@ -80,16 +89,16 @@ document.addEventListener("keydown", function(e){
 });
 
 document.addEventListener("keyup", function(e){
-	if(e.keyCode == 38){//		Up Arrow
+	if(e.keyCode == 38 || e.keyCode == 87){//		Up Arrow / W
 		velocityRaptorUp = false;
 	}
-	if(e.keyCode == 40){//		Down Arrow
+	if(e.keyCode == 40 || e.keyCode == 83){//		Down Arrow / S
 		velocityRaptorDown = false;
 	}
-	if(e.keyCode == 37){//		Left Arrow
+	if(e.keyCode == 37 || e.keyCode == 65){//		Left Arrow / A
 		velocityRaptorLeft = false;
 	}
-	if(e.keyCode == 39){//		Right Arrow
+	if(e.keyCode == 39 || e.keyCode == 68){//		Right Arrow / D
 		velocityRaptorRight = false;
 	}
 });
@@ -98,7 +107,6 @@ document.addEventListener("keyup", function(e){
 function initializeVelocityRaptor(){
 	if(velocityRaptorRunning)
 		return;
-	console.log("vel000");
 	velocityRaptorR = false;
 	velocityRaptorA = false;
 	velocityRaptorP = false;
@@ -108,14 +116,15 @@ function initializeVelocityRaptor(){
 	
 	velocityRaptorRunning = true;
 	
+	localStorage.setItem("VelocityRaptorLoaded" , true);
 	localStorage.setItem("VelocityRaptor" , `Title not shown
 MT
 -10,0
 hideMax
 3
-x-0.2
-x-0.03
-x+sin(x*0.535+1.54)/8
+x-sin(x*0.7+1.02)/40
+(max(min(((x-0.2)*10000),1),0))*x
+x+sin(x*0.7+1.04)/40
 useNone
 10,0
 none
@@ -136,16 +145,16 @@ x+0.1
 
 The ones I used in my quantum mechanics video:
 x-0.2
-x-0.03
+max(x-0.03,0)
 x+sin(x*0.535+1.54)/8
 */
 
-	velocityRaptorSVG = document.createElement("p");
+	velocityRaptorSVGTemplate = document.createElement("p");
 	// mainInput.setAttribute("contentEditable" , "true");
-	velocityRaptorSVG.style = "position:absolute;left:0px;top:-16px; z-index: 20";//		above everything except input field
+	velocityRaptorSVGTemplate.style = "position:absolute;left:0px;top:-16px; z-index: 20";//		above everything except input field
 
 	
-	velocityRaptorSVG.innerHTML = `<svg width="4000" height="2000" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	velocityRaptorSVGTemplate.innerHTML = `<svg width="4000" height="2000" version="1.1" xmlns="http://www.w3.org/2000/svg">
 		<g id="raptor" transform="translate(-337.53 -731.97) scale(1 1)">
 			<circle cx="411.3" cy="823.91" r="19.445" fill-opacity=".31313" style="paint-order:normal"/>
 			<g stroke="#000">
@@ -173,27 +182,62 @@ x+sin(x*0.535+1.54)/8
 			<path d="m454.55 749.13s9.2922 1.5238 14.616 2.5885c5.3664 1.0733 6.0294 1.3258 8.3653 2.4307" fill="none" stroke="#000" stroke-width=".7"/>
 		</g>
 	</svg>`;
-		document.body.appendChild(velocityRaptorSVG);
+		document.body.appendChild(velocityRaptorSVGTemplate);
 
 	
-	levelCode = "VelocityRaptor";
-	loadBuiltInLevel();
+	currentLevelCode = "VelocityRaptor";
+	loadLevel();
 	
-	console.log(velocityRaptorSVG);
-	
-	
-	velSVG = document.getElementById('raptor')
+	console.log(velocityRaptorSVGTemplate);
 	
 	
-	console.log(velSVG);
+	velocityRaptorSVG = document.getElementById('raptor')
+	
+	
+	// console.log(velocityRaptorSVG);
 	velocityRaptorUpdate();
-	console.log("vel");
+	// console.log("vel");
 }
 
 function velocityRaptorUpdate(){
 	if(velocityRaptorRunning)
 		window.requestAnimationFrame(velocityRaptorUpdate);
 	
+	if(paused)
+		return;
+	
+	//	----------------------------------		[   Draw velocity curves with 30x scale   ]		----------------------------------
+	ctx.lineWidth = 3;
+	if(velocityRaptorP)
+		for(k = 2 ; k > -1 ; k--){
+			ctx.strokeStyle = _colors[k] + "30";
+			ctx.beginPath();
+			//		this one is a do while loop instead of a for loop so it goes through 1 more iteration and there is no gap on the right side of the screen
+			ctx.moveTo(0 , ((-pieEquCompiled[k].eval({x: screenx , t: frameTime , z: tempZ})) + screeny)*screenScale);
+			i = lineResolution - lineResolution;
+			do{
+				i += lineResolution;
+				//		absolute x and y position
+				tmpx = i/screenScale + screenx;
+				tmpy = -pieEquCompiled[k].eval({x: tmpx , t: frameTime , z: tempZ});
+				//		scale along the line y=-x by about 27
+				tmpx = tmpx*6.5 + tmpy*5.5;
+				tmpy = tmpy*6.5 + tmpx*5.5;
+				//		screen x and y position
+				tmpx = (tmpx - screenx)*screenScale;
+				tmpy = Math.min( Math.max(tmpy + screeny , -10)*screenScale , 2000);
+				ctx.lineTo(tmpx , tmpy);
+			}while(i < screenWidth);
+			ctx.stroke();
+		}
+	
+	
+	
+	ctx.font = "35px Arial";
+	ctx.textAlign = "left";
+	ctx.fillStyle = _gridTextColor;
+	ctx.fillText("1m/s" , -screenx*screenScale-30 , (-1+screeny)*screenScale+5);
+	ctx.fillText("1m/s" , (1-screenx)*screenScale-30 , screeny*screenScale+5);
 	
 	yEqualsText.innerHTML = '<p class="unselectable" style="font-size: 40px; font-family: Arial; color: black;"><a style="color:'+_colors[2]+
 	'">v+</a><br><a style="color:'+_colors[1]+'">v=</a><br><a style="color:'+_colors[0]+'">v-</a></p>';
@@ -260,38 +304,11 @@ function velocityRaptorUpdate(){
 	}
 	
 	
-	//	----------------------------------		[   Calculate Raptor's Position   ]		----------------------------------
-	
-	velocityRaptorScale = (screenScale/100);
-	
-	if(slowMotion){//		10 times slower
-		velocityRaptorVx = (velocityRaptorVx + velocityRaptorOldVx*9)/10;
-		velocityRaptorVy = (velocityRaptorVy + velocityRaptorOldVy*9)/10;
-		dt = 1/600;
-	}else{
-		dt = 1/60;
-	}
-	velocityRaptorX += velocityRaptorVx * dt;
-	velocityRaptorY -= velocityRaptorVy * dt;
-	
-	tmpx = (velocityRaptorX - screenx)*screenScale - screenScale*0.75;//		screen position of the center of Velocity Raptor's shadow(in pixels)
-	tmpy = (velocityRaptorY + screeny)*screenScale - screenScale*0.94;
 	
 	
-	
-	//	----------------------------------		[   Draw To Screen   ]		----------------------------------
-	
-	velSVG.setAttribute("transform" , "translate(" + (velocityRaptorScale*-337.53 + tmpx) + " " + (velocityRaptorScale * -731.97 + tmpy) + ") scale(" + velocityRaptorScale + " " + velocityRaptorScale + ")");
-	
-	
-	ctx.font = "35px Arial";
-	ctx.textAlign = "left";
-	ctx.fillStyle = _gridTextColor;
-	ctx.fillText("Velocity.x = " + math.round(velocityRaptorVx*10)/10 , 10 , 30);
-	ctx.fillText("Velocity.y = " + math.round(velocityRaptorVy*10)/10 , 10 , 80);
-	
+	//	----------------------------------		[   Draw velocity to screen   ]		----------------------------------
 	//			draw the current X point
-	ctx.strokeStyle = "#FF0000";
+	/*ctx.strokeStyle = "#FF0000";
 	ctx.fillStyle = "#FF0000";
 	
 	if(velocityRaptorVx < 0){//		negative
@@ -309,7 +326,45 @@ function velocityRaptorUpdate(){
 		drawCircle(math.abs(velocityRaptorOldVy) , math.abs(velocityRaptorVy) , 3);
 	}else{
 		drawCircle(math.abs(velocityRaptorOldVy) , math.abs(velocityRaptorVy) , 5);
+	}*/
+	
+	
+	//	----------------------------------		[   Calculate Raptor's Position   ]		----------------------------------
+	
+	if(slowMotion){//		10 times slower
+		velocityRaptorVx = (velocityRaptorOldVx*9 + velocityRaptorVx)/10;
+		velocityRaptorVy = (velocityRaptorOldVy*9 + velocityRaptorVy)/10;
+		dt = 1/600;
+	}else{
+		dt = 1/60;
 	}
+	
+	//		Offset raptor position based on velocity
+	velocityRaptorX += velocityRaptorVx * dt;
+	velocityRaptorY -= velocityRaptorVy * dt;
+	
+	velocityRaptorScale = (screenScale/100);
+	
+	tmpx = (velocityRaptorX - screenx)*screenScale - screenScale*0.75;//		screen position of the center of Velocity Raptor's shadow(in pixels)
+	tmpy = (velocityRaptorY + screeny)*screenScale - screenScale*0.94;
+	
+	//		stop this dom element from going too far off the page
+	tmpx = math.max( math.min(tmpx , 9000) , -5000);
+	tmpy = math.max( math.min(tmpy , 9000) , -5000);
+	
+	
+	//	----------------------------------		[   Draw To Screen   ]		----------------------------------
+	
+	velocityRaptorSVG.setAttribute("transform" , "translate(" + (velocityRaptorScale*-337.53 + tmpx) + " " + (velocityRaptorScale * -731.97 + tmpy) + ") scale(" + velocityRaptorScale + " " + velocityRaptorScale + ")");
+	
+	/*
+	ctx.font = "35px Arial";
+	ctx.textAlign = "left";
+	ctx.fillStyle = _gridTextColor;
+	ctx.fillText("Velocity.x = " + math.round(velocityRaptorVx*100)/100 , 10 , 30);
+	ctx.fillText("Velocity.y = " + math.round(velocityRaptorVy*100)/100 , 10 , 80);
+	*/
+	
 }
 
 

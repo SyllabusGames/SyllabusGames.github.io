@@ -14,7 +14,7 @@ function resetSledder(){
 	checkInputFields("all");//		update line. (useful if the player types something while the simulation is running)
 	dropTime = 0;//		delete
 	if(!simulating && equation(apx) > apy + 0.01){//		trying to start level but sled is below line
-		showMessage = true;//		see CoSineRider.html
+		showMessage = true;//		see Main.html
 		messageTime = 0;
 		messageText = "SLED IS BELOW LINE";
 		return;

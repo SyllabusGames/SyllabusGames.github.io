@@ -109,7 +109,6 @@ function drawSVGColliders(){//		called from the end of Collisiions.js
 	ctx.stroke();
 
 	if(selectedPoint != -1){//		highlight selected point and move with cursor
-				console.log("selected " + selectedPoint);
 		if(draggingPoint){//		Point being dragged has a light blue dot over it
 			ctx.strokeStyle="#00FFFF";
 			ctx.fillStyle = "#00FFFF";

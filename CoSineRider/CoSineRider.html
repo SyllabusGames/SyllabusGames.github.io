@@ -62,33 +62,8 @@
 
 <!--		Remove white space around canvas (also makes cursor more accurate) and Disable right click menu		-->
 <body oncontextmenu="return false;" style="background-color:#DDDDDD; margin: 0;">
-	<form method="post" enctype="multipart/form-data">
-		<input type="file" name="files[]" multiple>
-		<input type="submit" value="Upload File" name="submit">
-	</form>
+
 </body>
-
-<!--		File Loader		-->
-<input type="file" id="files" hidden="hidden" name="files[]" multiple />
-<output id="list"></output>
-<script>
-	function handleFileSelect(evt) {
-		var files = evt.target.files; // FileList object
-
-		// files is a FileList of File objects. List some properties.
-		var output = [];
-		for (var i = 0, f; f = files[i]; i++) {
-			output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-				f.size, ' bytes, last modified: ',
-				f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-				'</li>');
-		}
-		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-	}
-
-	document.getElementById('files').addEventListener('change', handleFileSelect, false);
-</script>
-<!--		File Loader		-->
 
 <style>
 	.button {

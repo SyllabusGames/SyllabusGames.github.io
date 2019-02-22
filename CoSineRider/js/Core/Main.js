@@ -16,8 +16,7 @@
 	
 	
 
-	saveLevel();//		for testing
-	buildLevelMap();//		for testing
+	createLevelMap();//		for testing
 	loadLevelMap();//		for testing
 //			setUpAnim();
 	ctx.textAlign="center";
@@ -40,6 +39,7 @@
 	
 	screenSizeChanged();//			set the canvas size to the window/screen size
 	
+setDarkTheme();
 	
 	// if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){//		load onScreenKeypad if on mobile
 	// document.getElementById('onScreenKeypad').style.display = "block";
@@ -131,7 +131,7 @@ function update(){
 		pxt = 0;
 		if(drawBackground){
 			//		Level is not running, display the name
-			ctx.fillStyle = "black";//		font color for text overlay
+			ctx.fillStyle = _gridTextColor;//		font color for text overlay
 			ctx.font = "40px Arial";
 			ctx.fillText(levelName,10,40);
 		}
@@ -207,7 +207,7 @@ function update(){
 		ctx.font = "bold 35px Arial";
 		ctx.fillText("Acceleration limit = " + accelerationLimit + "m/s². Max = " + maxAcceleration + "m/s². Current = " + ftmp + "m/s²." , 10 , 40);//		place text in the upper center of screen (measure text)
 		if(ftmp > accelerationLimit){
-			showMessage = true;//		see CoSineRider.html
+			showMessage = true;//		see Main.html
 			messageTime = 0;
 			messageText = "TOO MUCH G FORCE";
 			//		play break sound effect
@@ -217,13 +217,13 @@ function update(){
 //		-----------------------------------------------------------------------		[   Display messages in Big Red Text   ]		-----------------------------------------------------------------------
 	if(showMessage){
 		messageTime += dt;
+		//		fade the text using the equation y = min(x*8-1,2-x) so it reaches max opacity at t= 0.25 and starts to fade at 1 second.
 		ctx.fillStyle = _displayErrorColor + Math.round(Math.max(Math.min(Math.min(messageTime*8-1,-messageTime+2)+1 , 1) *255, 17)).toString(16);//		font color for text overlay
 		ctx.font = "bold 80px Arial";
 		ctx.fillText(messageText , screenWidth/2 - ctx.measureText(messageText).width/2 , screenHeight/5);//		place text in the upper center of screen (measure text)
 		if(messageTime > 3)
 			showMessage = false;
 	}
-		
 //	ctx.fillText( Math.round(performanceFramerateLast).toString() + "fps" , Math.round(screenWidth * 0.8) , 40);
 }
 //		-----------------------------------------------------------------------		[   /UPDATE/   ]		-----------------------------------------------------------------------

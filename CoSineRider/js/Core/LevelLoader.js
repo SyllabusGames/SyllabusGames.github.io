@@ -2,7 +2,7 @@
 var loadedLevel;
 var levelName = "No level loaded";
 var levelType = "";
-var levelCode = "";//		Used by Goal (in Collidions.js) to save the current level as complete
+var currentLevelCode = "";//		Used by Goal (in Collidions.js) to save the current level as complete
 var partstring = "";
 var levelMap;//		array of strings containing all levels' save/load codes
 var mapIndex = 0;//	index of current level in levelMap
@@ -49,78 +49,127 @@ var isCutscene = false;//	level is a cutscene
 var lineNum = 0;
 
 
-function preloadLevelAssets(loadThis){
+//		Make an HTTP request to get the level's text file from the server. Then load the parallax .svg file if there is one, followed by the level's .svg file.
+function preloadLevelAssets(levelLoadName){
+	if(levelLoadName == "End")
+		return;
+	
 	//		From https://social.msdn.microsoft.com/Forums/en-US/64ea2d16-7594-400b-8b25-8b3b9a078eab/read-external-text-file-with-javascript?forum=sidebargadfetdevelopment
 	//		Read external file from web address
 	var txtFile = new XMLHttpRequest();
-	var levelLoadName = loadThis;
-	console.log("Loading " + levelLoadName);
-	txtFile.open("GET", "https://syllabusgames.github.io/CoSineRider/Levels/" + levelLoadName + ".txt", true);
-	txtFile.onreadystatechange = function() {
+	var outputText;
+	var svgName;
+	console.log("Start loading " + levelLoadName);
+	txtFile.onreadystatechange = function(){
 		if (txtFile.readyState === 4){  // Makes sure the document is ready to parse.
 			if (txtFile.status === 200){  // Makes sure it's found the file.
-				localStorage.setItem(levelLoadName , txtFile.responseText);
+				outputText = txtFile.responseText;
+				localStorage.setItem(levelLoadName , outputText);
 				
+				outputText = outputText.split('\n');
+				svgName = outputText[outputText.length-2];//		get the .svg name
+				console.log("Begin loading " + svgName + ".svg for " + levelLoadName);
 				
-			/*	console.log(allText.substring(allText.length-3));
-				console.log(allText.substring(allText.length-20));
-				if(allText.substring(allText.length-3) == "End"){//		if you just loaded a level, load the .svg it uses
-					var findSvg = allText.split('\n');
-					if(localStorage.getItem(findSvg[findSvg.length-2]) != null){//		if this .svg is already loaded, quit
-						console.log(findSvg[findSvg.length-2] + " Exists");
-						preloadLevelAssets(findSvg[findSvg.length-2]);
+				//		if the level uses a parallax background, load that too
+				if(svgName.substring(0 , 9) == "parallax="){
+					if(localStorage.getItem(svgName.substring(9)) == null){//		if this .svg is NOT already loaded
+						var parallaxName = svgName.substring(9);
+						svgName = outputText[outputText.length-3];//		get the actual level's .svg name
+						
+						var parallaxRequest = new XMLHttpRequest();
+						parallaxRequest.onreadystatechange = function() {
+							if (parallaxRequest.readyState === 4){  // Makes sure the document is ready to parse.
+								if (parallaxRequest.status === 200){  // Makes sure it's found the file.
+									localStorage.setItem(parallaxName , parallaxRequest.responseText);
+								}
+							}
+						}
+						parallaxRequest.open("GET", "https://syllabusgames.github.io/CoSineRider/LevelsSVG/" + parallaxName + ".svg", true);
+						parallaxRequest.send();
 					}
-				}*/
+				}
+				
+				
+				if(svgName != "none" && localStorage.getItem(svgName + "Colliders") == null){//		only load this colliders file if it isn't already loaded
+					console.log("Now loading " + svgName + "Colliders.svg for " + levelLoadName);
+					
+					var svgCollidersRequest = new XMLHttpRequest();
+					svgCollidersRequest.onreadystatechange = function(){
+						if (svgCollidersRequest.readyState === 4){  // Makes sure the document is ready to parse.
+							if (svgCollidersRequest.status === 200){  // Makes sure it's found the file.
+								localStorage.setItem(svgName + "Colliders" , svgCollidersRequest.responseText);
+								console.log("Loaded " + svgName + "Colliders.svg for " + levelLoadName);
+							}
+						}
+					}
+					svgCollidersRequest.open("GET", "https://syllabusgames.github.io/CoSineRider/LevelsSVG/" + svgName + "Colliders.svg", true);
+					svgCollidersRequest.send();
+				}
+
+				if(svgName == "none" || localStorage.getItem(svgName) != null){//		if this .svg is already loaded, record that this level is now fully loaded
+					console.log(svgName + ".svg already loaded for " + levelLoadName);
+					localStorage.setItem(levelLoadName+"Loaded" , true);
+					console.log("Finished loading level " + levelLoadName);
+				}else{//		now load the colliders and display .svg files
+					console.log("Now loading " + svgName + ".svg for " + levelLoadName);
+					
+					var svgRequest = new XMLHttpRequest();
+					svgRequest.onreadystatechange = function(){
+						if (svgRequest.readyState === 4){  // Makes sure the document is ready to parse.
+							if (svgRequest.status === 200){  // Makes sure it's found the file.
+								localStorage.setItem(svgName , svgRequest.responseText);
+								localStorage.setItem(levelLoadName+"Loaded" , true);
+								console.log("Finished loading level " + levelLoadName);
+							}
+						}
+					}
+					svgRequest.open("GET", "https://syllabusgames.github.io/CoSineRider/LevelsSVG/" + svgName + ".svg", true);
+					svgRequest.send();
+				}
 			}
 		}
 	}
-	txtFile.send(null);
-}
-
-function loadExternalLevel(){
-/*
-		  function handleFileSelect(evt) {
-			var files = evt.target.files; // FileList object
-
-			// files is a FileList of File objects. List some properties.
-			var output = [];
-			for (var i = 0, f; f = files[i]; i++) {
-			  output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-						  f.size, ' bytes, last modified: ',
-						  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-						  '</li>');
-			}
-			document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-		  }
-
-		  document.getElementById('files').addEventListener('change', handleFileSelect, false);
-		*/
+	txtFile.open("GET", "https://syllabusgames.github.io/CoSineRider/LevelsText/" + levelLoadName + ".txt", true);
+	txtFile.send();
 }
 
 function levelCleared(){
-	localStorage.setItem(levelCode , 1);//	save that the current level has been cleared
+	localStorage.setItem(currentLevelCode + "Clear", true);//	save that the current level has been cleared
 	mapIndex++;//		advance to the next level
-	levelCode = levelMap[mapIndex];
-	loadBuiltInLevel();//		load the next level
+	preloadLevelAssets(levelMap[mapIndex+1]);
+	currentLevelCode = levelMap[mapIndex];
+	loadLevel();//		load the next level
 }
 
 function loadLevelMap(){//		load the list of levels which was created in LevelSaver.js
 	levelMap = localStorage.getItem("LevelMap").split(',');
-//	preloadLevelAssets(levelMap[mapIndex+1]);
-	levelCode = levelMap[mapIndex];
-	loadBuiltInLevel();
+	preloadLevelAssets(levelMap[mapIndex]);
+	preloadLevelAssets(levelMap[mapIndex+1]);
+	currentLevelCode = levelMap[mapIndex];
+	loadLevel();
 }
 
-function loadBuiltInLevel(){
+function loadLevel(){
 	simulating = false;
 	clearGraphedPoints();
 	graphPointUndoXs = [[]];
-//	console.log(levelCode);
-//	console.log(localStorage.getItem(levelCode));
-	loadedLevel = localStorage.getItem(levelCode).split('\n');
+	// console.log(localStorage.getItem(currentLevelCode+"Loaded"));
+	if(localStorage.getItem(currentLevelCode+"Loaded") == null){//		level is not loaded yet
+		showMessage = true;//		see Main.html
+		messageTime = 1;
+		messageText = "Still Loading (Probably)";
+		console.log("Still Loading (Probably)");
+		window.requestAnimationFrame(loadLevel);//		try again next frame
+		return;
+	}
+	
+	
+	loadedLevel = localStorage.getItem(currentLevelCode).replace(/\r/g , "").split('\n');
+	console.log(loadedLevel);
 	levelName = loadedLevel[0];
-	levelType = loadedLevel[1];
+	levelType = loadedLevel[1];//.replace("\r" , "");
 	lineNum = 2;
+	
 
 	//		load sledder start position
 	//console.log(loadedLevel[lineNum]);
@@ -146,6 +195,7 @@ function loadBuiltInLevel(){
 			pieEquInput[k].style.backgroundColor = _inputColor;
 		}
 	}
+	
 	//		some levels may change the background color of the main input, fix it here
 	mainInput.style.backgroundColor = _inputColor;
 
@@ -184,10 +234,19 @@ function loadBuiltInLevel(){
 	useScreenLimit = false;
 	ay = -30;//		reset gravity after programming levels
 	
+	// console.log(levelName);
+	// console.log(levelName.length);
+	// console.log(levelName.charCodeAt(2));
+	console.log(levelType + " Length of " + levelType.length);
+	
+	
+	
+	console.log(loadedLevel[lineNum]);
 	//		-----------------------------------------------------------------------		[   Load Default Eqiations   ]		-----------------------------------------------------------------------
 	switch(levelType){
 		//		-----------------------------------------------------------------------		[   SineRider Clasic   ]		-----------------------------------------------------------------------
 		case "TY":
+			console.log("In TY");
 		//		"LV1: Using Time\nTY\n0,0\nsin(x-8*t)+(x-12)^2/300-1\nshowt0\nuseZ\n44,4\nCave\nEnd"
 			equRaw = loadedLevel[lineNum];
 			mainInput.innerHTML = equRaw;
@@ -567,6 +626,7 @@ function loadBuiltInLevel(){
 	}
 	
 	
+	console.log(loadedLevel[lineNum]);
 	//		-----------------------------------------------------------------------		[   Optional Modes   ]		-----------------------------------------------------------------------
 
 	//		Replacement sled graphic
@@ -578,6 +638,7 @@ function loadBuiltInLevel(){
 		sledWidth = parseFloat(stmp[1]);
 		lineNum++;
 	}
+	
 	
 	//		Guide Equation
 	if(loadedLevel[lineNum].substring(0,2) == "y="){
@@ -663,9 +724,11 @@ function loadBuiltInLevel(){
 	//		-----------------------------------------------------------------------		[   BACKGROUND AND COLLIDER SVG   ]		-----------------------------------------------------------------------
 	drawParallax = false;
 	drawBackground = loadedLevel[lineNum] != "none";
+	// console.log("--Level uses " + loadedLevel[lineNum] + "Colliders");
 	if(drawBackground){
-		background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
-		background.src = "Levels/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
+		if(loadedLevel[lineNum] != "none")
+			background.src = "https://syllabusgames.github.io/CoSineRider/LevelsSVG/" + loadedLevel[lineNum]+ ".svg";//		load background SVG
+		
 		if(!useNone)//		if a .svg is loaded and this is an actual level (useNone means this is a blank page for graphing)
 			loadCollidersFromSvg(localStorage.getItem(loadedLevel[lineNum] + "Colliders"));//		load collider SVG
 		
@@ -705,11 +768,11 @@ function loadBuiltInLevel(){
 	equUndo = [];
 	equCurrentUndo = 0;
 }
-
 	
 
 	//		-----------------------------------------------------------------------		[   Import .svg to single array   ]		-----------------------------------------------------------------------
 function loadCollidersFromSvg(sss){
+	// console.log(sss);
 	/*		this function reads in the translation of the entire file (if there is one),
 				splits the input file into strings at "<path" (thus cutting off any junk at the file's start) and stores the parts in the array partstring,
 				iterates through each section of the file

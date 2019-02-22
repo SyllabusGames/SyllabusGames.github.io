@@ -24,10 +24,12 @@ var allGroundBreaks = [];//new Array();
 //		Conserved variables for physics simulation
 var pxapx;//		sled position in global (absolute) space this physics step.
 var pxapy;
-// var pxRot;
+var pxRot;
+
 var pxLastx = 0;//		sled position last physics step
 var pxLasty = 0;
-// var pxLastRot;
+var pxLastRot;
+
 var pxt;//			current physics step time
 var pxdt = 0.01666666666666;//		time between physics steps
 var llineY = 0;
@@ -39,8 +41,6 @@ var pxLiney;
 var pxDot;
 var pxFrameTimeStore;
 var pxSleddx;
-// var rotPointx = 0;
-// var rotPointy = 0;
 
 
 var side = 1;
@@ -98,6 +98,7 @@ function runPhysics(){
 			//		The next physics step must be calculated. Record position from previous step as pxLast.
 			pxLastx = pxapx;
 			pxLasty = pxapy;
+			pxLastRot = pxRot;
 			
 			//		record last frame's velocity averaged with the one before which was averaged with the one before that which...
 			lastvx = (lastvx*3 + vx)/4;
@@ -117,7 +118,6 @@ function runPhysics(){
 				}
 
 				
-				rotation = rotation%(Math.PI*2);//		keep rotation between 0 and 2pi
 
 				tempZ = apz;//		set the Z coordinate used by equation() [tempZ] (see InputTyped.js) to the sled's Z coordinate 
 				pxFrameTimeStore = frameTime;//		store frameTime for restoration later
@@ -160,7 +160,7 @@ function runPhysics(){
 						pxapy = math.abs(pxLiney);//		avoid having a negative radius
 						//		you fell into the origin, reset
 						if(pxapy < 0.75){
-							showMessage = true;//		see CoSineRider.html
+							showMessage = true;//		see Main.html
 							messageTime = 0;
 							messageText = "FELL INTO GRAVITATIONAL SINGULARITY";
 							resetSledder();
@@ -281,13 +281,13 @@ function runPhysics(){
 			}
 			//		----------------		[   Set Rotation   ]		----------------
 			//		get the vector from the center to the end of the sled
-			rotPointx = Math.cos(-rotation)*sledWidth;
-			rotPointy = Math.sin(-rotation)*sledWidth;
+			rotPointx = Math.cos(-pxRot)*sledWidth;
+			rotPointy = Math.sin(-pxRot)*sledWidth;
 
 			if((-equation(pxapx + rotPointx) < (-pxapy + rotPointy))		||		(-equation(pxapx - rotPointx) < (-pxapy - rotPointy))){//		one of the sled's ends is below the line
 				av = -((equation(pxapx - rotPointx) - (pxapy + rotPointy)) - (equation(pxapx + rotPointx) - (pxapy - rotPointy)))*pxdt*20;
 			}
-			rotation += av;
+			pxRot += av;
 			av = Math.max( Math.min( 0.992 * av , 0.4) , -0.4);//		dampen rotation as it flies above the track so the sled eventually stopps spinning. Also, limit the speed to 0.4 radians per frame
 			
 			
@@ -330,7 +330,7 @@ function runPhysics(){
 						//		go back to equation edit mode
 						resetSledder();
 						
-						showMessage = true;//		see CoSineRider.html
+						showMessage = true;//		see Main.html
 						messageTime = 0;
 						messageText = "CHECKPOINT!";
 					}
@@ -349,6 +349,7 @@ function runPhysics(){
 		//		interpolate the past and future sled positions to get the position for this frame
 		apx = pxLastx + (pxapx - pxLastx) * (frameTime - (pxt - pxdt))/pxdt;//		(pxt - pxdt) is the time when pxLastx was the sled's position
 		apy = pxLasty + (pxapy - pxLasty) * (frameTime - (pxt - pxdt))/pxdt;
+		rotation = (pxLastRot + (pxRot - pxLastRot) * (frameTime - (pxt - pxdt))/pxdt) % (Math.PI*2);//		keep rotation between 0 and 2pi
 		
 		
 	//	console.log((apx*1000)/1000 + "Time taken = " + tttt + "ms for " + count + " Game time = " + frameTime);
@@ -442,8 +443,8 @@ function checkSvgColliders(){
 						}
 					}
 					
-					rotPointx = Math.cos(-rotation)*sledWidth;//		get x and y position of one end of the sled
-					rotPointy = Math.sin(-rotation)*sledWidth;
+					rotPointx = Math.cos(-pxRot)*sledWidth;//		get x and y position of one end of the sled
+					rotPointy = Math.sin(-pxRot)*sledWidth;
 					segmentLength = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
 					/*
 					//		SLED ROTATION USING BOTH ENDS OF THE SLED
@@ -533,7 +534,7 @@ function checkSvgColliders(){
 
 						pxapy = pxLiney + Math.sign(side)*0.0005;//		snap sled to just above/below line
 						if(pxapy + 0.5 < equation(apx)){
-							showMessage = true;//		see CoSineRider.html
+							showMessage = true;//		see Main.html
 							messageTime = 0;
 							messageText = "CRUSHED AGAINST CEILING";
 							resetSledder();
@@ -569,11 +570,11 @@ function checkSvgCollidersPolar(){
 				dy = allGroundPointsY[i-1] - allGroundPointsY[i];
 
 	//		-----------------------------------------------------------------------		[   Move Sled   ]		-----------------------------------------------------------------------
-				pxSleddx = pxapx - allGroundPointsX[i];//		change in x from one path point to the sled
+				pxSleddx = pxapx - allGroundPointsX[i-1];//		change in x from one path point to the sled
 				rtmp = pxSleddx/dx;//		fraction of line from [i] to [i-1] that is from [i] to sled position
-				pxLiney = -dy*rtmp - allGroundPointsY[i];//		pxLiney = y position on line at sled X coordinate
+				pxLiney = -dy*rtmp + allGroundPointsY[i-1];//		pxLiney = radius of point on collision array
 	
-				console.log(pxLiney + " - " +  pxSleddx + " - " +  rtmp + " - " + dx  + " - " +  dy);
+				console.log(pxLiney + " - " +  pxSleddx + " +rtmp " +  rtmp + " +dx= " + dx  + " dy= " +  dy + " - " + allGroundPointsY[i]);
 				if(Math.abs(pxLiney - pxapy) < 5){//		Sled is less than 1 meter from this line, run collision and rotation calculations. (this stops lines above and below the line the sled is on from effecting its rotation)
 								console.log("between " + i + "and" + (i-1));
 	
@@ -599,8 +600,8 @@ function checkSvgCollidersPolar(){
 						}
 					}
 					
-					rotPointx = Math.cos(-rotation)*sledWidth;//		get x and y position of one end of the sled
-					rotPointy = Math.sin(-rotation)*sledWidth;
+					rotPointx = Math.cos(-pxRot)*sledWidth;//		get x and y position of one end of the sled
+					rotPointy = Math.sin(-pxRot)*sledWidth;
 					segmentLength = Math.sqrt(dx*dx+dy*dy);//		vector dx,dy magnitude
 
 					rtmp = -(dx - pxSleddx - rotPointx)/dx*dy - rotPointy;
@@ -618,7 +619,7 @@ function checkSvgCollidersPolar(){
 
 						pxapy = pxLiney + Math.sign(side)*0.0005;//		snap sled to just above/below line
 						if(pxapy + 0.5 < equation(apx)){
-							showMessage = true;//		see CoSineRider.html
+							showMessage = true;//		see Main.html
 							messageTime = 0;
 							messageText = "CRUSHED AGAINST CEILING";
 							resetSledder();

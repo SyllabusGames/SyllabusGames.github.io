@@ -33,8 +33,8 @@ csvFileSelector.setAttribute('display' , "none");
 document.addEventListener("keydown", function(e){
 	if(e.keyCode == 121){//		F10
 		e.preventDefault();
-		levelCode = "NoneTyped";
-		loadBuiltInLevel();
+		currentLevelCode = "NoneTyped";
+		loadLevel();
 	}
 	if(e.keyCode == 45){//		Insert
 		e.preventDefault();//		don't type a space

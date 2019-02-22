@@ -3,6 +3,7 @@
 // var menuIndex = 0;
 //		button manipulation variables
 var menuArrowKeys = false;
+var currentCheckBox = -1;
 var currentButton = -1;
 var mouseCurrentButton = -1;
 var mouseLastButton = -1;//		used to check when the mouse switches buttons which will turn off keyboard menu navigation
@@ -13,6 +14,7 @@ var menuShowButtons = true;
 				
 var menuShowText = true;
 var menuText ; [];
+var menuCheckboxes = [];
 
 var menuScreenx;
 var menuScreeny;
@@ -48,10 +50,12 @@ function menuInitialize(){
 function meunMain(){
 	menuLevel = 0;
 	menuShowText = false;
-	menuButtons = [[0.5 , 0.3 , "Skip Level" , levelCleared , true],
-				[0.5 , 0.45 , "Instructions" , menuSupportedOpperations , false],
-				[0.5 , 0.6 , "Nothing" , levelCleared , true],
-				[0.5 , 0.75 , "Grapher" , menuNoneLevels , false],
+	menuButtons = [[0.5 , 0.3 , "Play Game" , levelCleared , true],
+				[0.5 , 0.425 , "Instructions" , menuBasicControls , false],
+				[0.5 , 0.55 , "Join Class" , levelCleared , true],
+				[0.5 , 0.675 , "Free Graph" , menuNoneLevels , false],
+				[0.5 , 0.8 , "Level Builder" , menuNoneLevels , true],
+				[0.5 , 0.925 , "Custom Levels" , menuNoneLevels , false],
 				[0.1375 , 0.075 , "Close" , menuClose]];
 }
 
@@ -79,6 +83,9 @@ function menuMouseDown(e){
 			if(menuButtons[currentButton][4])
 				menuClose();
 			menuButtons[currentButton][3]();
+		}
+		if(currentCheckBox != -1){//		invert the selected checkbox
+			menuCheckboxes[currentCheckBox][2] = !menuCheckboxes[currentCheckBox][2];
 		}
 	}
 }
@@ -118,6 +125,7 @@ function menuUpdate(){
 	screeny = screenHeight*0.95/screenScale;//		95% down the screen
 	screenScale = 50;
 	// gridScale = 1;
+	ctx.strokeStyle = _gridSecondaryColor;
 	drawPolarGrid();
 	
 	switch (menuLevel){
@@ -147,6 +155,16 @@ function menuUpdate(){
 			ctx.font = math.round(screenWidth/40) + "px Arial";
 			ctx.textAlign = "center";
 			break;
+		case 2://		Buttons and check boxes
+			ctx.font = math.round(screenWidth/40) + "px Arial";
+			ctx.textAlign = "left";
+			currentCheckBox = -1
+			drawCheckBox(0);
+			drawCheckBox(1);
+			drawCheckBox(2);
+			drawCheckBox(3);
+			ctx.textAlign = "center";
+			break;
 	}
 	
 	
@@ -163,7 +181,7 @@ function menuUpdate(){
 }
 
 function menuDrawMenuButtons(){
-	ctx.lineWidth = "6";
+	ctx.lineWidth = 6;
 	ctx.font = math.round(screenWidth/30) + "px Arial";
 	ctx.strokeStyle = _menuButtonColor;
 	
@@ -186,14 +204,14 @@ function menuDrawMenuButtons(){
 			if(currentButton == i){
 				ctx.fillStyle = _menuButtonHighlightColor;
 			}else{
-				ctx.fillStyle = _menuButtonFillColor;
+				ctx.fillStyle = _backgroundColor;
 			}
 		}else{//	selecting button with mouse
 			if(mouseCurrentButton == i){
 				currentButton = i;
 				ctx.fillStyle = _menuButtonHighlightColor;
 			}else{
-				ctx.fillStyle = _menuButtonFillColor;
+				ctx.fillStyle = _backgroundColor;
 			}
 		}
 		
@@ -216,22 +234,67 @@ function menuDrawMenuButtons(){
 	}
 }
 
-function menuSupportedOpperations(){
+
+function menuBasicControls(){
 	menuLevel = 1;
 	menuShowText = true;
-	menuText = [[0.5 , 0.2 , "Input fields support the following mathematical operators in addition to variables"],
-	[0.5 , 0.3 , "# is a stand in. For example (max(#, #) → max(1, x/4-1))"],
-	[0.5 , 0.5 , "+  -  *  /  ^  %  log(#)  sqrt(#)"],
-	[0.5 , 0.6 , "tan(#)  sin(#)  cos(#)  acos(#)  asin(#)  atan(#)  atan2(#,#)"],
-	[0.5 , 0.7 , "ceil(#)  floor(#)  round(#)  max(#,#)  min(#,#)"],
-	[0.5 , 0.8 , "|#|  OR  abs(#)"],
-	[0.5 , 0.9 , "e  pi"]];
-	menuButtons = [[0.1375 , 0.075 , "Back" , meunMain]]
+				
+	menuText = [[0.5 , 0.1 , "Basic Controls"],
+	[0.5 , 0.2 , "Pan: Hold middle mouse button or Home and move mouse"],
+	[0.5 , 0.3 , "Zoom in: Scroll mouse wheel up or PageUp button"],
+	[0.5 , 0.4 , "Zoom out: Scroll mouse wheel down or PageDown button"],
+	[0.5 , 0.5 , "Click in the input field to type an equation"]];
+	
+	menuButtons = [[0.2 , 0.75 , "Basic Controls" , menuBasicControls , false],
+				[0.2 , 0.9 , "Advanced Controls" , menuAdvancedControls , false],
+				[0.8 , 0.75 , "Supported Operations" , menuSupportedOperations , false],
+				[0.8 , 0.9 , "Level Builder" , menuLevelBuilderInstructions , false],
+				[0.1375 , 0.075 , "Back" , meunMain]];
+}
+
+function menuAdvancedControls(){
+	menuLevel = 1;
+	menuShowText = true;
+	menuText = [[0.5 , 0.1 , "Advanced Controls"],
+	[0.5 , 0.2 , "Hold shift to read points on the line or incrament slower"],
+	[0.5 , 0.3 , "Zoom n"],
+	[0.5 , 0.4 , "Zoom outbutton"],
+	[0.5 , 0.5 , "Click inuation"]];
+}
+
+function menuSupportedOperations(){
+	menuLevel = 1;
+	menuShowText = true;
+	menuText = [[0.5 , 0.05 , "Supported Opperations"],
+	[0.5 , 0.2 , "Input fields support the following mathematical operators in addition to variables"],
+	[0.5 , 0.28 , "# represents any equation. For example (max(#, #) is used as max(5, x/4-1))"],
+	[0.5 , 0.4 , "+  -  *  /  ^  %  log(#)  sqrt(#)"],
+	[0.5 , 0.48 , "tan(#)  sin(#)  cos(#)  acos(#)  asin(#)  atan(#)  atan2(#,#)"],
+	[0.5 , 0.56 , "ceil(#)  floor(#)  round(#)  max(#,#)  min(#,#)"],
+	[0.5 , 0.64 , "|#|  OR  abs(#)"],
+	[0.5 , 0.72 , "e  pi"]];
+}
+
+function menuLevelBuilderInstructions(){
+	menuLevel = 1;
+	menuShowText = true;
+	menuText = [[0.5 , 0.1 , "Level Builder Controls"],
+	[0.5 , 0.2 , "Hold er"],
+	[0.5 , 0.3 , "Zoom n"],
+	[0.5 , 0.4 , "Zbutton"],
+	[0.5 , 0.5 , "Clicon"]];
 }
 
 function menuNoneLevels(){
-	menuLevel = 1;
-	menuShowText = false;
+	menuLevel = 2;
+	menuShowText = true;
+	menuText = [[0.5 , 0.05 , "Free-graph Levels"]];
+	if(menuCheckboxes.length != 4){
+		menuCheckboxes = [	[0.7 , 0.2 , false , "Show t=0 line"],
+							[0.7 , 0.4 , false , "Use Z variable"],
+							[0.7 , 0.6 , false , "Graph Derivative"],
+							[0.7 , 0.8 , false , "Polar Coordinates"]];
+	}
 	menuButtons = [[0.5 , 0.15 , "Typed" , menuLoadNoneType , true],
 				[0.5 , 0.3 , "Piecewise" , menuLoadNonePie , true],
 				[0.5 , 0.45 , "Multi-Typed" , menuLoadNoneMulti , true],
@@ -241,28 +304,174 @@ function menuNoneLevels(){
 				[0.1375 , 0.075 , "Back" , meunMain]];
 }
 
-function menuLoadNoneType(){
-	levelCode = "NoneTyped";
-	loadBuiltInLevel();
-}
-function menuLoadNonePie(){
-	levelCode = "NonePie";
-	loadBuiltInLevel();
-}
-function menuLoadNoneMulti(){
-	levelCode = "NoneMulti";
-	loadBuiltInLevel();
-}
-function menuLoadNoneProxyVar(){
-	levelCode = "NoneProxyVar";
-	loadBuiltInLevel();
-}
-function menuLoadNoneProxyFunction(){
-	levelCode = "NoneProxyFunction";
-	loadBuiltInLevel();
-}
-function menuLoadNoneProgramming(){
-	levelCode = "NoneProgramming";
-	loadBuiltInLevel();
+function drawCheckBox(index){
+	//		set tmpx and tmpy to be the center of the check box
+	tmpx = menuCheckboxes[index][0]*screenWidth;
+	tmpy = menuCheckboxes[index][1]*screenHeight;
+	//		mouseX set in KeyboardMouseInput.js. Check if the cursor is over this checkbox
+	if(math.abs(mouseX - tmpx) < 20 && math.abs(mouseY - tmpy) < 20){
+		currentCheckBox = index;
+		ctx.fillStyle = _menuButtonHighlightColor;//		fill grey when hovered over
+	}else{
+		
+		ctx.fillStyle = _backgroundColor;
+	}
+	//		set tmpx and tmpy to be the upper left corner of the check box to make it easier to draw.
+	tmpx -= 20;
+	tmpy -= 20;
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = "#000000";
+	ctx.beginPath();
+	ctx.rect( tmpx , tmpy , 40 , 40);
+	ctx.fill();
+	ctx.stroke();
+	
+	ctx.fillStyle = "#000000";
+	ctx.fillText( menuCheckboxes[index][3] , tmpx + 50 , tmpy + 15 + screenWidth/80);
+	
+	//		draw check if box is checked
+	if(menuCheckboxes[index][2]){
+		ctx.lineWidth = 8;
+		ctx.strokeStyle = "#00AA00";
+		ctx.beginPath();
+		ctx.moveTo(tmpx + 5 , tmpy + 8);
+		ctx.lineTo(tmpx + 20 , tmpy + 23);
+		ctx.lineTo(tmpx + 43 , tmpy - 5);
+		ctx.stroke();
+	}
+	
 }
 
+function menuLoadNoneType(){
+	currentLevelCode = "NoneTyped";
+	localStorage.setItem("NoneTypedLoaded" , "True");
+	localStorage.setItem("NoneTyped" , `Title not shown
+TY
+-10,0
+x
+` + menuLevelOptions() + 
+`10,0
+none
+End`);
+	loadLevel();
+}
+
+
+function menuLoadNonePie(){
+	currentLevelCode = "NonePie";
+	localStorage.setItem("NonePieLoaded" , "True");
+	localStorage.setItem("NonePie" , `Title not shown
+PW
+-10,0
+5
+-999,10,-x/2+t*1.5
+10,20,t*1.5-10
+20,30,x/5-16+t*1
+30,40,x/8-16+t*0.5
+40,200,x/10-16+t*2
+` + menuLevelOptions() + 
+	`10,0
+none
+End`);
+	loadLevel();
+}
+
+
+function menuLoadNoneMulti(){
+	currentLevelCode = "NoneMulti";
+	localStorage.setItem("NoneMultiLoaded" , "True");
+	localStorage.setItem("NoneMulti" , `Title not shown
+MT
+-10,0
+hideMax
+5
+x/1
+x/2
+x/3
+x/4
+x/5
+` + menuLevelOptions() + 
+	`10,0
+none
+End`);
+	loadLevel();
+}
+
+
+function menuLoadNoneProxyVar(){
+	currentLevelCode = "NoneProxyVar";
+	localStorage.setItem("NoneProxyVarLoaded" , "True");
+	localStorage.setItem("NoneProxyVar" , `Title not shown
+PV
+-10,0
+y=A+B+C+D
+A=x+t
+B=x+t
+C=x+t
+D=x+t
+` + menuLevelOptions() + 
+	`10,0
+none
+End`);
+	loadLevel();
+}
+
+
+function menuLoadNoneProxyFunction(){
+	currentLevelCode = "NoneProxyFunction";
+	localStorage.setItem("NoneProxyFunctionLoaded" , "True");
+	localStorage.setItem("NoneProxyFunction" , `Title not shown
+PF
+-10,0
+y=f[x]+g[x]+h[x]+k[x]
+f=a/1
+g=a/2
+h=a/3
+k=a/4
+` + menuLevelOptions() + 
+	`10,0
+none
+End`);
+	loadLevel();
+}
+
+
+function menuLoadNoneProgramming(){
+	currentLevelCode = "NoneProgramming";
+	localStorage.setItem("NoneProgrammingLoaded" , "True");
+	localStorage.setItem("NoneProgramming" , `Title not shown
+TY
+-10,0
+x
+` + menuLevelOptions() + 
+	`10,0
+none
+End`);
+	loadLevel();
+}
+
+
+function menuLevelOptions(){
+	stmp = "";
+	if(menuCheckboxes[0][2])
+		stmp += "showt0\n";
+	if(menuCheckboxes[1][2])
+		stmp += "useZ\n";
+	
+	stmp += "useNone\n";
+	
+	if(menuCheckboxes[2][2])
+		stmp += "useDerivative\n";
+	if(menuCheckboxes[3][2])
+		stmp += "usePolar\n";
+	return stmp;
+}
+
+
+	
+
+	
+
+
+	
+	

@@ -18,7 +18,7 @@ function drawGrid(){//		draw a line at every 10 units
 			ctx.fillText("100m" , (100-screenx)*screenScale-30 , screeny*screenScale+10);
 		}
 	}else{
-		//		if scale is not huge and game is not running, lable the 10 meter marks
+		//		if scale is not huge and game is not running, label the 10 meter marks
 		if(screenScale < 25){
 			gridScale = 10;
 			if(!simulating){

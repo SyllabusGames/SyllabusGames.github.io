@@ -21,8 +21,10 @@ function moveScreen(){
 
 
 function zoomScreen(change){
+	if(shiftHeld)
+		change *= 0.2;
 	//		scale is non-linear so multiplying by dragScreenScale makes changes close to linear
-	dragScreenScale = Math.min(Math.max(dragScreenScale - change*dragScreenScale , 0.15) , 17000);
+	dragScreenScale = Math.min(Math.max(dragScreenScale - change*dragScreenScale , 0.15) , 40000);
 	
 	if(useScreenLimit){//		clamp the screen to show only this checkpoint and the 2 closest in both directions
 	console.log(screenWidth/(checkScreenx[1] - checkScreenx[0]));

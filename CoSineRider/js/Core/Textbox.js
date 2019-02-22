@@ -18,7 +18,7 @@ function setUpAllInputs(){
 //		create main input field
 	mainInput = document.createElement("p");
 	mainInput.setAttribute("contentEditable" , "true");
-	mainInput.style = "position:absolute;left:60px;top:720px;width:1480px;font-size:35px; font-family:'Arial'; background-color: #FFFFFFBB; border:1px solid #AAAAAA;";
+	mainInput.style = "position:absolute;left:60px;top:720px;width:1480px;font-size:35px; font-family:'Arial'; background-color:" + _inputColor + "; border:1px solid #AAAAAA;";
 	mainInput.innerHTML = "-x";
 	mainInput.style.display = "none";
 	mainInput.style.zIndex = "990";//		input field should always be above everything except Play/Pause button which is on 991 (and so will any input fields made by cloning it)

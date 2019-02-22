@@ -83,7 +83,7 @@ function setUpPlayerInputs(){
 			if(!simulating){//		if not simulating (and about to start) lock the camera if shift is not held down.
 				camLocked = !shiftHeld;//		if you hold shift while pressing Enter, sim uses your camera, if not, it uses the standard "keep goal and sledder in frame" aniamtion
 				if(useRender){//	Cannot start sledding when rendering an inequality. Display error message.
-					showMessage = true;//		see CoSineRider.html
+					showMessage = true;//		see Main.html
 					messageTime = 0;
 					messageText = "REMOVE < > = FROM EQUATION";
 					return;
