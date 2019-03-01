@@ -95,7 +95,7 @@ function sortByType(a, b) {
 		case "Edu":
 			itmp += 3;
 			break;
-		case "Sin":
+		case "Sim":
 			itmp += 2;
 			break;
 		case "HW":

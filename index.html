@@ -163,6 +163,8 @@
 
 <script>
 
+	var sortVar = [3, 1, 0];//	sort by subject [3], then rating[1], then type[0]
+	
 	var xmlns = "http://www.w3.org/2000/svg";
 	var xlinkns = "http://www.w3.org/1999/xlink";
 
@@ -204,7 +206,6 @@
 		listUpdate();
 	}
 
-	var sortVar = [3, 1, 0];//	sort by subject [3], then rating[1], then type[0]
 
 	//	----------------------------------		[   Sort list called   ]		----------------------------------
 	list.sort(sortList);//		see GameList.js and ListSort.js
