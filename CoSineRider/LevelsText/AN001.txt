@@ -1,0 +1,8 @@
+%a = 2//	a=2 at t=0
+display "y=x%a" (0.25,0.75)[0.1]//		show the text y=x(value of variable %a) at screen width*0.25,height*0.75 and text height of screen height*0.1
+%a => 4 at t = 5//	animate a to reach 4 at 5 seconds
+%a = 1 at t = 6//	set a to 1 at 6 seconds
+graph0 "y=x*%a" (#000000) at t = 4
+graph0 hide at t = 6
+t stop at t = 5//		stop time right after reaching t=5, setting t to exactly 5 and only proceeding after a mouse click
+grahp0 points {0,1,2,3,4,5}(#FF0000)//		graph points at x=0,1... on graph0
