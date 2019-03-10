@@ -9,3 +9,7 @@ graph0 "y=x*%a" (#000000) at t = 4
 graph0 hide at t = 6
 t stop at t = 5//		stop time right after reaching t=5, setting t to exactly 5 and only proceeding after a mouse click
 grahp0 points {0,1,2,3,4,5}(#FF0000)//		graph points at x=0,1... on graph0
+useNone
+10,0
+none
+End
