@@ -58,7 +58,7 @@
 	
 	AddDiv(50 , screenWidth);
 	AddDiv(120 , "Team 1");
-	AddDiv(200 , "Team 2");
+	AddDiv(200 , screenHeight);
 	
 	function AddDiv(yy , data){
 		elem = document.createElement("div");
@@ -94,7 +94,7 @@
 		tmp.innerHTML = text;
 		
 		tmp.setAttribute("class" , "teamName");
-		tmp.style.position = "relative";
+		tmp.style.position = "absolute";
 		tmp.style.top = "10px";
 		tmp.style.left = "5px";
 		parent.appendChild(tmp);
