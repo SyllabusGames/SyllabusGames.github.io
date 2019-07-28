@@ -21,8 +21,8 @@
 
 
 <script>
-	var screenWidth = document.documentElement.clientWidth
-	var screenHeight = document.documentElement.clientHeight;
+	var screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
+	var screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
 	
 	window.addEventListener("resize" , ScreenResize);
 	function ScreenResize(){
