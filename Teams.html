@@ -21,8 +21,8 @@
 
 
 <script>
-	var screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1)
-	var screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
+	var screenWidth = document.documentElement.clientWidth
+	var screenHeight = document.documentElement.clientHeight;
 	
 	window.addEventListener("resize" , ScreenResize);
 	function ScreenResize(){
@@ -33,7 +33,7 @@
 				console.log(players[i].length);
 			if(screenWidth*0.9 > 430+i*120){
 				for(f = players[i].length-1 ; f > -1 ; f--){
-					players[i][f].style.left = screenWidth*0.4*0.9+80+30*i + "px";
+					players[i][f].style.left = screenWidth*0.45*0.9+40+30*i + "px";
 					players[i][f].style.visibility = "visible";
 				}
 			}else{
@@ -56,9 +56,9 @@
 	players.push([]);
 	players.push([]);
 	
-	AddDiv(50 , 5);
-	AddDiv(120 , 5);
-	AddDiv(200 , 5);
+	AddDiv(50 , screenWidth);
+	AddDiv(120 , "Team 1");
+	AddDiv(200 , "Team 2");
 	
 	function AddDiv(yy , data){
 		elem = document.createElement("div");
@@ -69,23 +69,24 @@
 		elem.style.height = "70px";
 		document.body.appendChild(elem);
 		
-		AddTeamName(screenWidth*0.05 , "Team 1" , elem);
+		AddTeamName(screenWidth*0.05 , data , elem);
 		
-		AddButton(40 , "+200" , elem);
+		AddButton(30 , "+200" , elem);
+		AddButton(45 , "3" , elem);
 		
 		AddButton(65 , "+3" , elem);
 		AddButton(80 , "1" , elem);
 		
 		
-		AddPlayers(screenWidth*0.4*0.9+80  , 0 , 0 , elem);
-		AddPlayers(screenWidth*0.4*0.9+110 , 0 , 1 , elem);
-		AddPlayers(screenWidth*0.4*0.9+140 , 0 , 2 , elem);
-		AddPlayers(screenWidth*0.4*0.9+170 , 0 , 3 , elem);
+		AddPlayers(screenWidth*0.45*0.9+80  , 0 , 0 , elem);
+		AddPlayers(screenWidth*0.45*0.9+110 , 0 , 1 , elem);
+		AddPlayers(screenWidth*0.45*0.9+140 , 0 , 2 , elem);
+		AddPlayers(screenWidth*0.45*0.9+170 , 0 , 3 , elem);
 		
-		AddPlayers(screenWidth*0.4*0.9+80  , 30 , 0 , elem);
-		AddPlayers(screenWidth*0.4*0.9+110 , 30 , 1 , elem);
-		AddPlayers(screenWidth*0.4*0.9+140 , 30 , 2 , elem);
-		AddPlayers(screenWidth*0.4*0.9+170 , 30 , 3 , elem);
+		AddPlayers(screenWidth*0.45*0.9+80  , 30 , 0 , elem);
+		AddPlayers(screenWidth*0.45*0.9+110 , 30 , 1 , elem);
+		AddPlayers(screenWidth*0.45*0.9+140 , 30 , 2 , elem);
+		AddPlayers(screenWidth*0.45*0.9+170 , 30 , 3 , elem);
 	}
 	
 	function AddTeamName(xx , text , parent){
