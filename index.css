@@ -1,3 +1,22 @@
+/*		color scheme
+Dark
+#383F51
+
+Light Blue
+#6D9DC5
+
+Dark Blue
+#187795
+
+Pale Blue
+#38686A
+
+Green
+#1AA37E
+
+background color="#AEC5EB" or DAE9FF
+
+*/
 @font-face {
 	font-family: OpenDyslexicAlta;
 	font-weight: bold;
@@ -8,18 +27,19 @@ body {
 	margin: 0;
 	width: 100%;
 	height: 100%;
+	background-color: #DAE9FF;
 }
 
 .region{
-	border: 2px solid #FF0000;
+	border: 2px solid #38686A;
 	
-	display:block
-	position = absolute;
+	display:block;
+	position: absolute;
 	left: 5%;
-	width = 90%;
-	height = 70px;
+	width: 90%;
+	height: 70px;
 }
-
+/*
 .button {
 	
 	background-image:
@@ -37,14 +57,19 @@ body {
 	
     margin: 0 auto;
 	
-}
+}*/
 
 .teamName{
 	font-size: 40px;
+	color: #383F51;
     margin: 0 auto;
+	position: absolute;
+	top: 10px;
+	left: 5px;
 }
 
 .button_example{
+	position: absolute;
 	-webkit-box-shadow: #FEFFFF 0px 1px 3px inset;
 	-moz-box-shadow: #FEFFFF 0px 1px 3px inset;
 	box-shadow: #FEFFFF 0px 1px 3px inset;
@@ -57,13 +82,14 @@ body {
 	font-weight:bold;
 	color: #05142E;
 	
-	background-color: #3093C7; background-image: -webkit-gradient(linear, left top, left bottom, from(#3093C7), to(#1C5A85));
-	background-image: -webkit-linear-gradient(top, 	#3093C7, #1C5A85);
-	background-image: -moz-linear-gradient(top, 	#3093C7, #1C5A85);
-	background-image: -ms-linear-gradient(top,		#3093C7, #1C5A85);
-	background-image: -o-linear-gradient(top, 		#3093C7, #1C5A85);
-	background-image: linear-gradient(to bottom, 	#3093C7, #1C5A85);
-	filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#3093C7, endColorstr=#1C5A85);
+	background-color: #6D9DC5;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#6D9DC5), to(#187795));
+	background-image: -webkit-linear-gradient(top, 	#6D9DC5, #187795);
+	background-image: -moz-linear-gradient(top, 	#6D9DC5, #187795);
+	background-image: -ms-linear-gradient(top,		#6D9DC5, #187795);
+	background-image: -o-linear-gradient(top, 		#6D9DC5, #187795);
+	background-image: linear-gradient(to bottom, 	#6D9DC5, #187795);
+	filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#6D9DC5, endColorstr=#187795);
 	
 	//		do not allow text to be selected
 	-moz-user-select: -moz-none;
@@ -94,7 +120,6 @@ body {
 
 .disabled {
 	opacity: 0.6;
-	cursor: not-allowed;
 }
 
 
@@ -102,6 +127,7 @@ body {
 
 
 .profilePic{
+	position: absolute;
 	-webkit-box-shadow: #FEFFFF 0px 1px 3px inset;
 	-moz-box-shadow: #FEFFFF 0px 1px 3px inset;
 	box-shadow: #FEFFFF 0px 1px 3px inset;
@@ -114,13 +140,13 @@ body {
 	font-weight:bold;
 	color: #05142E;
 	
-	background-color: #FF0000; background-image: -webkit-gradient(linear, left top, left bottom, from(#FF0000), to(#1C5A85));
-	background-image: -webkit-linear-gradient(top, 	#FF0000, #1C5A85);
-	background-image: -moz-linear-gradient(top, 	#FF0000, #1C5A85);
-	background-image: -ms-linear-gradient(top,		#FF0000, #1C5A85);
-	background-image: -o-linear-gradient(top, 		#FF0000, #1C5A85);
-	background-image: linear-gradient(to bottom, 	#FF0000, #1C5A85);
-	filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#FF0000, endColorstr=#1C5A85);
+	background-color: #187795; background-image: -webkit-gradient(linear, left top, left bottom, from(#187795), to(#1C5A85));
+	background-image: -webkit-linear-gradient(top, 	#187795, #1C5A85);
+	background-image: -moz-linear-gradient(top, 	#187795, #1C5A85);
+	background-image: -ms-linear-gradient(top,		#187795, #1C5A85);
+	background-image: -o-linear-gradient(top, 		#187795, #1C5A85);
+	background-image: linear-gradient(to bottom, 	#187795, #1C5A85);
+	filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#187795, endColorstr=#1C5A85);
 	
 	//		do not allow text to be selected
 	-moz-user-select: -moz-none;
@@ -135,41 +161,38 @@ body {
 
 
 
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
+
+.profilePic .playerName {
+	visibility: hidden;
+	width: 120px;
+	background-color: #187795;
+	color: #000000;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 125%;
+	left: 50%;
+	margin-left: -60px;
+	opacity: 0;
+	font-size: 22px;
+	pointer-events: none;
+	transition: opacity 0.25s;
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
-  opacity: 0;
-  transition: opacity 0.25s;
+.profilePic .playerName::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #555 transparent transparent transparent;
 }
 
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
+.profilePic:hover .playerName {
+	visibility: visible;
+	opacity: 1;
 }
