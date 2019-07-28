@@ -33,7 +33,7 @@
 				console.log(players[i].length);
 			if(screenWidth*0.9 > 430+i*120){
 				for(f = players[i].length-1 ; f > -1 ; f--){
-					players[i][f].style.left = screenWidth*0.45*0.9+40+30*i + "px";
+					players[i][f].style.left = screenWidth*0.45*0.9/(window.devicePixelRatio || 1)+40+30*i + "px";
 					players[i][f].style.visibility = "visible";
 				}
 			}else{
