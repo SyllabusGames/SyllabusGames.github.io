@@ -31,9 +31,9 @@ body {
 }
 
 .region{
-	border: 2px solid #38686A;
-	
-	display:block;
+	border: 1px solid #AAAAAA25;
+
+	/* display:block; */
 	position: absolute;
 	left: 5%;
 	width: 90%;
@@ -203,4 +203,36 @@ body {
 .profilePic:hover .playerName {
 	visibility: visible;
 	opacity: 1;
+}
+
+
+	/*		-----------------------------------------------------------------------		[   Banner   ]		-----------------------------------------------------------------------*/
+
+
+/* The hero image */
+.banner-image {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 70px;
+	background-color: #1AA37E;
+	top: 0;
+	background-image: linear-gradient(#1AA37EFF, #00000060);
+	
+	/*
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("StandinLogo.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	*/
+}
+
+/* Place text in the middle of the image */
+.banner-text {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
 }

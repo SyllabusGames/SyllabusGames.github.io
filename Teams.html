@@ -8,8 +8,13 @@
 
 <link rel="stylesheet" type="text/css" href="index.css">
 
-<body>
+<body style="height: 100%; margin: 0;">
 
+<div class="banner-image">
+  <div class="banner-text">
+    <h1 style="font-size:50px">Games</h1>
+  </div>
+</div>
 </body>
 
 
@@ -70,13 +75,24 @@
 	pointPlayers.push([]);
 	pointPlayers.push([]);
 	
-	AddDiv(80 , "Team 0" , "+200" , "+3");
-	AddDiv(150 , "Team 1" , "-200" , "-3");
-	AddDiv(230 , "Team 2" , "-300" , "-5");
-	AddDiv(300 , "Team 3" , "+300" , "+5");
+	AddGame(120 , "Team 0" , "Team 1" , "+200" , "-200" , "+3" , "-3");
+	AddGame(270 , "Team 2" , "Team 3" , "+100" , "-100" , "+2" , "-2");
+	AddGame(900 , "Team 8" , "Team 9" , "+250" , "-250" , "+5" , "-5");
+	
+	function AddGame(yy , team1 , team2 , spread1 , spread2 , points1 , points2){
+		var game = document.createElement("div");
+		game.setAttribute("class" , "region");
+		game.style.border = "2px solid #38686A";
+		//border: 2px solid #38686A;
+		game.style.top = yy + "px";
+		game.style.height = "140px";
+		document.body.appendChild(game);
+		AddTeam(yy , team1 , spread1 , points1);
+		AddTeam(yy+70 , team2 , spread2 , points2);
+	}
 	
 	//		-----------------------------------------------------------------------		[   Add Team   ]		-----------------------------------------------------------------------
-	function AddDiv(yy , team , spread , points){
+	function AddTeam(yy , team , spread , points){
 		elem = document.createElement("div");
 		elem.setAttribute("class" , "region");
 		elem.style.top = yy + "px";
@@ -147,7 +163,6 @@
 		tmp.style.left = xx + "px";
 		tmp.style.top = (9 + top) + "px";
 		
-		console.log(betWin);
 		
 		if(betWin)
 			winPlayers[array].push(tmp);
