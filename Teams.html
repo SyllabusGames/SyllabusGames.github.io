@@ -77,12 +77,11 @@
 		}
 			
 	//		-----------------------------------------------------------------------		[   Header Font Size   ]		-----------------------------------------------------------------------
-		itmp = Math.min(screenWidth/35 , 35);
+		itmp = Math.min(screenWidth/((window.devicePixelRatio || 1)*35) , 35);
 		for(f = 4 ; f > -1 ; f--){
 			headers[f].style.fontSize =  itmp + "px";
 			headers[f].style.top = (115-itmp) + "px";
 		}
-		console.log(Math.min(screenWidth/35 , 35));
 	}
 	
 	var winPlayers = [];//		array of players betting to win
