@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!-- I may need this at some point (Button animate >>) https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate1 -->
 <head>
 	<title>Demo</title>
 	<link rel="icon" href="StandinLogo.png">
@@ -9,7 +9,6 @@
 <link rel="stylesheet" type="text/css" href="index.css">
 
 <body>
-
 
 </body>
 
@@ -25,15 +24,28 @@
 		screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
 		//		move player icons and hide some if the screen is too small
 		for(i = 0 ; i < 4 ; i++){
-				console.log(winPlayers[i].length);
-			if(screenWidth*0.9 > 430+i*120){
+		
+	//		-----------------------------------------------------------------------		[   Betting Player Icons   ]		-----------------------------------------------------------------------
+			if(screenWidth*0.9 > 370+i*130){
 				for(f = winPlayers[i].length-1 ; f > -1 ; f--){
-					winPlayers[i][f].style.left = screenWidth*0.45*0.9/(window.devicePixelRatio || 1)+40+30*i + "px";
+					winPlayers[i][f].style.left = screenWidth*0.45*0.9/(window.devicePixelRatio || 1)+40+28*i + "px";
 					winPlayers[i][f].style.visibility = "visible";
 				}
 			}else{
 				for(f = winPlayers[i].length-1 ; f > -1 ; f--){
 					winPlayers[i][f].style.visibility = "hidden";
+				}
+			}
+			
+	//		-----------------------------------------------------------------------		[   Point Player Icons   ]		-----------------------------------------------------------------------
+			if(screenWidth*0.9 > 370+i*130){
+				for(f = pointPlayers[i].length-1 ; f > -1 ; f--){
+					pointPlayers[i][f].style.left = screenWidth*0.8*0.9/(window.devicePixelRatio || 1)+40+28*i + "px";
+					pointPlayers[i][f].style.visibility = "visible";
+				}
+			}else{
+				for(f = pointPlayers[i].length-1 ; f > -1 ; f--){
+					pointPlayers[i][f].style.visibility = "hidden";
 				}
 			}
 		}
@@ -58,36 +70,45 @@
 	pointPlayers.push([]);
 	pointPlayers.push([]);
 	
-	AddDiv(50 , "Team 0");
-	AddDiv(120 , "Team 1");
-	AddDiv(200 , "Team 2");
-	AddDiv(270 , "Team 3");
+	AddDiv(80 , "Team 0" , "+200" , "+3");
+	AddDiv(150 , "Team 1" , "-200" , "-3");
+	AddDiv(230 , "Team 2" , "-300" , "-5");
+	AddDiv(300 , "Team 3" , "+300" , "+5");
 	
 	//		-----------------------------------------------------------------------		[   Add Team   ]		-----------------------------------------------------------------------
-	function AddDiv(yy , data){
+	function AddDiv(yy , team , spread , points){
 		elem = document.createElement("div");
 		elem.setAttribute("class" , "region");
 		elem.style.top = yy + "px";
 		document.body.appendChild(elem);
 		
-		AddTeamName(screenWidth*0.05 , data , elem);
+		AddTeamName(screenWidth*0.05 , team , elem);
 		
-		AddButton(30 , "+200" , elem);
-		AddButton(45 , "3" , elem);
+		AddButton(30 , spread , elem);
+		AddButton(45 , "8" , elem);
+		AddPlayer(screenWidth*0.45*0.9+80  , 0 , 0 , "Tim" , true , elem);
+		AddPlayer(screenWidth*0.45*0.9+110 , 0 , 1 , "John" , true , elem);
+		AddPlayer(screenWidth*0.45*0.9+140 , 0 , 2 , "Tim2" , true , elem);
+		AddPlayer(screenWidth*0.45*0.9+170 , 0 , 3 , "Tim3" , true , elem);
 		
-		AddButton(65 , "+3" , elem);
-		AddButton(80 , "1" , elem);
+		AddPlayer(screenWidth*0.45*0.9+80  , 28 , 0 , "Tim15" , true , elem);
+		AddPlayer(screenWidth*0.45*0.9+110 , 28 , 1 , "Tim16" , true , elem);
+		AddPlayer(screenWidth*0.45*0.9+140 , 28 , 2 , "Tim8" , true , elem);
+		AddPlayer(screenWidth*0.45*0.9+170 , 28 , 3 , "Tim3" , true , elem);
+		
+		AddButton(65 , points , elem);
+		AddButton(80 , "7" , elem);
+		AddPlayer(screenWidth*0.45*0.9+280  , 0 , 0 , "Mr. Verrrrrrrrry Long Name" , false , elem);
+		AddPlayer(screenWidth*0.45*0.9+310 , 0 , 1 , "John" , false , elem);
+		AddPlayer(screenWidth*0.45*0.9+340 , 0 , 2 , "Tim2" , false , elem);
+		AddPlayer(screenWidth*0.45*0.9+370 , 0 , 3 , "Tim3" , false , elem);
+		
+		AddPlayer(screenWidth*0.45*0.9+280  , 28 , 0 , "Tim15" , false , elem);
+		AddPlayer(screenWidth*0.45*0.9+310 , 28 , 1 , "Tim16" , false , elem);
+		AddPlayer(screenWidth*0.45*0.9+340 , 28 , 2 , "Tim8" , false , elem);
+		//AddPlayer(screenWidth*0.45*0.9+370 , 28 , 3 , "Tim3" , false , elem);
 		
 		
-		AddPlayer(screenWidth*0.45*0.9+80  , 0 , 0 , "Tim" , elem);
-		AddPlayer(screenWidth*0.45*0.9+110 , 0 , 1 , "John" , elem);
-		AddPlayer(screenWidth*0.45*0.9+140 , 0 , 2 , "Tim2" , elem);
-		AddPlayer(screenWidth*0.45*0.9+170 , 0 , 3 , "Tim3" , elem);
-		
-		AddPlayer(screenWidth*0.45*0.9+80  , 30 , 0 , "Tim15" , elem);
-		AddPlayer(screenWidth*0.45*0.9+110 , 30 , 1 , "Tim16" , elem);
-		AddPlayer(screenWidth*0.45*0.9+140 , 30 , 2 , "Tim8" , elem);
-		AddPlayer(screenWidth*0.45*0.9+170 , 30 , 3 , "Tim3" , elem);
 	}
 	
 	//		-----------------------------------------------------------------------		[   Team Name   ]		-----------------------------------------------------------------------
@@ -109,13 +130,30 @@
 		parent.appendChild(tmp);  
 	}
 	
-	function AddPlayer(xx , top , array , name , parent){
+	function AddPlayer(xx , top , array , name , betWin , parent){
 		tmp = document.createElement("button");
 		
+	//	tmp = document.createElement("img");
+	//	tmp.src = "StandinLogo.png";
+	
+	//	tmp.innerHTML = '<img src="StandinLogo.png" height="27px" width="27px" style="position: absolute; left: 0px; top=0px;"/>';
+	//	tmp.width = "27px";
+	//	tmp.height = "27px";
+	
+		tmp.style = 'background-image: url("ProfilePicture.jpg"); background-size: 27px 27px;';
+		
 		tmp.setAttribute("class" , "profilePic");
+	
 		tmp.style.left = xx + "px";
-		tmp.style.top = (10 + top) + "px";
-		winPlayers[array].push(tmp);
+		tmp.style.top = (9 + top) + "px";
+		
+		console.log(betWin);
+		
+		if(betWin)
+			winPlayers[array].push(tmp);
+		else
+			pointPlayers[array].push(tmp);
+			
 		parent.appendChild(tmp);
 		
 		nested = document.createElement("span");
