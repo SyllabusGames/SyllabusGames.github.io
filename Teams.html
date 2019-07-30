@@ -10,18 +10,39 @@
 
 <body style="height: 100%; margin: 0;">
 
-<div class="banner-image">
-  <div class="banner-text">
-    <h1 style="font-size:50px">Games</h1>
-  </div>
-</div>
+	<div class="banner-image">
+		<div class="banner-text">
+			<h1 style="font-size:50px">Games</h1>
+		</div>
+	</div>
+	
+	<div id="header">
+		<text id="header0" class="columnHeader" style="left:5%">Team Names</text>
+		<text id="header1" class="columnHeader" style="left:32%">M/L</text>
+		<text id="header2" class="columnHeader" style="left:45%"># of Players</text>
+		<text id="header3" class="columnHeader" style="left:63.5%">Points</text>
+		<text id="header4"class="columnHeader" style="left:77%"># of Players</text>
+	</div>
 </body>
 
 
-
 <script>
+	var headers = [];
+	headers.push(document.getElementById("header0"));
+	headers.push(document.getElementById("header1"));
+	headers.push(document.getElementById("header2"));
+	headers.push(document.getElementById("header3"));
+	headers.push(document.getElementById("header4"));
+	
 	var screenWidth = document.documentElement.clientWidth * (window.devicePixelRatio || 1);
 	var screenHeight = document.documentElement.clientHeight *(window.devicePixelRatio || 1);
+	
+	var elem;
+	var tmp;
+	var nested;
+	var i;
+	var f;
+	var itmp;
 	
 	window.addEventListener("resize" , ScreenResize);
 	function ScreenResize(){
@@ -54,13 +75,16 @@
 				}
 			}
 		}
+			
+	//		-----------------------------------------------------------------------		[   Header Font Size   ]		-----------------------------------------------------------------------
+		itmp = Math.min(screenWidth/35 , 35);
+		for(f = 4 ; f > -1 ; f--){
+			headers[f].style.fontSize =  itmp + "px";
+			headers[f].style.top = (115-itmp) + "px";
+		}
+		console.log(Math.min(screenWidth/35 , 35));
 	}
 	
-	var elem;
-	var tmp;
-	var nested;
-	var i;
-	var f;
 	var winPlayers = [];//		array of players betting to win
 	//		make an array of arrays containing 8 blank arrays to be arrange like this  	0	1	2	3
 	//																					0	1	2	3
