@@ -51,7 +51,7 @@ function drawGrid(){//		draw a line at every 10 units
 			if(i%10 == 0){
 				ctx.lineWidth = 3;
 				if(i == 0){//		Origin line
-					ctx.strokeStyle = _gridMainColor;;
+					ctx.strokeStyle = _gridMainColor;
 					ctx.beginPath();
 					ctx.moveTo(-screenx * screenScale , 0);//		(graph left edge + line number*line spacing(10))*scale
 					ctx.lineTo(-screenx * screenScale , screenHeight);

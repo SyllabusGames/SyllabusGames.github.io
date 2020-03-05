@@ -19,6 +19,10 @@ var csvPointList = [];//		points are stored [x1,y1,x2,y2]
 var csvpartstring;
 var csvReader = new FileReader();
 
+var initialized = false;
+
+var loadCsvButton;//		button in the lower right corner (where the play/pause button usually is)
+
 const csvurl = 'process.php';
 const csvform = document.querySelector('form');
 
@@ -29,13 +33,10 @@ csvFileSelector.setAttribute('accept' , ".csv");
 csvFileSelector.setAttribute('onchange' , "handleFiles(this.files)");
 csvFileSelector.setAttribute('display' , "none");
 
+
+/*
 //		activate load file button when Insert is pressed
 document.addEventListener("keydown", function(e){
-	if(e.keyCode == 121){//		F10
-		e.preventDefault();
-		currentLevelCode = "NoneTyped";
-		loadLevel();
-	}
 	if(e.keyCode == 45){//		Insert
 		e.preventDefault();//		don't type a space
 		csvFileSelector.click();//		open file selector
@@ -49,7 +50,7 @@ document.addEventListener("keydown", function(e){
 		}
 		csvPointList.pop();//		remove the last point in the array because it has nothing to average with
 		csvPointList.pop();*/
-		
+		/*
 	//		average each point with its two neightbors except for the ends which average with itself and its enighbor
 	//		This can cause some strange behaviour at the end points
 		var tmpPointList = csvPointList;
@@ -58,9 +59,46 @@ document.addEventListener("keydown", function(e){
 			csvPointList[i] = (tmpPointList[i-2] + tmpPointList[i+2])/2;//		set current point's Y position to be the average of the Y position of the points on either side
 		}
 		csvPointList[tmpPointList.length-1] = (tmpPointList[tmpPointList.length-1] + tmpPointList[tmpPointList.length-3]*3)/4;//		last point
-
 	}
 });
+*/
+document.addEventListener("mousemove", function(e){
+	if(initialized){
+		if(localStorage.getItem("NoneTypedLoaded") == "True"){//		a non-game level is loaded.
+			loadCsvButton.style.left = (screenWidth-65) + "px";
+			loadCsvButton.style.top = (screenHeight-65) + "px";
+			loadCsvButton.style.display = "block";//	Display the Load CSV button
+		}else{
+			loadCsvButton.style.display = "none";//		Hide the Load CSV button
+		}
+	
+	}else{//		set up the button
+		
+		loadCsvButton = document.createElement("p");
+		// mainInput.setAttribute("contentEditable" , "true");
+		loadCsvButton.style = "position:absolute;left:0px;top:0px; z-index: 20";//		above everything except input field
+		
+		loadCsvButton.innerHTML = `<svg id="LoadCsvButton"; height="70" width="70" style="z-index: 991; position:absolute; left:0px; top:-16px;">
+			<g transform="translate(10 10)">
+				<rect x="0" y="0" width="50" height="50" ry="12" fill="none" stroke="#000000" stroke-width="6"/>
+				<rect ry="11" height="46" width="46" y="2" x="2" class="button" onclick="csvFileSelector.click()" />
+				
+				<text class="unselectable" fill="#000000" font-family="Arial" font-size="19px" text-anchor="middle" text-align="center" style="font-weight:bold;">
+					<tspan x="27" y="23">Load</tspan>
+					<tspan x="25" y="41">CSV</tspan>
+				</text>
+			</g>
+		</svg>`;
+	
+		document.body.appendChild(loadCsvButton);
+		loadCsvButton.style.display = "none";//		Hide the Load CSV button
+		
+		initialized = true;
+	}
+});
+
+
+	
 
 //		read .csv, store in csvInputString, and run csvLoad()
 function handleFiles(files){
@@ -106,11 +144,15 @@ function csvDraw(){
 	if (paused)
 		return;
 	//ctx.font = "25px Arial";
+	
+	//		move play/pause button to lower right corner of screen
+	loadCsvButton.style.left = (screenWidth-65) + "px";
+	loadCsvButton.style.top = (screenHeight-65) + "px";
+	
+	ctx.lineWidth = 2;
 	ctx.fillStyle = "#5050FF";
 	ctx.strokeStyle="#5050FF";
 	for(i = csvPointList.length-1 ; i > 1 ; i -= 2){
-	//	ctx.fillText( '(' + (Math.round(dx*100)/100).toString() + ',' + (Math.round(dy*100)/100).toString() + ')', (dx - screenx)*screenScale + 5 , -(dy-screeny)*screenScale);
-	
 		//		draw dot on graph at coordinates above
 		drawCircle(csvPointList[i-1] , csvPointList[i] , 4);
 	}

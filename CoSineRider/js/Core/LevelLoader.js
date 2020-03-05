@@ -66,6 +66,11 @@ function preloadLevelAssets(levelLoadName){
 				outputText = txtFile.responseText;
 				localStorage.setItem(levelLoadName , outputText);
 				
+				// if(levelLoadName.substring(0,2) == "AN"){//		this is an animation. Do not load an svg
+					// localStorage.setItem(levelLoadName+"Loaded" , true);
+					// return;
+				// }
+				
 				outputText = outputText.split('\n');
 				svgName = outputText[outputText.length-2];//		get the .svg name
 				console.log("Begin loading " + svgName + ".svg for " + levelLoadName);
@@ -90,7 +95,7 @@ function preloadLevelAssets(levelLoadName){
 				}
 				
 				
-				if(svgName != "none" && localStorage.getItem(svgName + "Colliders") == null){//		only load this colliders file if it isn't already loaded
+				if(svgName.substring(0 , 4) != "none" && localStorage.getItem(svgName + "Colliders") == null){//		only load this colliders file if it isn't already loaded
 					console.log("Now loading " + svgName + "Colliders.svg for " + levelLoadName);
 					
 					var svgCollidersRequest = new XMLHttpRequest();
@@ -106,7 +111,7 @@ function preloadLevelAssets(levelLoadName){
 					svgCollidersRequest.send();
 				}
 
-				if(svgName == "none" || localStorage.getItem(svgName) != null){//		if this .svg is already loaded, record that this level is now fully loaded
+				if(svgName.substring(0 , 4) == "none" || localStorage.getItem(svgName) != null){//		if this .svg is already loaded, record that this level is now fully loaded
 					console.log(svgName + ".svg already loaded for " + levelLoadName);
 					localStorage.setItem(levelLoadName+"Loaded" , true);
 					console.log("Finished loading level " + levelLoadName);
@@ -163,6 +168,14 @@ function loadLevel(){
 		return;
 	}
 	
+	// console.log(localStorage.getItem(currentLevelCode));
+	// if(currentLevelCode.substring(0,2) == "AN"){//		this is an animation. Skip everything and just run 3B1BAnimations
+		// animInput = loadedLevel;
+		// animInitialize();
+		// console.log("anim start");
+		// isCutscene = true;
+		// return;
+	// }
 	
 	loadedLevel = localStorage.getItem(currentLevelCode).replace(/\r/g , "").split('\n');
 	console.log(loadedLevel);
@@ -623,6 +636,14 @@ function loadLevel(){
 			cutInitialize(loadedLevel[lineNum]);
 			lineNum++;
 			break;
+		//		-----------------------------------------------------------------------		[   Animation   ]		-----------------------------------------------------------------------
+		case "AN":
+			isCutscene = true;
+			animInput = loadedLevel;
+			animInitialize();
+			return;
+			// lineNum++;
+			// break;
 	}
 	
 	

@@ -146,7 +146,7 @@ function equation(input){
 			}
 		}
 		//		current X position is not within a range so set to very low value to make a pit.
-		return (-9001);
+		return (-1000);
 	}else{
 		if(useDerivative)
 			return (equCompiled.eval({x: input , t: frameTime , z: tempZ}) - equCompiled.eval({x: input - 0.001 , t: frameTime , z: tempZ}))*1000;

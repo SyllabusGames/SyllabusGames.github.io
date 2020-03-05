@@ -44,6 +44,8 @@ function menuInitialize(){
 	document.addEventListener('keydown', menuKeyDown);
 	document.addEventListener('mousedown', menuMouseDown);
 	
+	localStorage.setItem("NoneTypedLoaded" , "False");//		Asside from 
+	
 	meunMain();
 }
 
