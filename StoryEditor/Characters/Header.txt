@@ -1,0 +1,4 @@
+0:Turning Point
+1:Goals they reach
+2:Goals they don’t reach but work towards
+3:Goals they are rendered incapable of reaching

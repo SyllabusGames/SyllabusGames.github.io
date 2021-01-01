@@ -1,0 +1,7 @@
+→A↓0
+Logic Gates sector. 
+→A↓1
+Can also be accessed through the menu.
+Equipping it just lets you use it as a glossary for whatever you are looking at. (Hold button to highlight entities)
+→A↓2
+Works like the logic gate switcher but using it opens a guide entry for whatever you use it on so it will show the truth table for any gate and equations for any component. It also works on all switches, enemies, and other interact-able objects. 
