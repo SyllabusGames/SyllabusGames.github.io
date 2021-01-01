@@ -1,0 +1,20 @@
+→A↓000
+Text 0
+new line
+	tab indented
+		double tab indented
+→A↓001
+Text 1
+new line
+→A↓002
+Text 2
+new line
+→A↓003
+Text 3
+	new line
+→A↓004
+Text 4
+	new line
+→A↓005
+Text 5
+	new line
