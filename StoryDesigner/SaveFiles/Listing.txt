@@ -1,0 +1,10 @@
+#A00Abilities
+#000Art Style
+#000Bits
+#000Characters
+#000Enemies
+#000Gameplay Summary
+#000Lessons
+#000Music
+#0A0Plot
+#00AThemes

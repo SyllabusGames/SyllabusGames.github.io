@@ -1,8 +1,7 @@
+→A↓2
+Factor in distance to enemy when targeting.
 →A↓0
-A section of the elevator sector is built around this ability though it is completely optional. It has players drop down a ravine so they need to air jump (or just dash) to reach a platform below.)
-The room you get this ability in is just a platform suspended over a teliporter with another platform far enough away that you need a dash, air jump, air dash to cross it.  After that is just something letting you Z Target an enemy and a target.
+unlo
 →A↓1
 Cancels any action / circuit mode. Can be used to toggle between side scroller and shoulder view when in a side scrolling section.
 When used in mid air, does an air jump.
-→A↓2
-Factor in distance to enemy when targeting.
