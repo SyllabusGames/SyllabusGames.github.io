@@ -1,4 +1,17 @@
-0:Turning Point
-1:Goals they reach
+5:Bits
+6:Overview
+7:Musical Theme
+8:Opinion of [Anris]
+9:Role Model
+10:Appearance
+11:The player can trust them to... (do things off screen)
+12:Thing they inherently care about
+13:Who they want to be
+14:School Stress Level
+15:Anti-goal (thing they explicitly do not want to do or have)
 2:Goals they don’t reach but work towards
-3:Goals they are rendered incapable of reaching
+3:Goals they are rendered incapable of reaching.
+1:Goals they reach
+16:Options they don’t take
+0:Turning Point
+17:Bad at 

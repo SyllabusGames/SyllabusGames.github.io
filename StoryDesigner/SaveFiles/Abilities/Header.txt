@@ -1,3 +1,1 @@
 2:Bits
-0:Unlocked In
-1:Uses

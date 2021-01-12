@@ -1,7 +1,7 @@
 →A↓2
 Factor in distance to enemy when targeting.
-→A↓0
+→A↓-0
 unlo
-→A↓1
+→A↓-1
 Cancels any action / circuit mode. Can be used to toggle between side scroller and shoulder view when in a side scrolling section.
 When used in mid air, does an air jump.
