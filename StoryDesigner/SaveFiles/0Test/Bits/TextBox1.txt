@@ -1,0 +1,12 @@
+Theme. Accepting there are things you don’t know and things you are wrong about and asking for help even on things you are proud of being goid at. 
+
+Lisege les-age. Liminal Space Generator
+
+To draw a curve. Draw a line at the two locations you want the curve to start and end. Then subdivide the sides once. Then subdivide that once. Blender will smoothly interpolate with each cut.
+
+The border obstacle is also called “The Wall Outside the World”
+
+The best kind of multiplayer coop is in games like Trine or Helldivers where you mostly can’t hurt each other but there are still ways to mess with each other like dropping ammo on someone’s mech or tethering someones box to the ground. The best part of trine was when three of us were tethered to and swinging from a ring on a rolling stand while the fourth actually worked on the puzzle. 
+
+The more you set up events before skipping and letting the player assume the intervening scene, the less possible it is to do something the wrong way in their opinion.
+In Fullmetal Alchemist, Ed uses alchemy to win an arm wrestling contest because his opponent was also cheating. This worked well as a story moment and for his character, but is interesting because it annoyed Winry who wanted to see him win using her work. I need to make sure I see every character's perspective on each event and try to not just have all of them agree.
