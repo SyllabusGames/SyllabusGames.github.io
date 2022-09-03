@@ -1,0 +1,10 @@
+→A↓2
+line up 2 square holes and you can dash from one, through the other
+
+Pick 3 points in the world where the ground is purple and a triangle will be drawn between them, which then rotates into a circle you can stand on. (Lass interesting, but far easier to implement)
+https://answers.unity.com/questions/322413/finding-color-of-a-body-at-the-point-of-collision.html
+You could even create a replacement shader that takes main_ texture*main_ Color and returns 1 if it is close enough to purple.
+→A↓0
+
+→A↓1
+

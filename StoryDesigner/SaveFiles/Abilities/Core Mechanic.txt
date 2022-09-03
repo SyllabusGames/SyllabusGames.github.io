@@ -1,0 +1,34 @@
+→A↓2
+Circuits provide Knowledge and Strategy challenges, but it is left up to the "combat system" to provide a skill challenge that ties the game together.
+https://docs.google.com/document/d/1Upl8GQ0cadguhd19DQZE6XyeNwtv4Bj1wympB3r8K68/edit
+https://docs.google.com/document/d/1UGtxvMKKiQEEGliKl52LXFNtB-gxW5vqKMW-dh2BfWE/edit
+
+Main, large scale, mostly non-interactive challenge is climbing mechs and other moving platforms.
+
+I don't like the current system since bombs have basically one use and are worthless
+
+3 parts. Dropping and powering the bomb. Protecting it from enemies. Getting clear before it activates.
+
+Large mechs:
+	Immobilize them or get a good jump from somewhere. Then climb them without sliding off from the ground slope changing.
+Medium mechs:
+	Immobilize them or get a good jump from somewhere. Then climb them without sliding off, being hit, or one of their friends hitting you. You will be climbing on the mech's body as opposed to large mechs where you climb the legs, so sliding off is less of an issue.
+Small mechs:
+	You do not climb them. Immobilize them or dash precisely to get to their runic plates and remove them without getting hit. Immobilize other mechs so they don't interfere with the one you are focusing on.
+	
+	Encounter (Group of 3):
+		Throw down 3 welders and focus on the mech furthest from them.
+		All 3 move towards the welders, attempting to disable them.
+		Move towards 1 mech and dash around behind it.
+		1 of the welders goes off, immobilizing one of them while the third is still working to disable the slowly charging 2 other welders.
+		Press dash while close to the runic plate mount on the mech to hold onto the frame around it and press Toggle Gate when you character finished each plate to start on the next. (pressing too early has a random chance to break the current plate)
+			Use the right analogue stick to look around and the left to pick which plate to remove next. (Early mechs have plates labeled for which abilities they enable)
+		Mech 3 has shifted focus to you so you press Dash to dismount the mech and dodge its attack which hits mech 1, breaking a plate.
+		Mech 1 has only 1 of 3 plates left so it only has 1 of its 3 abilities. (a slam attack, a spin, and a turn speed boost)
+
+Bombs have no purpose aside from combat and opening things. There are no times when you choose to use a bomb. Only opportunities to forget to use one.
+Bombs are a KEY not a TOOL (which is unacceptable being one of 4 permanent abilities)
+
+Mechanic	Climbing	Small Robots	Medium Robots	
+[Clear Sides]                        	NA	Agro		
+[Clear path forward]                	Towards runic plates	Immobilize -

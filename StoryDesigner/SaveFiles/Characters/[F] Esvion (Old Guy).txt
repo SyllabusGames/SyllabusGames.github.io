@@ -1,0 +1,51 @@
+→A↓5
+(when you first enter the room, he says to himself) "Oh great, the rune wrights let their kids in here. Like they didn't already treat this place like their own lab, now it's a playground."
+(he nevery really shows annoyance at you being here outside of this line)
+
+(Conversationally)"So why are you here? You must know I'm not naming any of you the seventh Guard of Paradigm, so… what then?"
+"We were just looking around."
+"We actually weren't expecting to find anyone here. Who are you?"
+(Taken aback by them not knowing him) "What are they teaching you in school?"
+"Electronics currently"
+"I am the Seventh Guard of Paradigm… The mage []"
+"You're a mage, like Anris!?"
+"You know of Anris but not of me. What…"
+"Well he is trying to take over the world."
+"Still? I thought he could have finished that in a week. Is the Lady Who Owns The Rain really standing against him?" (Said like the is supprised she took a side, not that she stood a chance)
+"I don't know who that is, but he is fighting about 6 different armies, so"
+"Mere men, standing against a mage. Each generation looks down on the next with disappointment, but I must have been the last true battle mage the world has seen."
+
+
+"You only truly own something if you can destroy it knowing no one has the right to stop you."
+→A↓6
+[F]
+→A↓7
+
+→A↓8
+
+→A↓9
+
+→A↓10
+
+→A↓11
+
+→A↓12
+
+→A↓13
+
+→A↓14
+
+→A↓15
+
+→A↓2
+
+→A↓3
+
+→A↓1
+
+→A↓16
+
+→A↓0
+
+→A↓17
+

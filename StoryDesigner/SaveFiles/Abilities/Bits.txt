@@ -1,0 +1,76 @@
+→A↓2
+Every tool should be useful in 80% of situations.
+
+some can accomplish the same thing but in different ways, requiring different player skill
+
+Early on, you find a list made by [Onen] trying to index all the side projects (abilities). This list contains all abilities in the game. Some are fully explained and noted where they are being stored. Some are just “thing J was working on”
+
+All of these abilities should be taught through Anchor Tossing.
+
+Every ability challenge should be accessible just by looking at the floors around the challenge door and finding a path from somewhere you can fall to, to the door. There should be no mandatory skill requirement for 100%ing the game.
+
+Swords and tool are not tools, they are sculptures and neat toys made to function like tools.
+
+I need some way to indicate what ability a player will get for completing a challenge area so they can prioritize reaching certain ones once they are capable of reaching them all.
+
+Several challenge areas are floating/moving islands or other structures just drifting through Anyu in a predictable but long pattern. There are no clear ways to get to them, but after loading all areas, it should be easy to find a location where you can fall to each.
+
+When equipping abilities, the player can swap the primary and alt functions of each tool. 
+
+[4] establishes a duplication box. A custom chest you put items in to indicate you want her to duplicate them. It exists mainly for story reasons to tell the player [4] made this
+
+CONTROLLER
+	______                                                               _____
+	|Z Target|_____________________________|Custom|
+	
+	Dodge                                                        Throw/Recall tool 
+	
+             []                                                                    Circuit Mode
+      []            []          [Menu]           [Pause]        Toggle Gate            Custom 
+             []                                                                      Custom
+
+		      __________________________
+     \Custom/                                                         \Custom/
+
+CONTROLLER To KEYBOARD (MMB unused)
+	______                                                      _____
+	|Ctrl|_____________________________|RMB|
+	
+	Shift                                                            LMB
+	
+             [W]                                                            Tab
+      [A]            [D]          [~/Enter]        [Esc]       Q            E 
+             [S]                                                             Space
+
+		      __________________________
+               \Alt/                                                         \MMB/
+
+Block - not moving will automatically block any attack in the direction you are looking, halving all damage. 
+
+The mobile / touch screen version of the game is an adventure game. You tap where you want to go. Your abilities are on a bar at the bottom of the screen. Interactable objects are highlighted (to compensate for the smaller screen and less versatile viewing angle.) There is also a button for switching between shoulder and top-down cameras.
+
+Many areas are designed to be traversed using the item acquired nearby but never actually require it. 
+
+And then there’s Anchor Tossing. First off, don’t toss an anchor. If it catches on something it can swing and put a hole in your boat. It can also catch someone standing on the line and pull them in which is the metaphorical goal here, for the player to just be walking on a ship and suddenly find themselves in a new environment with new mechanics and challenges. This is done after establishing the base mechanics when you just give the player a new item or ability, tell them nothing, but make sure they will be able to figure out what it does on their own if they want.This isn’t getting a new gun in an FPS.This is finding a redstone circuit in a structure to find out redstone exists. This is shine sparking in Metroid if it was more intuitive. This is half the items in Symphony of the Night. This is BombChus if they were never necessary (that 1 stupid Spirit Temple Room in Gannon’s castle). This is air jumping in DKC. This is every ability in Soul Chain. This is being given a new mechanic to explore that can fundamentally change how you approach challenges in the game,,, but never have to use.
+
+Design puzzles like Sean Hip 2, make each puzzle out of as few elements as possible, reused constantly. So a box is a platform to stand on, a moving obstacle to block things, a conductor, a magnetic conductor, 
+
+Ability skill levels are built up like FF6/Skyrim where using each ability builds competence with that ability, but it actually doesn't. Every successful use of an ability boosts invisible stats like 3rd person aiming accuracy, movement skills… along with a skill stat for that one tool or group of tools. Now you get better with all weapons if you just use one of them, but if you only use the sword and never the throwing fan, when you get the rocket sword, you will be proficient at swinging it but not at throwing it. All of this is in the background though. What the player sees is just [1]'s chart listing how good/how much practice each character has with each tool. This always says "has not used" to start off, even if they have that stats to use it perfectly.
+Each tool gets its own description for each character. For example. Rocket sword:
+	[2]: Keeps almost dropping it, Can't get it to come back, not great, reliable, kind of impressive
+	[3]: Seems afraid of it (fair enough), Still has a hard time controlling it, a little finicky but ok, reliable, pretty good
+	[4]: I'm not using that thing!
+	[5]: Way too confident, He seems to be improving, Uses it the same as any other sword. except the bit where he throws it.
+Ability skill is shown in game as how long a character takes to activate an ability. Each tool also has unique benefits, like
+	throwing fan returning to you more reliably
+	not tripping after a dash
+	not accidentally toggling circuit mode twice (followed by a frustrated oops so the player knows it wasn't them)
+
+I don't want any of these to really be annoying, just make them noticeable enough that the player knows their characters are improving and sees the problem when they give a character all new equipment.
+
+https://www.youtube.com/watch?v=_MxAbWN4TFc
+An OoT speed-runner, when asked why he is still playing a 20  year old game, said there is a lot of depth to it and things keep changing so it is still interesting. I don’t think my game can be demanding enough that the average player will really investigate the mechanics; certainly not to the extent that speed-runners do, but I need every ability to have depth and push the player towards finding those through encounters where they know they can do something, but none of the basic moves can get them through.
+→A↓0
+
+→A↓1
+

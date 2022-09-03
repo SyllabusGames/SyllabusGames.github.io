@@ -1,0 +1,48 @@
+→A↓2
+Idle (Knowledge challenge)
+
+Analogue CONTROLLER
+	______                                                               _____
+	||_____________________________||
+						
+	                                                        Toggle Wire
+	
+             []                                                                    Circuit Mode
+      []            []          [Menu]           [Pause]                     
+             []                                                                      Add Gate
+
+		      __________________________
+          \/                                                                 \Alt/
+
+I may want to add the ability to horizontally flip tiles
+
+LMB (0) - Add gate , drag gate , change type , 
+LMB (alt) - box select , drag box selection
+Q - Add Gate 0
+E - Add Gate 1
+R - Add Gate 2
+RMB (1) - Draw wire , change wire color , NOT gate
+RMB (alt) - copy wire color  (hides the gate select menu)
+MMB (2) - Delete gate , delete wire (hides the gate select menu)
+Mouse Wheel - Zoom (hides the gate select menu)
+Tab - Circuit Mode
+
+
+Logic CONTROLLER
+
+
+	  _________                                                          _____________________________________________
+	  |box select|_____________________________|copy wire color , (hold and press face button) copy gate|
+Add Gate 0 , change type , drag gate                      Draw Wire , Change color
+	                                                        
+	
+             []                                                                    Circuit Mode
+[]Wire color select[]  [Menu]  [Pause]        Add Gate 1           Add Gate 3
+             []                                                                Add Gate 2
+
+		        __________________________
+\Move Screen/ \Delete/                                        Move Cursor \hold to zoom with LStick/
+→A↓0
+
+→A↓1
+

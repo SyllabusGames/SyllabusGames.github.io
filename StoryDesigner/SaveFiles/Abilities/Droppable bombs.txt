@@ -1,0 +1,6 @@
+→A↓2
+alt drops bombs that follow global gravity
+→A↓0
+
+→A↓1
+

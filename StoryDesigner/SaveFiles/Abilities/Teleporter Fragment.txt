@@ -1,0 +1,13 @@
+→A↓2
+Switch between the last 5 respawn points (last platforms you were walking on) and teleport back to one of them
+
+Each button press sends you back 1 until you reach the oldest point. 
+
+Spawn points are only recorded when you are at least a set distance from you last point or are on a different object
+
+
+Puzzle is an enclosed room with floor tiles that turn the whole world grey. You can’t see anything, but when you step off you can see normally so the challenge is to memoize a route across the next section of tiles to reach the next spot where you can see again. The entrance will have most players in shoulder camera so a top down camera is very helpful but the player has to think to use it. If you stand in the grey for too long, you get warped to the start. The second half (where you have the teleporter fragment) this time limit gets reduced but you can use the new tool to warp right back where you were. The tile grey effect fades in to teleporting into the grey will let you see for a moment. 
+→A↓0
+
+→A↓1
+

@@ -1,0 +1,62 @@
+→A↓5
+ went to your school and comes back, both to visit her favorite teacher [Science] and to challenge you for Anyu.
+When [UB] decides they are going to the SoftScape to fight you, she is the one who runs the computer they use to get there.
+She is “on contract”, the 3rd option between getting a job and going to college. This basically turns you into a protagonist. You have a small income from the government and a vague goal you are meant to work towards. The rules are all very relaxed but oversight is very attentive so they will kick you off contract if you don’t take it seriously. There are a lot of art contracts which everyone likes because you have to clean a place before you can paint it so they become more like wandering renovators. 
+
+The first time she meets the protagonists in school to request Anyu:
+	[CS] I finally hunted you down. Now, tell me where I can find the computer [Anris] is using to run his 
+	[2] This sounds important, so let's start with, who are you?
+	[CS] I am a student of [WM], a magician, and a guard of paradigm. I tracked you to this
+	[5] No you're not! You graduated from this school two years ago. You're probably just here to visit an old teacher.
+	[CS] But how did you know I went to this school?
+	[5] I go to this school.
+	[CS] Dang it, I should have known.
+	[CS] Yes, I went to this school, but I'm also all those other things I just said. Now where is the computer?
+	[2] … We're not telling you..?
+	[CS] Well Iiii,,, have a sword. (waves her hand, some aura appears but no sword.) PRETEND I HAVE A SWORD! Now tell me or else.
+	[5] Well I actually have a sword (picking it up from next to his backpack). Now pretend we said no.
+	[CS] (Stares in slight confusion about how poorly this is going)
+	…
+	[CS] So,,, why are you guys working with [Anris].
+	[2][5] We aren't.
+	…
+	[ST] (enters the room) [CS] what are you doing here (happy to see her)
+	[CS] (Slightly shocked at finally being in a situation she knows how to deal with)
+	
+WM's Assault
+	[2] So, [CS], you seem a lot more competent this time.
+	[CS] Ya, I'm not here to talk to someone completely different this time.
+	[2] So [5] was right.
+	[CS] I already admitted that!
+→A↓6
+[CS]
+→A↓7
+
+→A↓8
+
+→A↓9
+
+→A↓10
+
+→A↓11
+
+→A↓12
+
+→A↓13
+
+→A↓14
+
+→A↓15
+
+→A↓2
+
+→A↓3
+
+→A↓1
+
+→A↓16
+
+→A↓0
+
+→A↓17
+

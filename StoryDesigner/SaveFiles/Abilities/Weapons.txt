@@ -1,0 +1,29 @@
+→A↓2
+Sword
+Fan
+Dart Gun
+
+Holding the weapon button while falling along a wall will use the weapon to grind down that wall at a consistent speed while leaving a scratch trail behind and dealing damage if relevant.
+
+Using a weapon after dashing does a dash attack
+
+These are not offensive abilities. You have plenty of those. These are finishing moves used to abruptly end fights early. 
+
+These are drained as you use them and can be recharged by defeating enemies, meaning you must use them perfectly or not entirely rely on them for every encounter.
+Rocket engine blade/fan
+The ultimate weapon, used by [5] in the final fight if you have it.
+
+Visual Effect The Amazing Engineering Behind Solid Rocket Boosters
+SpaceX Starship's Raptor vacuum engine test-fired in Texas
+SpaceX Raptor Engine Test Compilation
+
+
+R1: Swing.
+R2: Throw. 
+Dash R1: Dash attack
+Dash R2: Rocket boost
+
+→A↓0
+
+→A↓1
+

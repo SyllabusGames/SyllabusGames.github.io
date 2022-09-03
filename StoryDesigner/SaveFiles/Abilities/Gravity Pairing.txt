@@ -1,0 +1,6 @@
+→A↓2
+Assign gravity to object to match player’s gravity
+→A↓0
+
+→A↓1
+

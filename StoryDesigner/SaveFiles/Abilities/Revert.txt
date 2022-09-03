@@ -1,0 +1,8 @@
+→A↓2
+Flips logic gates back 1 cycle.
+Undoes the last health/status change of an enemy.
+Can be used as a very late parry to heal the last hit you took.
+→A↓0
+
+→A↓1
+

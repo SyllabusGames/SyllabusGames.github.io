@@ -1,0 +1,44 @@
+→A↓5
+He is the coach from an "uplifting" sports movie crossed with a templar. (started from nothing)
+"We have worked harder to get here than anyone else."
+"Our cause is just beyond even considering any other."
+(worked harder than you to become better than you)
+
+Epilogue:
+	He finds [Anris] after he looses to ask him what the plans are now.
+	[Anris] "You keep saying you worked your way from the bottom to be the best. You were born in __ in an upper, working class family. As a warlord, you did ok. You worked your way from the average citizen to average general."
+	[Anris] "You can't change things. You're not any better than your opponents. You push, they push, the world stays in equilibrium and it's partially your fault. And when it starts to slip to one side or the other, Hidden Lynx pushes it right back to center."
+	"Who? "
+	
+→A↓6
+[G2]
+→A↓7
+
+→A↓8
+
+→A↓9
+
+→A↓10
+
+→A↓11
+
+→A↓12
+
+→A↓13
+
+→A↓14
+
+→A↓15
+
+→A↓2
+
+→A↓3
+
+→A↓1
+
+→A↓16
+
+→A↓0
+
+→A↓17
+

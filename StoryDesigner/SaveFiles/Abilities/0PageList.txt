@@ -1,0 +1,19 @@
+#111Core Mechanic
+#111Bits
+#111Armor Mods (Runic Plates/Dust)
+#111Time Investment Upgrades
+#111[Permanent] Circuit Mode Δ
+#111[Permanent] Toggle Logic Gate ▢
+#111[Permanent] Dash/Dodge L1
+#111[Permanent] Bomb/Wire Welder R1
+#111ZTarget
+#111GuideBook
+#111Down Tether
+#111Teleporter Fragment
+#111Revert
+#111Gravity Pairing
+#111Electric Field Conduction
+#111Droppable bombs
+#111Detonator
+#111Square Dash / Purple Platform
+#111Weapons

@@ -1,0 +1,7 @@
+→A↓2
+Electric shocktapus's ability to magnetically (electrically) charge yourself to perceive and be acted on by magnetic fields. This lets you ride electric wires by sliding along the field lines (while in a low weight state?)
+Only works on high power analogue wires. Anything else will give an error "Wire power too low. Increase V*i"
+→A↓0
+
+→A↓1
+

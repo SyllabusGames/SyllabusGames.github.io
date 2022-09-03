@@ -1,0 +1,20 @@
+→A↓2
+This is the game's core fantasy. Taking an advanced technology and building it into something that is yours. You can't unlock everything, not even close. Many upgrades a physical in the real world since those also take [1]/[4]'s time. 
+
+Hoverboard (Holding sprint button spawns it and it is faster than running)
+
+Add a slider to the select menu to set the logic update frequency in Hz (0-60). [1] makes suggestions when this should be changed after changing it himself for the first 4 areas. 
+
+Customize UI color and theme
+
+When you select an upgrade that needs runic plates but there are not enough in the scrap column to finish it, [1] will have to wait to ask the group what can be scrapped. [4] will just (let you) decide on the spot.
+
+Series of updates that move console exclusive commands from the real world console to the in game select menu so [4] can go to Anyu.
+
+Anyu LOD settings (settings to unload more stuff) Settings to make the game run faster are always available through the settings menu, but this adds the ability to lessen unloading or remove LOD entirely with [1]/[4] warning you Anyu may slow down.
+
+Many upgrades require runic powder when it makes sense.
+→A↓0
+
+→A↓1
+

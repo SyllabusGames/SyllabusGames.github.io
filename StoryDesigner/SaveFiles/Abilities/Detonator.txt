@@ -1,0 +1,12 @@
+→A↓2
+Turns bomb into remote bombs.
+Alt detonate all at once
+Pointing at object:
+	Remote activate switches
+	Reset the position of spawned objects
+	Reset enemies to the last location they were in where they gained or lost health
+
+→A↓0
+
+→A↓1
+

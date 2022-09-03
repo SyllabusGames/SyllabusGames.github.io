@@ -1,5 +1,15 @@
 →A↓2
-Works like the logic gate switcher but using it opens a guide entry for whatever you use it on so it will show the truth table for any gate and equations for any component. It also works on all switches, enemies, and other interact-able objects. 
+Works like the logic gate switcher but using it opens a guide entry for whatever you use it on so it will show the truth table for any gate and equations for any component. It also works on all switches, enemies, and other interact-able objects.
+Display enemy health/stats for everything on screen and displays this info every time you are near those objects until you double tap the button or reload the game.
+Allows you to see Anris’s level and health.
+Gives useful information about where you have already been.
+Displays links between switches and what they control.
+
+(Need a reason for experienced players to use this)
+
+Displays the icon for what each optional area gives you on the entrance way.
+Shows you what is inside chests from a distance.
+
 →A↓0
 Logic Gates sector. 
 →A↓1
