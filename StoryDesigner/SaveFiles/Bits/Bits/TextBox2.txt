@@ -1,2 +1,10 @@
-Bits: Text Box #2
-Yay
+Text Box #2
+Char12
+Char19
+26
+29
+32
+35
+38
+41
+44
